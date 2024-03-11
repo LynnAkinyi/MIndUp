@@ -1,0 +1,387 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{% static 'js/chart.js' %}"></script>
+    <title>Dashboard</title>
+    <style>
+        .sidenav {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            z-index: 1;
+            top: 0px;
+            left: 0;
+            background-color: #A79589;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+        
+        .sidenav a {
+            padding: 10px;
+            margin: 20px 20px 20px 30px;
+            display: block;
+            text-decoration: none;
+            text-decoration: none;
+            font-size: 18px;
+            color: #8A441D;
+            display: block;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.4));
+        }
+        
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+        
+        .dashlinks {
+            margin-top: 50%;
+            margin-bottom: 40%;
+        }
+        
+        footer {
+            background-color: #A79589;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 0;
+            width: 100%;
+        }
+        
+        .main {
+            margin-left: 140px;
+            /* Same as the width of the sidenav */
+            padding: 0px 10px;
+        }
+        
+        .main h2 {
+            margin-top: 50px;
+            margin-bottom: 10px;
+        }
+        
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-left: 50px;
+            height: 250px;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.4));
+        }
+        
+        .column {
+            flex: 1;
+            margin: 10px;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            overflow-y: auto;
+            background-color: #fff6f2;
+        }
+        
+        a {
+            text-decoration: none;
+            color: black;
+        }
+        /* Add this to your style tag */
+        
+        .selected-dates {
+            top: 0px;
+            max-height: 100px;
+        }
+        
+        .progress-chart-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+        }
+        
+        .progress-chart {
+            width: 60px;
+            height: 80px;
+            margin: 10px;
+            display: inline-block;
+        }
+        
+        .progress-circle {
+            fill: none;
+            stroke: #007bff;
+            stroke-width: 10;
+            stroke-linecap: round;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            transition: stroke-dashoffset 0.5s;
+        }
+        
+        .progress-circle-background {
+            fill: none;
+            stroke: #f3f3f3;
+            stroke-width: 10;
+        }
+        
+        .analysis-heading {
+            margin: 20px;
+            text-align: center;
+        }
+        
+        .topnav {
+            background-color: #A79589;
+            overflow: hidden;
+            padding: 20px;
+            margin: 10px 0 0 220px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+        }
+        
+        .main h2 {
+            margin-left: 10cqmin;
+            margin-bottom: 20px;
+        }
+        
+        .topnav input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            margin-right: 55%;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+            /* Adjusted margin */
+        }
+        
+        .material-icons {
+            color: #8A441D;
+            font-size: 28px;
+            cursor: pointer;
+            margin-right: 10px;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+            /* Adjusted margin */
+        }
+        /* Media query for mobile */
+        
+        .dropdownNav {
+            display: none;
+            position: absolute;
+            width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dropdownNav a {
+            display: block;
+            text-align: left;
+            padding: 12px 16px;
+        }
+        
+        @media (max-width: 600px) {
+            .sidenav {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 10px;
+            }
+            .sidenav a {
+                float: left;
+                width: 100%;
+                text-align: center;
+            }
+            .topnav {
+                padding: 10px;
+                margin: 0;
+            }
+            .topnav input[type="text"] {
+                width: 100%;
+                margin: 0 0 10px 0;
+            }
+            .main {
+                margin-left: 0;
+            }
+            .main h2 {
+                text-align: center;
+            }
+            .row {
+                margin-left: 0;
+                height: auto;
+                flex-direction: column;
+            }
+            .row a {
+                text-decoration: none;
+                color: black;
+            }
+            .column {
+                margin: 10px 0;
+                width: 100%;
+            }
+            .sidenav {
+                display: none;
+            }
+            <!-- .mobile-nav {
+                display: flex;
+                flex-direction: column;
+                margin: 10px;
+                padding: 20px;
+                border-radius: 20px;
+                background-color: rgba(75, 51, 3, 0.282)
+            }
+            -->.topnav input[type="text"] {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- add side nav and style it -->
+    <div class="sidenav">
+        <div class="dashlinks">
+            <a href="dashboard.html"><span class="material-icons">
+dashboard
+</span>Dashboard</a>
+            <a href="{% url 'profile' %}"><span class="material-icons">
+person
+</span>Profile</a>
+            <a href="{% url 'community' %}"><span class="material-icons">
+groups
+</span>Community</a>
+            <a href="{% url 'blog' %}"><span class="material-icons">
+edit_note
+</span>Blog</a>
+            <a href="{% url 'about' %}"><span class="material-icons">
+description
+</span>About Us</a></div>
+        <a href="{% url 'logout' %} "><span class="material-icons">
+logout
+</span>Logout</a>
+    </div>
+    <!-- <div class="mobile-nav">
+
+
+        <div id="dropdownNav" class="dropdownNav">
+            <a href="#">Dashboard</a>
+            <a href="#">Profile</a>
+            <a href="#">Community</a>
+            <a href="#">Blog</a>
+        </div>
+
+    </div> -->
+
+    <!-- add top navigation bar -->
+    <div class="topnav">
+        <input type="text" placeholder="Search...">
+
+        <span class="material-icons">
+            notifications
+        </span>
+        <span class="material-icons">
+            account_circle
+        </span>
+        <button onclick="openNav()"><span class="material-icons">
+menu
+</span></button>
+    </div>
+
+    <!-- add main content -->
+    <div class="main">
+        <h2>Hello, {{ request.user.username }}, Welcome Back!</h2>
+        <!-- Add this inside your .main div -->
+        <div class="row">
+            <div class="column">Patient Overview</div>
+            <div class="column">Upcoming Events</div>
+            <a href="book.html">
+                <div class="column" id="appointment">Appointments
+                    <div class="selected-dates">
+                        <ul id="selectedDatesList"></ul>
+                    </div>
+
+                </div>
+            </a>
+        </div>
+        <div class="row">
+            <div class="column">Analytics
+                <canvas id="myChart" width="500" height="400"></canvas>
+            </div>
+            <div class="column">What's New</div>
+        </div>
+    </div>
+    <script>
+        // Retrieve the date from the query parameters in the URL
+        const selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
+
+        // Display selected dates in the dashboard
+        window.onload = function() {
+            const appointmentDiv = document.getElementById('appointment');
+            const ul = document.createElement('ul');
+
+            selectedDates.forEach(date => {
+                const li = document.createElement('li');
+                li.textContent = date;
+                ul.appendChild(li);
+            });
+
+            appointmentDiv.appendChild(ul);
+        };
+
+        window.onload = function() {
+            const appointmentDiv = document.getElementById('appointment');
+            const ul = document.createElement('ul');
+
+            selectedDates.forEach(date => {
+                const li = document.createElement('li');
+                li.textContent = date;
+
+                const deleteBtn = document.createElement('span');
+                deleteBtn.classList.add('material-icons', 'delete-btn');
+                deleteBtn.textContent = 'delete';
+                deleteBtn.addEventListener('click', function() {
+                    li.remove(); // Remove the date from the list
+                    // Update selectedDates array in local storage
+                    const updatedDates = selectedDates.filter(d => d !== date);
+                    localStorage.setItem('selectedDates', JSON.stringify(updatedDates));
+                });
+
+                li.appendChild(deleteBtn); // Add delete button to the list item
+                ul.appendChild(li); // Add list item to the unordered list
+            });
+
+            appointmentDiv.appendChild(ul); // Add unordered list to the appointment div
+        };
+
+        var ctx = document.getElementById('pieChart').getContext('2d');
+        var pieChart = new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: [{ %
+                        for label in data.labels %
+                    }
+                    '{{ label }}', { % endfor %
+                    }
+                ],
+                datasets: [{
+                    data: [{ %
+                        for value in data.values %
+                    } {
+                        {
+                            value
+                        }
+                    }, { % endfor %
+                    }],
+                    backgroundColor: [{ %
+                            for color in data.colors %
+                        }
+                        '{{ color }}', { % endfor %
+                        }
+                    ],
+                }]
+            },
+            options: {
+                // Chart options (if needed)
+            }
+        });
+    </script>
+</body>
+
+</html>

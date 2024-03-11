@@ -1,0 +1,208 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Tranquil Mind</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <link rel="icon" href="static/css/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="shortcut icon" href="static/images/favicon.ico" type="image/x-icon" />
+    <style>
+        .dropdown-menu {
+            display: none;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        
+        @media only screen and (max-width: 600px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+            }
+            .nav-links a {
+                margin: 10px 0;
+            }
+            .social-links {
+                display: none;
+            }
+            .welcome-container {
+                padding: 50px;
+            }
+            .welcome-text h1 {
+                font-size: 2.5rem;
+            }
+            .welcome-text p {
+                font-size: 1rem;
+            }
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .container article,
+            .container img {
+                width: 100%;
+                margin-bottom: 30px;
+            }
+            .container article {
+                padding: 0;
+            }
+            .section1,
+            .section2,
+            .section3 {
+                padding: 30px;
+            }
+        }
+        
+        .dropdown-menu {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            margin: 20px;
+        }
+        
+        .dropdown-icon {
+            width: 20px;
+            height: 20px;
+            margin-left: 5px;
+        }
+        
+        .dropdown-content {
+            border-radius: 10px;
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+            z-index: 1;
+            left: 0;
+        }
+        
+        .dropdown-menu:hover .dropdown-content {
+            margin: 40%;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            gap: 20px;
+        }
+        
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Splash screen -->
+    <div class="splash-screen">
+        <img src="{% static 'images/logo.png' %}" alt="logo" class="logo" />
+    </div>
+
+    <!-- Homepage -->
+    <div class="homepage">
+        <!-- Welcome section -->
+        <section class="welcome-section">
+            <div class="bg"></div>
+            <div class="nav-bar">
+                <div class="logow">
+                    <img src="static/images/logo.png" alt="logo" class="logow" />
+                </div>
+                <div class="nav-links">
+
+                    <a href="home.html">Home</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="community.html">Community</a>
+                    <a href="blog.html">Blog</a>
+                    <a href="about.html">About Us</a>
+                    <a href="login.html">Login</a>
+                </div>
+                <div class="dropdown-menu"> <span class="material-symbols-outlined">
+menu
+</span>
+                    <div class="dropdown-content">
+                        <a href="home.html">Home</a>
+                        <a href="community.html">Community</a>
+                        <a href="blog.html">Blog</a>
+                        <a href="about.html">About Us</a>
+                        <a href="login.html">Login</a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="welcome-container">
+                <div class="social-links">
+                    <a href="https://www.twitter.com">
+                        <img src="static/images/twitter.png" alt="Facebook" />
+                    </a>
+                    <a href="https://www.linkedin.com/in/lynn-akinyi/">
+                        <img src="static/images/linkedin (1).png" alt="Twitter" />
+                    </a>
+                    <a href="https://www.instagram.com/_a_ly.nn/">
+                        <img src="static/images/instagram (1).png" alt="Instagram" />
+                    </a>
+                    <p>Follow Us On</p>
+                </div>
+                <div class="welcome-text">
+                    <h1>Welcome to Tranquil Mind</h1>
+                    <p>
+                        You are not alone. This is a safe and supportive space dedicated to your mental well-being.
+                    </p>
+                    <a href="#explore" class="cta-button">Explore Now</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Other sections -->
+        <section class="section1">
+            <div class="container">
+                <article>
+                    <h1>Building Resilience</h1>
+                    <p>
+                        Join resilience-building workshops conducted by experts on our platform. Engage with a supportive community sharing stories of triumph and participate in activities designed to enhance emotional strength and adaptability..
+                    </p>
+                </article>
+                <img src="static/images/people.jpg" alt="Image" class="image" />
+            </div>
+        </section>
+
+        <section class="section2">
+            <div class="container">
+                <img src="static/images/partner.jpg" alt="Image" class="image" />
+                <article>
+                    <h1>The Power of Connection</h1>
+                    <p>
+                        Explore how our platform emphasizes the importance of healthy relationships in mental well-being. From communication tips to relationship support groups, discover the role of connections in fostering a positive state of mind.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section3">
+            <div class="container">
+                <article>
+                    <h1>Breaking Barriers to Mental Health Support</h1>
+                    <p>
+                        Dive into the world of virtual counseling, exploring its benefits, considerations, and how it has become a lifeline for individuals worldwide.
+                    </p>
+                </article>
+                <img src="static/images/therapist.jpg" alt="Image" class="image" " />
+        </div>
+      </section>
+      <footer>This is the footer</footer>
+    </div>
+  </body>
+</html>

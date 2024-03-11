@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* styles.css */
+        /* Header styling */
+        
+        header {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        header img {
+            border-radius: 50%;
+            max-width: 150px;
+        }
+        /* Availability section styling */
+        
+        .availability {
+            margin: 20px;
+        }
+        /* About section styling */
+        
+        .about {
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        /* Ratings section styling */
+        
+        .ratings {
+            margin: 20px;
+        }
+        
+        .review {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+        /* Charges section styling */
+        
+        .charges {
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        
+        .styled-input {
+            padding: 10px;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .styled-button {
+            background-color: #8A441D;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .selected-dates {
+            margin-top: 20px;
+            background-color: #8A441D;
+        }
+    </style>
+    <!-- Link to your CSS file -->
+    <title>Therapist Profile</title>
+</head>
+
+<body>
+    <header>
+        <img src="images/practice.jpg" alt="Therapist Photo">
+        <h1>Dr. Jane Doe</h1>
+        <p>Specializes in anxiety and stress management</p>
+    </header>
+
+    <section class="availability">
+        <!-- Calendar or schedule goes here -->
+        <!-- Example: -->
+        <div class="calendar">
+            <!-- Calendar content -->
+        </div>
+    </section>
+
+    <section class="about">
+        <h2>About Me</h2>
+        <p>With over 10 years of experience...</p>
+    </section>
+
+    <section class="ratings">
+        <!-- Ratings and reviews go here -->
+        <!-- Example: -->
+        <div class="review">
+            <p>⭐️⭐️⭐️⭐️⭐️</p>
+            <p>"Dr. Jane is amazing!"</p>
+        </div>
+        <!-- Repeat for other reviews -->
+    </section>
+
+    <section class="charges">
+        <h2>Charges</h2>
+        <p>Initial consultation: $150</p>
+        <p>Follow-up sessions: $100</p>
+        <form action="">
+            <form action="">
+                <input type="date" id="appointmentDate" class="styled-input">
+                <button class="styled-button" id="scheduleButton">Schedule</button>
+            </form>
+        </form>
+    </section>
+
+    <script>
+        // app.js
+
+        document.getElementById("scheduleButton").onclick = function() {
+            const selectedDate = document.getElementById('appointmentDate').value;
+            if (selectedDate) {
+                let selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
+                selectedDates.push(selectedDate);
+                localStorage.setItem('selectedDates', JSON.stringify(selectedDates));
+
+                // Display a success message or modal
+                alert('Appointment scheduled successfully!');
+                window.location.replace('dashboard.html');
+            }
+        };
+    </script>
+</body>
+
+</html>

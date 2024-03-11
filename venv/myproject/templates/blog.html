@@ -1,0 +1,158 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>My Blog</title>
+    <style>
+        /* styles.css */
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Inter;
+        }
+        
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .blog-page {
+            height: 100vh;
+            overflow-y: scroll;
+        }
+        
+        .section {
+            height: 100%;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .section-1,
+        .section-3 {
+            background-color: #a79589;
+        }
+        
+        .article {
+            width: 50%;
+            margin-left: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .article-image {
+            width: 100%;
+            max-width: 300px;
+            margin-right: 50px;
+        }
+        
+        .article-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .read-more-button {
+            margin-top: 20px;
+            padding: 10px 50px;
+            background-color: #8a4c1d;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+        
+        .read-more-button:hover {
+            background-color: #a79589;
+        }
+        /* styles.css */
+        
+        .container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .text {
+            flex: 2;
+            padding: 20px;
+            font-size: 40px;
+            font-weight: bold;
+        }
+        /* Add additional rules for sections 3-7 here */
+    </style>
+</head>
+
+<body>
+    <h1>TranquilMind</h1>
+
+    <div class="blog-page">
+        <div class="container">
+            <div class="text">
+                <p>
+                    Our articles are designed to resonate with your unique mental health journey. We believe in the power of knowledge to transform lives.
+                </p>
+            </div>
+            <div class="article-image">
+                <img src="images/man.png" alt="Image" />
+            </div>
+        </div>
+        <button class="read-more-button">Start Reading</button>
+        <button class="read-more-button" id="post-article-button">Post Article</button>
+
+        <section class="section section-1">
+            <div class="article">
+                <img src="images\lonely.jpg" alt="Article 1" class="article-image" />
+                <div class="article-content">
+                    <h2>Demystifying Mental Health</h2>
+                    <p>
+                        Contrary to common misconceptions, mental health is not solely about mental illnesses but encompasses our emotional, psychological, and social well-being. It's about how we handle stress, relate to others, and make choices.
+                    </p>
+                    <button class="read-more-button">Read More</button>
+                </div>
+            </div>
+        </section>
+        <section class="section section-2">
+            <div class="article">
+                <div class="article-content">
+                    <h2>Coping with Stress</h2>
+                    <p>
+                        Stress is an unavoidable part of life, but how we manage it greatly influences our mental health. In this article, we explore ten proven strategies to effectively cope with stress in our daily lives. From mindfulness practices and relaxation techniques
+                        to time management and positive affirmations, these tools empower individuals to build resilience and maintain mental well-being in the face of life's challenges.
+                    </p>
+                    <button class="read-more-button">Read More</button>
+                </div>
+                <img src="images\lonely.jpg" alt="Article 2" class="article-image" />
+            </div>
+        </section>
+        <!-- Repeat this pattern for sections 3-7 -->
+        <section class="section section-3" id="articles">
+
+        </section>
+    </div>
+</body>
+<script>
+    // Add event listener to the button
+    document.getElementById('post-article-button').addEventListener('click', function() {
+        // Redirect the user to the page where they can create a new article
+        window.location.href = 'create_article.html'; // Replace '/create-article' with the URL of your create article page
+    });
+</script>
+
+</html>
+</body>
+
+</html>

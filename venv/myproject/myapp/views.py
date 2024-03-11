@@ -1,0 +1,126 @@
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login, logout 
+from .forms import UserCreationForm, LoginForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+
+from django.views.generic import TemplateView
+
+
+# Create your views here.
+# Home page
+
+
+def index(request):
+    return render(request, 'index.html')
+
+def home(request):
+    return render(request, 'index.html')
+
+@login_required
+def dashboard(request):
+    return render(request, 'dashboard.html')
+
+def book(request):
+    return render(request, 'book.html')
+
+def chat(request):
+    users = User.objects.all()  # Fetch all users from the database
+    return render(request, 'chat.html', {'users': users})
+
+def create_article(request):
+    return render(request, 'create_article.html')
+
+def details(request):
+    return render(request, 'details.html')
+
+def dir(request):
+    return render(request, 'dir.html')
+
+def faq(request):
+    return render(request, 'faq.html')
+
+def mind(request):
+    return render(request, 'mind.html')
+
+def testimonies(request):
+    return render(request, 'testimonies.html')
+
+def profile(request):
+    return render(request, 'profile.html')
+
+def forums(request):
+        return render(request, 'forums.html')
+
+
+
+@login_required
+def community(request):
+    return render(request, 'community.html')
+
+@login_required
+def blog(request):
+    return render(request, 'blog.html')
+
+def about(request):
+    return render(request, 'about.html')
+
+# signup page
+def user_signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+    else:
+        form = UserCreationForm()
+    return render(request, 'signup.html', {'form': form})
+
+# login page
+def user_login(request):
+    if request.method == 'POST':
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(request, username=username, password=password)
+            if user:
+                if user.is_staff:
+                    login(request, user)
+                    return redirect('http://127.0.0.1:8000/admin/login/?next=/admin/')
+                else:
+                    login(request, user)
+                    return redirect('dashboard')
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form})
+# logout page
+def user_logout(request):
+    logout(request)
+    return redirect('login')
+
+def schedule_appointment(request):
+    if request.method == 'POST':
+        selected_date = request.POST.get('appointment_date')
+        if selected_date:
+            # Perform any necessary operations, such as saving to the database
+            # Here, we'll just redirect to the dashboard with the selected date
+            return redirect('dashboard', appointment_date=selected_date)
+    return redirect('book')
+
+def forums(request):
+    users = User.objects.all()  # Fetch all users from the database
+    return render(request, 'forums.html', {'users': users})
+
+def pie_chart_view(request):
+    labels = ['Anxiety', 'Depression', 'Stress']
+    values = [25, 35, 40]
+    colors = ['#FF6384', '#36A2EB', '#FFCE56']
+
+    data = {
+        'labels': labels,
+        'values': values,
+        'colors': colors,
+    }
+
+    return render(request, 'dashboard.html', {'data': data})

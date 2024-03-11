@@ -1,0 +1,86 @@
+<!-- create_article.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Article</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        label {
+            font-weight: bold;
+        }
+        
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Create New Article</h1>
+    <form method="POST" action="{% url 'blog' %}>
+        {% csrf_token %} {{ form.as_p }}
+        <label for=" title ">Title:</label><br>
+        <input type="text " id="title " name="title "><br>
+        <label for="content ">Content:</label><br>
+        <textarea id="content " name="content " rows="4 " cols="50 "></textarea><br>
+        <button type="submit " onclick="createArticle() ">Submit</button>
+    </form>
+    <script>
+        function createArticle() {
+  const articleTitle = document.getElementById('articleTitle').value;
+  const articleContent = document.getElementById('articleContent').value;
+
+  if (articleTitle && articleContent) {
+    // Retrieve existing articles from local storage or initialize an empty array
+    let articles = JSON.parse(localStorage.getItem('articles')) || [];
+
+    // Add the new article to the array
+    articles.push({
+      title: articleTitle,
+      content: articleContent,
+      date: new Date().toISOString().slice(0, 10)
+    });
+
+    // Store the updated array back in local storage
+    localStorage.setItem('articles', JSON.stringify(articles));
+
+    // Redirect to the blog page
+    window.location.href = 'blog.html';
+  }
+}
+</script>
+</body>
+
+</html>

@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* styles.css */
+        /* Header styling */
+        
+        header {
+            background-color: #f9f9f9;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            text-align: center;
+        }
+        
+        #search {
+            width: 50%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 20px;
+        }
+        /* Top therapist section styling */
+        
+        .top-therapists {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            margin: 20px;
+        }
+        
+        .therapist-card {
+            width: 300px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .therapist-card img {
+            max-width: 100%;
+            border-radius: 50%;
+        }
+        /* View All button styling */
+        
+        .view-all-button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            background-color: #8A441D;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .view-all-button:hover {
+            background-color: #E2D2C7;
+        }
+        /* Add this to your existing CSS */
+        
+        .book-appointment-button {
+            background-color: #8A441D;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 8px 16px;
+            font-weight: bold;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .book-appointment-button:hover {
+            background-color: #E2D2C7;
+        }
+    </style>
+    <!-- Link to your CSS file -->
+    <title>Therapist Directory</title>
+</head>
+
+<body>
+    <header>
+        <h1>Find Your Therapist</h1>
+        <input type="text" id="search" placeholder="Search therapists...">
+    </header>
+    <h2>Top Therapists</h2>
+    <section class="top-therapists">
+        <!-- Top therapist cards go here -->
+        <!-- Example: -->
+
+        <div class="therapist-card">
+            <img src="images/counsell.jpg" alt="Therapist 1">
+            <h2>Dr. Jane Doe</h2>
+            <p>Specializes in anxiety and stress management.</p>
+            <a href="book.html" class="book-appointment-button">Book Appointment</a>
+        </div>
+        <div class="therapist-card">
+            <img src="images/counsell.jpg" alt="Therapist 1">
+            <h2>Dr. Jane Doe</h2>
+            <p>Specializes in anxiety and stress management.</p>
+            <a href="book.html" class="book-appointment-button">Book Appointment</a>
+        </div>
+        <div class="therapist-card">
+            <img src="images/counsell.jpg" alt="Therapist 1">
+            <h2>Dr. Jane Doe</h2>
+            <p>Specializes in anxiety and stress management.</p>
+            <a href="book.html" class="book-appointment-button">Book Appointment</a>
+        </div>
+        <div class="therapist-card">
+            <img src="images/counsell.jpg" alt="Therapist 1">
+            <h2>Dr. Jane Doe</h2>
+            <p>Specializes in anxiety and stress management.</p>
+            <a href="book.html" class="book-appointment-button">Book Appointment</a>
+
+        </div>
+        <!-- Repeat for other therapists -->
+        <div class="view-all-button-container">
+            <button class="view-all-button">View All Therapists</button>
+        </div>
+    </section>
+
+
+</body>
+
+</html>
