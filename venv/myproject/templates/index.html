@@ -34,9 +34,9 @@
 
                     <a href="home.html">Home</a>
                     <a href="{% url 'dashboard' %}">Dashboard</a>
-                    <a href="community.html">Community</a>
+                    <a href="{% url 'community' %}">Community</a>
                     <a href="{% url 'blog' %}">Blog</a>
-                    <a href="about.html">About Us</a>
+                    <a href="{% url 'about' %}">About Us</a>
                     <a href="{% url 'login' %}">Login</a>
                 </div>
                 <!-- <div class="dropdown-menu"> <span class="material-symbols-outlined">
@@ -71,7 +71,7 @@ menu
                     <p>
                         You are not alone. This is a safe and supportive space dedicated to your mental well-being.
                     </p>
-                    <a href="#explore" class="cta-button">Explore Now</a>
+                    <a href="{% url 'login' %}" class="cta-button">Explore Now</a>
                 </div>
             </div>
         </section>
