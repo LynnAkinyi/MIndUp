@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 from .views import forums
+from .views import user_details
 
 urlpatterns = [
     path('', views.index, name='home'),
@@ -22,5 +23,6 @@ urlpatterns = [
     path('community/testimonies.html/', views.profile, name='testimonies'),
     path('signup/', views.user_signup, name='signup'),
     path('logout/', views.user_logout, name='logout'),
-    path('forums/', forums, name='forums'),    
+    path('forums/', forums, name='forums'),
+    path('api/user/details/', user_details, name='user_details'),    
 ]

@@ -3,7 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import UserCreationForm, LoginForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+import json
 from django.views.generic import TemplateView
 
 
@@ -112,15 +114,15 @@ def forums(request):
     users = User.objects.all()  # Fetch all users from the database
     return render(request, 'forums.html', {'users': users})
 
-def pie_chart_view(request):
-    labels = ['Anxiety', 'Depression', 'Stress']
-    values = [25, 35, 40]
-    colors = ['#FF6384', '#36A2EB', '#FFCE56']
-
-    data = {
-        'labels': labels,
-        'values': values,
-        'colors': colors,
-    }
-
-    return render(request, 'dashboard.html', {'data': data})
+@csrf_exempt
+def user_details(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        name = data.get('name')
+        email = data.get('email')
+        # Here you can save the user details to the database or perform any other necessary actions
+        # For simplicity, let's just return the user details as JSON response
+        return JsonResponse({'name': name, 'email': email})
+    else:
+        # Handle GET requests or any other methods if needed
+        pass
