@@ -154,7 +154,8 @@
             padding: 10px;
             border-radius: 10px;
             border: none;
-            margin-right: 55%;
+            margin-left: 5%;
+            margin-right: 50%;
             filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
             /* Adjusted margin */
         }
@@ -266,9 +267,7 @@
             <a href="dashboard.html"><span class="material-icons">
 dashboard
 </span>Dashboard</a>
-            <a href="{% url 'profile' %}"><span class="material-icons">
-person
-</span>Profile</a>
+
             <a href="{% url 'community' %}"><span class="material-icons">
 groups
 </span>Community</a>
@@ -302,9 +301,13 @@ logout
             notifications
         </span>
 
-        <span class="material-icons">
+        <a href="{% url 'profile' %}"><span class="material-icons">
+person
+</span></a>
+
+        <!-- <span class="material-icons">
 menu
-</span>
+</span> -->
     </div>
 
     <!-- add main content -->
