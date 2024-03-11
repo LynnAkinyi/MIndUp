@@ -115,9 +115,9 @@
     </section>
 
     <script>
-        // app.js
+        document.getElementById("scheduleButton").addEventListener('click', function(event) {
+            event.preventDefault(); // Prevent form submission
 
-        document.getElementById("scheduleButton").onclick = function() {
             const selectedDate = document.getElementById('appointmentDate').value;
             if (selectedDate) {
                 let selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
@@ -126,9 +126,9 @@
 
                 // Display a success message or modal
                 alert('Appointment scheduled successfully!');
-                window.location.replace('dashboard.html');
+                window.location.replace("{% url 'dashboard' %}");
             }
-        };
+        });
     </script>
 </body>
 
