@@ -97,7 +97,7 @@ def user_login(request):
 # logout page
 def user_logout(request):
     logout(request)
-    return redirect('login')
+    return redirect('home')
 
 def schedule_appointment(request):
     if request.method == 'POST':

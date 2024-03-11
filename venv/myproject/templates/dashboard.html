@@ -6,8 +6,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{% static 'js/chart.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+    </script>
     <title>Dashboard</title>
     <style>
         .sidenav {
@@ -289,42 +289,47 @@ menu
         <h2>Hello, {{ request.user.username }}, Welcome Back!</h2>
         <!-- Add this inside your .main div -->
         <div class="row">
-            <div class="column">Patient Overview</div>
-            <div class="column">Upcoming Events</div>
+            <div class="column"><b><i>Member Overview</i></b></div>
+            <div class="column"><b><i>Upcoming Events</i></b></div>
             <a href="book.html">
-                <div class="column" id="appointment">Appointments
-                    <div class="selected-dates">
-                        <ul id="selectedDatesList"></ul>
-                    </div>
+                <div class="column" id="appointment"><b><i>Scheduled Appointments</i></b></a>
+            <div class="selected-dates">
+                <ul id="selectedDatesList"></ul>
+            </div>
 
-                </div>
-            </a>
+            </div>
+
         </div>
         <div class="row">
-            <div class="column">Analytics
-                <canvas id="myChart" width="500" height="400"></canvas>
+            <div class="column"><b><i>Progress</i></b>
+                <canvas id="myChart" style="width:100%;max-width:700px;"></canvas>
             </div>
-            <div class="column">What's New</div>
+            <div class="column"><b><i>What's new</i></b></div>
         </div>
     </div>
     <script>
         // Retrieve the date from the query parameters in the URL
         const selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
 
+        // Function to schedule an appointment and redirect to dashboard
+        function scheduleAppointment() {
+            const selectedDate = document.getElementById('appointmentDate').value;
+            if (selectedDate) {
+                // Retrieve existing selected dates from local storage or initialize an empty array
+                let selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
+
+                // Add the new selected date to the array
+                selectedDates.push(selectedDate);
+
+                // Store the updated array back in local storage
+                localStorage.setItem('selectedDates', JSON.stringify(selectedDates));
+
+                // Redirect to the dashboard page
+                window.location.href = 'dashboard.html';
+            }
+        }
+
         // Display selected dates in the dashboard
-        window.onload = function() {
-            const appointmentDiv = document.getElementById('appointment');
-            const ul = document.createElement('ul');
-
-            selectedDates.forEach(date => {
-                const li = document.createElement('li');
-                li.textContent = date;
-                ul.appendChild(li);
-            });
-
-            appointmentDiv.appendChild(ul);
-        };
-
         window.onload = function() {
             const appointmentDiv = document.getElementById('appointment');
             const ul = document.createElement('ul');
@@ -349,6 +354,34 @@ menu
 
             appointmentDiv.appendChild(ul); // Add unordered list to the appointment div
         };
+
+
+        const xValues = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+
+        new Chart("myChart", {
+            type: "line",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    data: [860, 1140, 1060, 1060, 1070, 1110, 1330, 2210, 7830, 2478],
+                    borderColor: "red",
+                    fill: false
+                }, {
+                    data: [1600, 1700, 1700, 1900, 2000, 2700, 4000, 5000, 6000, 7000],
+                    borderColor: "green",
+                    fill: false
+                }, {
+                    data: [300, 700, 2000, 5000, 6000, 4000, 2000, 1000, 200, 100],
+                    borderColor: "blue",
+                    fill: false
+                }]
+            },
+            options: {
+                legend: {
+                    display: false
+                }
+            }
+        });
     </script>
 </body>
 
