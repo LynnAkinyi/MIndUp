@@ -20,11 +20,12 @@
             background-color: #A79589;
             overflow-x: hidden;
             padding-top: 20px;
+            border-radius: 0px 20px 20px 0px;
         }
         
         .sidenav a {
             padding: 10px;
-            margin: 20px 20px 20px 30px;
+            margin: 20px 20px 40px 30px;
             display: block;
             text-decoration: none;
             text-decoration: none;
@@ -97,47 +98,12 @@
             max-height: 100px;
         }
         
-        .progress-chart-container {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: flex-start;
-        }
-        
-        .progress-chart {
-            width: 60px;
-            height: 80px;
-            margin: 10px;
-            display: inline-block;
-        }
-        
-        .progress-circle {
-            fill: none;
-            stroke: #007bff;
-            stroke-width: 10;
-            stroke-linecap: round;
-            transform: rotate(-90deg);
-            transform-origin: 50% 50%;
-            transition: stroke-dashoffset 0.5s;
-        }
-        
-        .progress-circle-background {
-            fill: none;
-            stroke: #f3f3f3;
-            stroke-width: 10;
-        }
-        
-        .analysis-heading {
-            margin: 20px;
-            text-align: center;
-        }
-        
         .topnav {
             background-color: #A79589;
             overflow: hidden;
             padding: 20px;
             margin: 10px 0 0 220px;
-            border-radius: 5px;
+            border-radius: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -152,7 +118,7 @@
         .topnav input[type="text"] {
             width: 300px;
             padding: 10px;
-            border-radius: 10px;
+            border-radius: 30px;
             border: none;
             margin-left: 5%;
             margin-right: 50%;
@@ -164,8 +130,8 @@
             color: #8A441D;
             font-size: 28px;
             cursor: pointer;
-            margin-right: 10px;
-            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+            margin-right: 15px;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.1));
             /* Adjusted margin */
         }
         /* Media query for mobile */
@@ -192,15 +158,12 @@
             cursor: pointer;
             font-size: 12px;
         }
+        /* CSS */
         
-        a.active {
-            /* Your active link styles here */
-            font-weight: bold;
-            /* For example, make the text bold */
-            color: blue;
-            /* Change the color */
-            text-decoration: underline;
-            /* Add underline */
+        .active {
+            color: #8A441D;
+            background-color: #fff6f2;
+            border-radius: 40px;
         }
         
         @media (max-width: 600px) {
@@ -264,9 +227,8 @@
     <!-- add side nav and style it -->
     <div class="sidenav">
         <div class="dashlinks">
-            <a href="dashboard.html"><span class="material-icons">
-dashboard
-</span>Dashboard</a>
+            <a href="{% url 'dashboard' %}" class="active" id="dashboardLink"><span class="material-icons">dashboard</span>Dashboard</a>
+
 
             <a href="{% url 'community' %}"><span class="material-icons">
 groups
@@ -346,10 +308,18 @@ menu
             <div class="column"><b><i>Progress</i></b>
                 <canvas id="myChart" style="width:100%;max-width:700px;"></canvas>
             </div>
-            <div class="column"><b><i>What's new</i></b></div>
+            <div class="column"><b><i>What's new</i></b>
+                <canvas id="myChart" style="width:100%;max-width:700px;"></canvas>
+            </div>
         </div>
     </div>
     <script>
+        // JavaScript
+        window.onload = function() {
+            const dashboardLink = document.getElementById('dashboardLink');
+            dashboardLink.classList.add('active');
+        }
+
         // Retrieve the date from the query parameters in the URL
         const selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
 
@@ -429,6 +399,31 @@ menu
 
         new Chart("myChart", {
             type: "line",
+            data: {
+                labels: xValues,
+                datasets: [{
+                    data: [860, 1140, 1060, 1060, 1070, 1110, 1330, 2210, 7830, 2478],
+                    borderColor: "red",
+                    fill: false
+                }, {
+                    data: [1600, 1700, 1700, 1900, 2000, 2700, 4000, 5000, 6000, 7000],
+                    borderColor: "green",
+                    fill: false
+                }, {
+                    data: [300, 700, 2000, 5000, 6000, 4000, 2000, 1000, 200, 100],
+                    borderColor: "blue",
+                    fill: false
+                }]
+            },
+            options: {
+                legend: {
+                    display: false
+                }
+            }
+        });
+
+        new Chart("myChart", {
+            type: "graph",
             data: {
                 labels: xValues,
                 datasets: [{

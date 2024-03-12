@@ -9,6 +9,7 @@ import json
 from django.views.generic import TemplateView
 
 
+
 # Create your views here.
 # Home page
 
@@ -126,3 +127,5 @@ def user_details(request):
     else:
         # Handle GET requests or any other methods if needed
         pass
+
+

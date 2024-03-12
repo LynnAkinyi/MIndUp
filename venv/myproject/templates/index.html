@@ -13,7 +13,12 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="shortcut icon" href="static/images/favicon.ico" type="image/x-icon" />
     <style>
-
+        .active {
+            color: #8A441D;
+            background-color: #fff6f2;
+            border-radius: 30px;
+            padding: 10px;
+        }
     </style>
 </head>
 
@@ -32,7 +37,7 @@
                 </div>
                 <div class="nav-links">
 
-                    <a href="home.html">Home</a>
+                    <a href="{% url 'home' %}" class="active" id="dashboardLink">Home</a>
                     <a href="{% url 'dashboard' %}">Dashboard</a>
                     <a href="{% url 'community' %}">Community</a>
                     <a href="{% url 'blog' %}">Blog</a>
@@ -119,6 +124,12 @@ menu
     <a href="{% url 'signup' %} ">Signup</a> {% endif %} -->
       <footer>This is the footer</footer>
     </div>
+    <script>  
+         window.onload = function() {
+            const dashboardLink = document.getElementById('dashboardLink');
+            dashboardLink.classList.add('active');
+        }
+</script>
 </body>
 
 </html>
