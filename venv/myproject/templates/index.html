@@ -59,20 +59,10 @@ menu
             </div>
 
             <div class="welcome-container">
-                <div class="social-links">
-                    <a href="https://www.twitter.com">
-                        <img src="static/images/twitter.png" alt="Facebook" />
-                    </a>
-                    <a href="https://www.linkedin.com/in/lynn-akinyi/">
-                        <img src="static/images/linkedin (1).png" alt="Twitter" />
-                    </a>
-                    <a href="https://www.instagram.com/_a_ly.nn/">
-                        <img src="static/images/instagram (1).png" alt="Instagram" />
-                    </a>
-                    <p>Follow Us On</p>
-                </div>
+
                 <div class="welcome-text">
                     <h1>Welcome to Tranquil Mind</h1>
+
                     <p>
                         You are not alone. This is a safe and supportive space dedicated to your mental well-being.
                     </p>
@@ -122,7 +112,46 @@ menu
     <a href="{% url 'logout' %} ">Logout</a> {% else %}
     <a href="{% url 'login' %} ">Login</a>
     <a href="{% url 'signup' %} ">Signup</a> {% endif %} -->
-      <footer>This is the footer</footer>
+      <footer>
+  <div class="footer-container ">
+    <div class="footer-section ">
+      <h3>Reach us</h3>
+      <p><a href="tel:+254768608120 ">+25476860 8120</a></p>
+      <p><a href="mailto:2003749@students.kcau.ac.ke ">2003749@students.kcau.ac.ke</a></p>
+      <p><a href="https://www.google.com/maps/search/?api=1&query=Nairobi,Kenya " target="_blank "><i class="fas fa-map-marker-alt "></i> Nairobi, Kenya</a></p>
+    </div>
+    <div class="footer-section ">
+      <h3>Company</h3>
+      <a href="{% url 'about' %} ">About</a>
+      <a href="{% url 'contact' %} ">Contact Us</a>
+      <div class="social-links ">
+        <p>Follow Us On</p>
+                    <a href="https://www.twitter.com ">
+                        <img src="static/images/twitter.png " alt="Facebook " />
+                    </a>
+                    <a href="https://www.linkedin.com/in/lynn-akinyi/ ">
+                        <img src="static/images/linkedin (1).png " alt="Twitter " />
+                    </a>
+                    <a href="https://www.instagram.com/_a_ly.nn/ ">
+                        <img src="static/images/instagram (1).png " alt="Instagram " />
+                    </a>
+                    
+                </div>
+    </div>
+    <div class="footer-section ">
+      <h3>Legal</h3>
+      <p>Privacy Policy</p>
+      <p>Terms & Services</p>
+      <p>Terms of Use</p>
+    </div>
+    <div class="footer-section ">
+      <h3>Quick Links</h3>
+      <a href="{% url 'dir' %} ">Therapist Directory</a>
+      <a href="{% url 'faq' %} ">FAQs</a>
+      <a href="{% url 'community' %} ">Community</a>
+    </div>
+  </div>
+</footer>
     </div>
     <script>  
          window.onload = function() {

@@ -133,7 +133,11 @@ section p {
   color: #fff;
 }
 .container {
-  display: flex;
+  max-width: 900px; /* Adjust this value to change the maximum width of the content */
+  margin: 30px auto; /* This centers the content horizontally */
+  text-align: center; /* This centers the text within the container */
+  display: flex; /* This makes the article and image display side by side */
+  justify-content: space-around; /* This adds space between the article and image */
   align-items: center;
 }
 
@@ -142,6 +146,7 @@ section p {
   height: auto;
   margin-right: 20px;
   border-radius: 20px;
+  flex: 0 0 200px;
 }
 
 article {
@@ -154,15 +159,14 @@ article {
 }
 
 .welcome-container {
-  display: flex; /* Use flexbox to create a flexible container */
+  display: flex;
+  justify-content: center; /* Use flexbox to create a flexible container */
 }
 .social-links {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  margin-left: 5px;
-  margin-top: 100px;
-  width: 20px;
+
   flex: 1;
 }
 
@@ -177,16 +181,16 @@ article {
 .social-links img {
   width: 20px;
   height: 20px;
-  margin: 10px;
+
   filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
 }
 .social-links p {
   margin-left: 40px;
-  margin-top: 50px;
+
   font-size: 14px;
-  transform: rotate(-90deg);
-  transform-origin: 0% 100%;
-  color: #fff;
+  /* transform: rotate(-90deg);
+  transform-origin: 0% 100%; */
+
   filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
 }
 .welcome-text {
@@ -199,11 +203,64 @@ article {
 .welcome-text p {
   color: #fff;
 }
-footer {
+/* footer {
   background-color: #e2d2c7;
   color: #6a2d0a;
   height: 200px;
   text-align: center;
+} */
+
+/* Footer Container */
+.footer-container {
+  display: flex;
+  justify-content: space-around;
+  background-color: #e2d2c7;
+  padding: 40px;
+}
+
+/* Footer Section */
+.footer-section {
+  text-align: center;
+}
+
+.footer-section h3 {
+  color: #6a2d0a;
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+
+.footer-section p,
+a {
+  color: #6a2d0a;
+  font-size: 14px;
+  line-height: 1.5;
+  margin-bottom: 10px;
+  text-decoration: none;
+}
+
+/* Icons */
+.fas {
+  margin-right: 10px;
+  color: #333;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .footer-container {
+    flex-wrap: wrap;
+  }
+
+  .footer-section {
+    width: 50%;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .footer-section {
+    width: 100%;
+    text-align: left;
+  }
 }
 /* @media only screen and (max-width: 600px) {
   .welcome-text {
