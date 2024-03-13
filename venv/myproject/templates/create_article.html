@@ -12,10 +12,22 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            background-color: #f2f2f2;
         }
         
         h1 {
             color: #333;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        form {
+            background-color: #fff;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         
         label {
@@ -24,9 +36,10 @@
         
         input[type="text"],
         textarea {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
+            width: calc(100% - 22px);
+            /* Adjusting for padding */
+            padding: 10px;
+            margin-bottom: 20px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
@@ -35,10 +48,13 @@
         button[type="submit"] {
             background-color: #4CAF50;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            width: 100%;
+            display: block;
+            font-size: 16px;
         }
         
         button[type="submit"]:hover {
@@ -50,6 +66,8 @@
 <body>
     <h1>Create New Article</h1>
     <form onsubmit="createArticle(); return false;">
+        <label for="image">Image:</label><br>
+        <input type="file" id="articleImage" name="image"><br>
         <label for="title">Title:</label><br>
         <input type="text" id="articleTitle" name="title"><br>
         <label for="content">Content:</label><br>
@@ -62,25 +80,34 @@
         function createArticle() {
             const articleTitle = document.getElementById('articleTitle').value;
             const articleContent = document.getElementById('articleContent').value;
+            const articleImage = document.getElementById('articleImage').files[0]; // Get the selected image file
 
-            if (articleTitle && articleContent) {
+            if (articleTitle && articleContent && articleImage) {
                 // Retrieve existing articles from local storage or initialize an empty array
                 let articles = JSON.parse(localStorage.getItem('articles')) || [];
 
-                // Add the new article to the array
-                articles.push({
-                    title: articleTitle,
-                    content: articleContent,
-                    date: new Date().toISOString().slice(0, 10)
-                });
+                // Convert the image file to a base64-encoded string
+                const reader = new FileReader();
+                reader.readAsDataURL(articleImage);
+                reader.onload = function() {
+                    const imageData = reader.result;
 
-                // Store the updated array back in local storage
-                localStorage.setItem('articles', JSON.stringify(articles));
+                    // Add the new article to the array
+                    articles.push({
+                        title: articleTitle,
+                        content: articleContent,
+                        image: imageData, // Store the base64-encoded image data
+                        date: new Date().toISOString().slice(0, 10)
+                    });
 
-                // Redirect to the blog page
-                window.location.href = blogUrl;
+                    // Store the updated array back in local storage
+                    localStorage.setItem('articles', JSON.stringify(articles));
+
+                    // Redirect to the blog page
+                    window.location.href = blogUrl;
+                };
             } else {
-                alert('Please fill in both title and content fields.');
+                alert('Please fill in all fields.');
             }
         }
     </script>

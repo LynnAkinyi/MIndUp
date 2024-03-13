@@ -44,6 +44,43 @@
         .section-3 {
             background-color: #a79589;
         }
+        /* CSS for the articles section */
+        
+        .section-3 {
+            display: flex;
+            justify-content: center;
+            /* Horizontally center the contents */
+            align-items: center;
+            /* Vertically center the contents */
+            flex-wrap: wrap;
+            /* Wrap the articles if they overflow */
+            padding: 20px;
+            height: auto;
+        }
+        
+        .article {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .article h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .article p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .article p.date {
+            font-style: italic;
+            color: #888;
+        }
         
         .article {
             width: 50%;
@@ -150,6 +187,63 @@
         // Redirect the user to the page where they can create a new article
         window.location.href = 'create_article.html'; // Replace '/create-article' with the URL of your create article page
     });
+
+    // Display articles in the articles section
+    window.onload = function() {
+        const articlesSection = document.getElementById('articles');
+
+        // Retrieve existing articles from local storage
+        const articles = JSON.parse(localStorage.getItem('articles')) || [];
+
+        // Loop through the articles and create elements for each one
+        articles.forEach(article => {
+            const articleDiv = document.createElement('div');
+            articleDiv.classList.add('article');
+
+            const titleH2 = document.createElement('h2');
+            titleH2.textContent = article.title;
+
+            const contentP = document.createElement('p');
+            contentP.textContent = article.content;
+
+            const dateP = document.createElement('p');
+            dateP.textContent = `Date: ${article.date}`;
+
+            // Create an image element
+            const image = document.createElement('img');
+            image.src = article.image; // Set the image source to the base64-encoded image data
+            image.alt = article.title; // Set alt text for accessibility
+
+            articleDiv.appendChild(titleH2);
+            articleDiv.appendChild(contentP);
+            articleDiv.appendChild(dateP);
+            articleDiv.appendChild(image); // Append the image element to the article div
+
+            articlesSection.appendChild(articleDiv);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Delete';
+            deleteBtn.classList.add('delete-btn');
+            deleteBtn.addEventListener('click', function() {
+                // Remove the article from the UI
+                articleDiv.remove();
+                // Implement logic to delete the article from storage or database
+                // For example, you can send an AJAX request to the server to delete the article
+            });
+
+            // Append the delete button to the article div
+            articleDiv.appendChild(deleteBtn);
+
+            deleteBtn.addEventListener('click', function() {
+                // Remove the article from the UI
+                articleDiv.remove();
+
+                // Remove the article from local storage
+                const updatedArticles = articles.filter(a => a.title !== titleH2.textContent);
+                localStorage.setItem('articles', JSON.stringify(updatedArticles));
+            });
+        });
+    };
 </script>
 
 </html>
