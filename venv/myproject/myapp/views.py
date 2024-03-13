@@ -7,6 +7,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.views.generic import TemplateView
+from django.http import JsonResponse
+from .models import Article
 
 
 
@@ -31,8 +33,17 @@ def chat(request):
     users = User.objects.all()  # Fetch all users from the database
     return render(request, 'chat.html', {'users': users})
 
+
 def create_article(request):
     return render(request, 'create_article.html')
+
+def save_article(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        content = request.POST.get('content')
+        article = Article.objects.create(title=title, content=content)
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False})
 
 def details(request):
     return render(request, 'details.html')
@@ -129,5 +140,4 @@ def user_details(request):
     else:
         # Handle GET requests or any other methods if needed
         pass
-
 
