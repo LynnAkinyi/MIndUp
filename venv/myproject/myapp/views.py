@@ -54,8 +54,6 @@ def dir(request):
 def faq(request):
     return render(request, 'faq.html')
 
-def mind(request):
-    return render(request, 'mind.html')
 
 def testimonies(request):
     return render(request, 'testimonies.html')
@@ -141,3 +139,20 @@ def user_details(request):
         # Handle GET requests or any other methods if needed
         pass
 
+def create_article(request):
+    if request.method == 'POST':
+        title = request.POST['title']
+        content = request.POST['content']
+        image = request.FILES.get('image')
+        Article.objects.create(title=title, content=content, image=image)
+        return redirect('article_list')
+    return render(request, 'create_article.html')
+
+def article_list(request):
+    articles = Article.objects.all()
+    return render(request, 'article_list.html', {'articles': articles})
+
+def delete_article(request, article_id):
+    article = Article.objects.get(id=article_id)
+    article.delete()
+    return redirect('article_list')

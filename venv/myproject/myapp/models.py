@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 
 
 
+
 class UserRole(models.Model):
     name = models.CharField(max_length=50)
     permissions = models.JSONField(default=dict)
@@ -28,11 +29,11 @@ class Writer(models.Model):
         return u'%s' % (self.name)
 
 class Article(models.Model):
-    text_title = models.CharField(max_length=50, null=True, blank=True)
-    text = models.TextField(max_length=200, null=True, blank=True)
-    refWriter = models.ForeignKey(Writer, on_delete=models.CASCADE)
-    createdDate = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return u'[%s] : %s' % (self.refWriter,self.text_title)
+    title = models.CharField(max_length=100)
+    content = models.TextField(default='')
+    date = models.DateField(null=True, blank=True)
+    image = models.ImageField(upload_to='article_images/', blank=True)
 
+    def __str__(self):
+        return self.title
 
