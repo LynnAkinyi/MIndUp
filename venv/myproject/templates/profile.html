@@ -6,69 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
     <style>
-        /* Basic styling for demonstration purposes */
-        
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f2f2f2;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        
-        .section {
-            margin-bottom: 20px;
-        }
-        
-        .section-title {
-            font-size: 24px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
         .input-group {
             margin-bottom: 10px;
         }
         
-        .input-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        
-        .input-group input {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        
-        .input-group textarea {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        
-        .btn {
-            background-color: #007bff;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-        
-        .btn:hover {
-            background-color: #0056b3;
+        .saved-info {
+            display: none;
         }
     </style>
 </head>
@@ -92,70 +35,96 @@
                 <label for="phone">Phone:</label>
                 <input type="tel" id="phone" name="phone">
             </div>
-        </div>
-
-        <!-- Address Section -->
-        <div class="section">
-            <h2 class="section-title">Address</h2>
             <div class="input-group">
-                <label for="address">Address:</label>
-                <textarea id="address" name="address" rows="4"></textarea>
+                <label for="profile-picture">Profile Picture:</label>
+                <input type="file" id="profile-picture" name="profile-picture" accept="image/*">
+            </div>
+            <div class="saved-info">
+                <p><strong>Name:</strong> <span id="saved-name"></span></p>
+                <p><strong>Email:</strong> <span id="saved-email"></span></p>
+                <p><strong>Phone:</strong> <span id="saved-phone"></span></p>
+                <p><strong>Profile Picture:</strong> <img id="saved-profile-picture" src="" alt="Profile Picture"></p>
             </div>
         </div>
 
-        <!-- Preferences Section -->
-        <div class="section">
-            <h2 class="section-title">Preferences</h2>
-            <div class="input-group">
-                <label for="interests">Interests:</label>
-                <textarea id="interests" name="interests" rows="4"></textarea>
-            </div>
-        </div>
+        <!-- Save/Edit Button -->
+        <button class="btn" id="save-btn" onclick="saveProfile()">Save</button>
 
-        <!-- Save Button -->
-        <button class="btn" onclick="saveProfile()">Save</button>
 
     </div>
 
     <script>
         function saveProfile() {
-            // Fetch input values
-            var name = document.getElementById('name').value;
-            var email = document.getElementById('email').value;
-            var phone = document.getElementById('phone').value;
-            var address = document.getElementById('address').value;
-            var interests = document.getElementById('interests').value;
+            // Get input values
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
 
-            // Create profile info HTML
-            var profileInfo = '<div class="profile-info">' +
-                '<p><strong>Name:</strong> ' + name + '</p>' +
-                '<p><strong>Email:</strong> ' + email + '</p>' +
-                '<p><strong>Phone:</strong> ' + phone + '</p>' +
-                '</div>' +
-                '<div class="profile-info">' +
-                '<p><strong>Address:</strong> ' + address + '</p>' +
-                '</div>' +
-                '<div class="profile-info">' +
-                '<p><strong>Interests:</strong> ' + interests + '</p>' +
-                '</div>';
+            // Store values in local storage
+            const userData = {
+                name: name,
+                email: email,
+                phone: phone
+            };
+            localStorage.setItem('userProfile', JSON.stringify(userData));
 
-            // Update profile sections
-            document.getElementById('personal-info-section').innerHTML += profileInfo;
-            document.getElementById('address-section').innerHTML += profileInfo;
-            document.getElementById('preferences-section').innerHTML += profileInfo;
+            // Redirect to dashboard page
+            window.location.replace("{% url 'dashboard' %}");
 
-            // Clear input fields
-            document.getElementById('name').value = '';
-            document.getElementById('email').value = '';
-            document.getElementById('phone').value = '';
-            document.getElementById('address').value = '';
-            document.getElementById('interests').value = '';
+            // Display saved information
+            document.getElementById('saved-name').textContent = name;
+            document.getElementById('saved-email').textContent = email;
+            document.getElementById('saved-phone').textContent = phone;
 
-            // Alert user
+            // Display the uploaded profile picture
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('saved-profile-picture').src = e.target.result;
+            }
+            reader.readAsDataURL(profilePicture);
+
+            // Hide input fields and show saved information
+            const inputGroups = document.querySelectorAll('.input-group');
+            inputGroups.forEach(group => group.style.display = 'none');
+            document.querySelector('.saved-info').style.display = 'block';
+
+            // Change button text to "Edit"
+            document.getElementById('save-btn').textContent = 'Edit';
+            document.getElementById('save-btn').onclick = editProfile;
+
             alert('Profile saved successfully!');
         }
-    </script>
 
+        function editProfile() {
+            // Show input fields and hide saved information
+            const inputGroups = document.querySelectorAll('.input-group');
+            inputGroups.forEach(group => group.style.display = 'block');
+            document.querySelector('.saved-info').style.display = 'none';
+
+            // Change button text to "Save"
+            document.getElementById('save-btn').textContent = 'Save';
+            document.getElementById('save-btn').onclick = saveProfile;
+        }
+
+        // Check if values exist in local storage and display them
+        window.addEventListener('load', () => {
+            const userProfile = JSON.parse(localStorage.getItem('userProfile'));
+
+            if (userProfile && userProfile.name && userProfile.email && userProfile.phone) {
+                document.getElementById('saved-name').textContent = userProfile.name;
+                document.getElementById('saved-email').textContent = userProfile.email;
+                document.getElementById('saved-phone').textContent = userProfile.phone;
+
+                const inputGroups = document.querySelectorAll('.input-group');
+                inputGroups.forEach(group => group.style.display = 'none');
+                document.querySelector('.saved-info').style.display = 'block';
+
+                // Change button text to "Edit"
+                document.getElementById('save-btn').textContent = 'Edit';
+                document.getElementById('save-btn').onclick = editProfile;
+            }
+        });
+    </script>
 </body>
 
 </html>

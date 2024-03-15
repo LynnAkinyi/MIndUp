@@ -279,15 +279,10 @@ menu
         <!-- Add this inside your .main div -->
         <div class="row">
             <div class="column"><b><i>Member Overview</i></b>
-                <div id="userDetails"></div>
-                <form id="userDetailsForm">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" required><br><br>
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" required><br><br>
-                    <button type="submit" class="styled-button">Save</button>
-                </form>
+                <div class="saved-info" id="saved-info">
 
+                    <div class="dashboard-info" id="dashboard-info"></div>
+                </div>
 
             </div>
             <div class="column"><b><i>Upcoming Events</i></b>
@@ -315,6 +310,27 @@ menu
         </div>
     </div>
     <script>
+        // Check if values exist in local storage and display them
+        window.addEventListener('load', function() {
+            var userProfile = localStorage.getItem('userProfile');
+            if (userProfile) {
+                var userData = JSON.parse(userProfile);
+                var name = userData.name;
+                var email = userData.email;
+                var phone = userData.phone;
+                var profilePictureUrl = userData.profilePictureUrl;
+
+                var dashboardInfoDiv = document.getElementById('dashboard-info');
+                dashboardInfoDiv.innerHTML = '<p><strong>Name:</strong> ' + name + '</p>' +
+                    '<p><strong>Email:</strong> ' + email + '</p>' +
+                    '<p><strong>Phone:</strong> ' + phone + '</p>' +
+                    '<p><strong>Profile Picture:</strong> <img src="' + profilePictureUrl + '" alt="Profile Picture"></p>';
+
+                // Show saved information
+                var savedInfoDiv = document.getElementById('saved-info');
+                savedInfoDiv.style.display = 'block';
+            }
+        });
         // JavaScript
         window.onload = function() {
             const dashboardLink = document.getElementById('dashboardLink');
