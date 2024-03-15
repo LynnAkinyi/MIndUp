@@ -82,6 +82,10 @@
             background-color: #fff6f2;
         }
         
+        .highlight {
+            background-color: yellow;
+        }
+        
         a {
             text-decoration: none;
             color: black;
@@ -257,12 +261,14 @@ logout
 
     <!-- add top navigation bar -->
     <div class="topnav">
-        <input type="text" placeholder="Search...">
+        <input type="text" id="searchInput" placeholder="Enter search query...">
 
-        <span class="material-icons">
-            notifications
-        </span>
-
+        <span class="material-icons" id="notificationIcon">
+    notifications
+</span>
+        <div id="notificationDropdown" style="display: none;">
+            <!-- Add your notifications here -->
+        </div>
         <a href="{% url 'profile' %}">
             <span class="material-icons">person</span>
         </a>
@@ -310,6 +316,42 @@ menu
         </div>
     </div>
     <script>
+        document.getElementById('notificationIcon').addEventListener('click', function() {
+            var dropdown = document.getElementById('notificationDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        });
+        document.getElementById('searchInput').addEventListener('keyup', function(event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the search function
+                search();
+            }
+        });
+
+        function search() {
+            // Get the search query from the input field
+            var query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+            // Get the content to search
+            var contentToSearch = Array.from(document.querySelectorAll('.dashlinks a, .main h2, .main b, #dashboard-info, #upcoming-events, #selectedDatesList'));
+
+            // Remove previous highlights
+            contentToSearch.forEach(function(item) {
+                item.innerHTML = item.innerHTML.replace(/<span class="highlight">([^<]*)<\/span>/g, '$1');
+            });
+
+            // Loop through each content item and check if it matches the search query
+            contentToSearch.forEach(function(item) {
+                var textContent = item.textContent.toLowerCase();
+                if (textContent.includes(query)) {
+                    // If the item matches the search query, highlight it
+                    var regex = new RegExp('(' + query + ')', 'gi');
+                    item.innerHTML = item.innerHTML.replace(regex, '<span class="highlight">$1</span>');
+                }
+            });
+        }
         // Check if values exist in local storage and display them
         window.addEventListener('load', function() {
             var userProfile = localStorage.getItem('userProfile');

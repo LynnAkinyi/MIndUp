@@ -77,11 +77,11 @@
             document.getElementById('saved-phone').textContent = phone;
 
             // Display the uploaded profile picture
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                document.getElementById('saved-profile-picture').src = e.target.result;
+            function displaySelectedImage() {
+                const profilePicture = document.getElementById('profile-picture').files[0];
+                const selectedImage = document.getElementById('profile-picture');
+                selectedImage.src = URL.createObjectURL(profilePicture);
             }
-            reader.readAsDataURL(profilePicture);
 
             // Hide input fields and show saved information
             const inputGroups = document.querySelectorAll('.input-group');
