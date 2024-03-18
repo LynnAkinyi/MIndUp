@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -6,6 +7,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Profile</title>
     <style>
+        body {
+            background-color: #f0f0f0;
+            /* Change this to your preferred color */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        .container {
+            text-align: center;
+            background-color: #fff;
+            /* Change this to your preferred color */
+            padding: 50px;
+            border-radius: 10px;
+            width: 400px;
+        }
+        
         .input-group {
             margin-bottom: 10px;
         }
@@ -18,11 +40,15 @@
 
 <body>
     <div class="container">
-        <h1>User Profile</h1>
+        <h1>{{ request.user.username }}'s Profile</h1>
 
         <!-- Personal Information Section -->
         <div class="section">
             <h2 class="section-title">Personal Information</h2>
+            <div class="input-group">
+                <label for="profile-picture">Profile Picture:</label>
+                <input type="file" id="profile-picture" name="profile-picture" accept="image/*">
+            </div>
             <div class="input-group">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name">
@@ -35,15 +61,13 @@
                 <label for="phone">Phone:</label>
                 <input type="tel" id="phone" name="phone">
             </div>
-            <div class="input-group">
-                <label for="profile-picture">Profile Picture:</label>
-                <input type="file" id="profile-picture" name="profile-picture" accept="image/*">
-            </div>
+
             <div class="saved-info">
+                <p><strong>Profile Picture:</strong> <img id="saved-profile-picture" src="" alt="Profile Picture"></p>
                 <p><strong>Name:</strong> <span id="saved-name"></span></p>
                 <p><strong>Email:</strong> <span id="saved-email"></span></p>
                 <p><strong>Phone:</strong> <span id="saved-phone"></span></p>
-                <p><strong>Profile Picture:</strong> <img id="saved-profile-picture" src="" alt="Profile Picture"></p>
+
             </div>
         </div>
 

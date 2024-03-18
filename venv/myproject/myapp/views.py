@@ -9,12 +9,17 @@ import json
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from .models import Article
+from .models import MindfulnessTask, ExerciseTask
 
+def tasks(request):
+    mindfulness_task = MindfulnessTask.objects.get_or_create()[0]
+    exercise_task = ExerciseTask.objects.get_or_create()[0]
 
-
-# Create your views here.
-# Home page
-
+    context = {
+        'mindfulness_task': mindfulness_task,
+        'exercise_task': exercise_task,
+    }
+    return render(request, 'tasks.html', context)
 
 def index(request):
     return render(request, 'index.html')
@@ -45,11 +50,14 @@ def save_article(request):
         return JsonResponse({'success': True})
     return JsonResponse({'success': False})
 
+
 def details(request):
     return render(request, 'details.html')
 
+
 def dir(request):
     return render(request, 'dir.html')
+
 
 def faq(request):
     return render(request, 'faq.html')
@@ -62,10 +70,10 @@ def profile(request):
     return render(request, 'profile.html')
 
 def forums(request):
-        return render(request, 'forums.html')
+    return render(request, 'forums.html')
 
 def contact(request):
-        return render(request, 'contact.html')
+    return render(request, 'contact.html')
 
 
 @login_required
@@ -156,3 +164,5 @@ def delete_article(request, article_id):
     article = Article.objects.get(id=article_id)
     article.delete()
     return redirect('article_list')
+
+

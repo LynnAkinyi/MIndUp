@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+    <h1>To-Do List</h1>
+    <canvas id="progress-chart" width="400" height="200"></canvas>
+
+    <ul>
+        {% for task in tasks %}
+        <li>
+            {{ task.title }} - {{ task.description }}
+            <form action="{% url 'update_task' task.id %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit">{% if task.completed %}Undo{% else %}Complete{% endif %}</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    {{ tasks|json_script:"tasks" }}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var tasks = JSON.parse(document.getElementById('tasks').textContent);
+            var completedTasks = tasks.filter(task => task.completed).length;
+            var totalTasks = tasks.length - completedTasks;
+
+            var ctx = document.getElementById('progress-chart').getContext('2d');
+            var chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'Unfinished'],
+                    datasets: [{
+                        label: 'Task Progress',
+                        data: [completedTasks, totalTasks],
+                        backgroundColor: [
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 99, 132, 0.2)',
+                        ],
+                        borderColor: [
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 99, 132, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: {
+                        position: 'right',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Task Progress'
+                    },
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

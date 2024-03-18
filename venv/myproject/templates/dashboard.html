@@ -39,9 +39,23 @@
             color: #f1f1f1;
         }
         
-        .dashlinks {
-            margin-top: 50%;
-            margin-bottom: 40%;
+        .dashlinks a {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logout a {
+            display: flex;
+            align-items: center;
+            margin-top: 150px;
+        }
+        
+        .material-icons {
+            color: #8A441D;
+            font-size: 28px;
+            cursor: pointer;
+            margin-right: 15px;
+            /* Adjusted margin */
         }
         
         footer {
@@ -129,15 +143,6 @@
             filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
             /* Adjusted margin */
         }
-        
-        .material-icons {
-            color: #8A441D;
-            font-size: 28px;
-            cursor: pointer;
-            margin-right: 15px;
-            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.1));
-            /* Adjusted margin */
-        }
         /* Media query for mobile */
         
         .dropdownNav {
@@ -168,6 +173,16 @@
             color: #8A441D;
             background-color: #fff6f2;
             border-radius: 40px;
+        }
+        
+        .date-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .date-item .delete-btn {
+            margin-left: 10px;
         }
         
         @media (max-width: 600px) {
@@ -242,10 +257,16 @@ edit_note
 </span>Blog</a>
             <a href="{% url 'about' %}"><span class="material-icons">
 description
-</span>About Us</a></div>
-        <a href="{% url 'logout' %} "><span class="material-icons">
+</span>About Us</a>
+            <a href="{% url 'tasks' %}"><span class="material-icons">
+task
+</span>Tasks</a>
+        </div>
+        <div class="logout"> <a href="{% url 'logout' %} "><span class="material-icons">
 logout
-</span>Logout</a>
+</span>Logout</a></div>
+
+
     </div>
     <!-- <div class="mobile-nav">
 
@@ -261,7 +282,7 @@ logout
 
     <!-- add top navigation bar -->
     <div class="topnav">
-        <input type="text" id="searchInput" placeholder="Enter search query...">
+        <input type="text" id="searchInput" placeholder="Search...">
 
         <span class="material-icons" id="notificationIcon">
     notifications
@@ -374,10 +395,7 @@ menu
             }
         });
         // JavaScript
-        window.onload = function() {
-            const dashboardLink = document.getElementById('dashboardLink');
-            dashboardLink.classList.add('active');
-        }
+
 
         // Retrieve the date from the query parameters in the URL
         const selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
@@ -402,12 +420,19 @@ menu
 
         // Display selected dates in the dashboard
         window.onload = function() {
+            const dashboardLink = document.getElementById('dashboardLink');
+            dashboardLink.classList.add('active');
             const appointmentDiv = document.getElementById('appointment');
             const ul = document.createElement('ul');
 
             selectedDates.forEach(date => {
                 const li = document.createElement('li');
-                li.textContent = date;
+
+                li.classList.add('date-item');
+
+                const dateSpan = document.createElement('span'); // Create a span for the date text
+                dateSpan.textContent = date;
+                li.appendChild(dateSpan);
 
                 const deleteBtn = document.createElement('span');
                 deleteBtn.classList.add('material-icons', 'delete-btn');

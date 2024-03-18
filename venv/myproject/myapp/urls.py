@@ -18,6 +18,7 @@ urlpatterns = [
     path('blog/create_article.html', views.create_article, name='create_article'), 
     path('dashboard/', views.dashboard, name='dashboard'),
     path('dashboard/book.html', views.book, name='book'),
+    path('dashboard/tasks.html', views.tasks, name='tasks'),
     path('dashboard/profile.html', views.profile, name='profile'), 
     path('details/', views.details, name='details'), 
     path('faq/', views.faq, name='faq'),

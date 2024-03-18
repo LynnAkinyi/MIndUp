@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+from django.utils.timezone import now
 
 
 
@@ -37,3 +39,23 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+class MindfulnessTask(models.Model):
+    duration = models.PositiveIntegerField(default=10)  # in minutes
+    completed = models.BooleanField(default=False)
+
+class ExerciseTask(models.Model):
+    duration = models.PositiveIntegerField(default=30)  # in minutes
+    completed = models.BooleanField(default=False)
+
+class Task(models.Model):
+    COMPLETE = "Complete"
+    INCOMPLETE = "Incomplete"
+    STATUS = [
+        (COMPLETE, "Complete"),
+        (INCOMPLETE, "Incomplete")
+    ]
+
+    detail = models.CharField(max_length=200, null=False, blank=False)
+    status = models.CharField(max_length=200, choices=STATUS, default=INCOMPLETE)
+    category = models.CharField(max_length=200, default=None)
+    creation_date = models.DateTimeField('Creation Date', default=now)
