@@ -19,13 +19,13 @@
             left: 0;
             background-color: #A79589;
             overflow-x: hidden;
-            padding-top: 20px;
+            padding-top: 10px;
             border-radius: 0px 20px 20px 0px;
         }
         
         .sidenav a {
             padding: 10px;
-            margin: 20px 20px 40px 30px;
+            margin: 20px 20px 20px 30px;
             display: block;
             text-decoration: none;
             text-decoration: none;
@@ -40,6 +40,7 @@
         }
         
         .dashlinks a {
+            margin-top: 50px;
             display: flex;
             align-items: center;
         }
@@ -171,7 +172,7 @@
         
         .active {
             color: #8A441D;
-            background-color: #fff6f2;
+            background-color: rgba(255, 246, 242, 0.4);
             border-radius: 40px;
         }
         
@@ -479,54 +480,31 @@ menu
         };
 
 
-        const xValues = [100, 200, 300, 400, 500, 600, 700, 800, 900, 1000];
+        // Retrieve the tasks and bonuses from localStorage
+        let tasks = JSON.parse(localStorage.getItem('tasks'));
+        let bonuses = JSON.parse(localStorage.getItem('bonuses'));
 
-        new Chart("myChart", {
-            type: "line",
+        // Create the chart
+        let myChart = new Chart("myChart", {
+            type: "bar",
             data: {
-                labels: xValues,
+                labels: tasks,
                 datasets: [{
-                    data: [860, 1140, 1060, 1060, 1070, 1110, 1330, 2210, 7830, 2478],
-                    borderColor: "red",
-                    fill: false
-                }, {
-                    data: [1600, 1700, 1700, 1900, 2000, 2700, 4000, 5000, 6000, 7000],
-                    borderColor: "green",
-                    fill: false
-                }, {
-                    data: [300, 700, 2000, 5000, 6000, 4000, 2000, 1000, 200, 100],
-                    borderColor: "blue",
-                    fill: false
+                    label: 'Bonus Earned',
+                    data: bonuses,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
                 }]
             },
             options: {
-                legend: {
-                    display: false
-                }
-            }
-        });
-
-        new Chart("myChart", {
-            type: "graph",
-            data: {
-                labels: xValues,
-                datasets: [{
-                    data: [860, 1140, 1060, 1060, 1070, 1110, 1330, 2210, 7830, 2478],
-                    borderColor: "red",
-                    fill: false
-                }, {
-                    data: [1600, 1700, 1700, 1900, 2000, 2700, 4000, 5000, 6000, 7000],
-                    borderColor: "green",
-                    fill: false
-                }, {
-                    data: [300, 700, 2000, 5000, 6000, 4000, 2000, 1000, 200, 100],
-                    borderColor: "blue",
-                    fill: false
-                }]
-            },
-            options: {
-                legend: {
-                    display: false
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: 10
+                        }
+                    }]
                 }
             }
         });

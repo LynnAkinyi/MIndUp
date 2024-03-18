@@ -4,62 +4,196 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To-Do List</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Task Progress Tracker</title>
+    <!-- Include Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
 </head>
 
 <body>
-    <h1>To-Do List</h1>
-    <canvas id="progress-chart" width="400" height="200"></canvas>
+    <div class="task-list">
+        <h2>Tasks to be completed:</h2>
+        <ul>
+            <li>
+                Task 1
+                <input type="radio" name="task1" value="incomplete"> Incomplete
+                <input type="radio" name="task1" value="quarter"> 1/4 Done
+                <input type="radio" name="task1" value="half"> 1/2 Done
+                <input type="radio" name="task1" value="three-quarters"> 3/4 Done
+                <input type="radio" name="task1" value="complete"> Complete
+            </li>
+            <li>
+                Task 2
+                <input type="radio" name="task2" value="incomplete"> Incomplete
+                <input type="radio" name="task2" value="quarter"> 1/4 Done
+                <input type="radio" name="task2" value="half"> 1/2 Done
+                <input type="radio" name="task2" value="three-quarters"> 3/4 Done
+                <input type="radio" name="task2" value="complete"> Complete
+            </li>
+            <!-- Add more tasks as needed -->
+        </ul>
+    </div>
 
-    <ul>
-        {% for task in tasks %}
-        <li>
-            {{ task.title }} - {{ task.description }}
-            <form action="{% url 'update_task' task.id %}" method="post" style="display: inline;">
-                {% csrf_token %}
-                <button type="submit">{% if task.completed %}Undo{% else %}Complete{% endif %}</button>
-            </form>
-        </li>
-        {% endfor %}
-    </ul>
-    {{ tasks|json_script:"tasks" }}
+    <table id="bonusTable">
+        <tr>
+            <th>Task</th>
+            <th>Bonus Earned</th>
+        </tr>
+        <tr>
+            <td>Task 1</td>
+            <td id="bonusTask1">0</td>
+        </tr>
+        <tr>
+            <td>Task 2</td>
+            <td id="bonusTask2">0</td>
+        </tr>
+        <!-- Add more tasks as needed -->
+    </table>
+
+    <div class="column"><b><i>Progress</i></b>
+        <canvas id="myChart" style="width:100%;max-width:700px;"></canvas>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var tasks = JSON.parse(document.getElementById('tasks').textContent);
-            var completedTasks = tasks.filter(task => task.completed).length;
-            var totalTasks = tasks.length - completedTasks;
+        document.querySelectorAll('input[type=radio]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                let taskNumber = this.name.replace('task', '');
+                let bonus = 0;
+                switch (this.value) {
+                    case 'quarter':
+                        bonus = 2;
+                        break;
+                    case 'half':
+                        bonus = 4;
+                        break;
+                    case 'three-quarters':
+                        bonus = 6;
+                        break;
+                    case 'complete':
+                        bonus = 8;
+                        break;
+                }
+                document.getElementById('bonusTask' + taskNumber).textContent = bonus;
+            });
+        });
+        // Collect the data
+        let tasks = Array.from(document.querySelectorAll('.task-list li')).map((li, i) => 'Task ' + (i + 1));
+        let bonuses = tasks.map(task => parseInt(document.getElementById('bonus' + task.replace(' ', '')).textContent));
 
-            var ctx = document.getElementById('progress-chart').getContext('2d');
-            var chart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Completed', 'Unfinished'],
-                    datasets: [{
-                        label: 'Task Progress',
-                        data: [completedTasks, totalTasks],
-                        backgroundColor: [
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 99, 132, 0.2)',
-                        ],
-                        borderColor: [
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 99, 132, 1)',
-                        ],
-                        borderWidth: 1
+        // Create the chart
+        let myChart = new Chart("myChart", {
+            type: "bar",
+            data: {
+                labels: [],
+                datasets: [{
+                    label: 'Bonus Earned',
+                    data: [],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true,
+                            max: 10
+                        }
                     }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    legend: {
-                        position: 'right',
-                    },
-                    title: {
-                        display: true,
-                        text: 'Task Progress'
-                    },
+                }
+            }
+        });
+
+        document.querySelectorAll('input[type=radio]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                let taskNumber = this.name.replace('task', '');
+                let bonus = 0;
+                switch (this.value) {
+                    case 'quarter':
+                        bonus = 2;
+                        break;
+                    case 'half':
+                        bonus = 4;
+                        break;
+                    case 'three-quarters':
+                        bonus = 6;
+                        break;
+                    case 'complete':
+                        bonus = 8;
+                        break;
+                }
+                document.getElementById('bonusTask' + taskNumber).textContent = bonus;
+
+                // Update the chart
+                let tasks = Array.from(document.querySelectorAll('.task-list li')).map((li, i) => 'Task ' + (i + 1));
+                let bonuses = tasks.map(task => parseInt(document.getElementById('bonus' + task.replace(' ', '')).textContent));
+                myChart.data.labels = tasks;
+                myChart.data.datasets[0].data = bonuses;
+                myChart.update();
+            });
+        });
+
+        document.querySelectorAll('input[type=radio]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                let taskNumber = this.name.replace('task', '');
+                let bonus = 0;
+                switch (this.value) {
+                    case 'quarter':
+                        bonus = 2;
+                        break;
+                    case 'half':
+                        bonus = 4;
+                        break;
+                    case 'three-quarters':
+                        bonus = 6;
+                        break;
+                    case 'complete':
+                        bonus = 8;
+                        break;
+                }
+                document.getElementById('bonusTask' + taskNumber).textContent = bonus;
+
+                // Store the bonus in localStorage
+                localStorage.setItem('bonusTask' + taskNumber, bonus);
+
+                // Update the chart
+                // Update the chart and store the data in localStorage
+                let tasks = Array.from(document.querySelectorAll('.task-list li')).map((li, i) => 'Task ' + (i + 1));
+                let bonuses = tasks.map(task => parseInt(document.getElementById('bonus' + task.replace(' ', '')).textContent));
+                myChart.data.labels = tasks;
+                myChart.data.datasets[0].data = bonuses;
+                myChart.update();
+
+                // Store the tasks and bonuses in localStorage
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                localStorage.setItem('bonuses', JSON.stringify(bonuses));
+            });
+        });
+
+        // Load the bonuses from localStorage when the page is refreshed
+        // Load the bonuses from localStorage when the page is refreshed
+        window.addEventListener('load', function() {
+            document.querySelectorAll('.task-list li').forEach((li, i) => {
+                let taskNumber = i + 1;
+                let bonus = localStorage.getItem('bonusTask' + taskNumber);
+                if (bonus !== null) {
+                    document.getElementById('bonusTask' + taskNumber).textContent = bonus;
+                    let value = ['quarter', 'half', 'three-quarters', 'complete'][bonus / 2 - 1];
+                    document.querySelector(`input[name=task${taskNumber}][value=${value}]`).checked = true;
                 }
             });
         });
