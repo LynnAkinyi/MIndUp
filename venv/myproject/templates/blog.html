@@ -67,19 +67,19 @@
         
         .article h2 {
             font-size: 24px;
-            color: #333;
+            color: #6A2D0A;
             margin-bottom: 10px;
         }
         
         .article p {
             font-size: 16px;
-            color: #666;
+            color: #6A2D0A;
             line-height: 1.5;
         }
         
         .article p.date {
             font-style: italic;
-            color: #888;
+            color: #756a62;
         }
         
         .article {
@@ -104,7 +104,7 @@
         }
         
         .read-more-button {
-            margin-top: 20px;
+            margin: 20px;
             padding: 10px 50px;
             background-color: #8a4c1d;
             color: white;
@@ -130,6 +130,55 @@
             font-weight: bold;
         }
         /* Add additional rules for sections 3-7 here */
+        
+        .article {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .article img {
+            width: 40%;
+            height: auto;
+            border-radius: 10px;
+        }
+        
+        .article h2 {
+            order: -1;
+            /* This will move the title to the top */
+            text-align: center;
+        }
+        
+        .article p {
+            grid-column: 1 / -1;
+        }
+        
+        .article .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 50px;
+            background-color: #6A2D0A;
+            color: #fff;
+            border-radius: 40px;
+        }
+        
+        .article p {
+            grid-row: 3;
+            grid-column: 1;
+        }
+        
+        .article .date {
+            grid-row: 3;
+            grid-column: 2;
+            justify-self: end;
+        }
     </style>
 </head>
 
@@ -144,7 +193,7 @@
                 </p>
             </div>
             <div class="article-image">
-                <img src="static/images/therapist.jpg" alt="Image" class="image" />
+                <img src="{% static 'images/man.png' %}" alt="Image" class="image" />
             </div>
         </div>
         <button class="read-more-button">Start Reading</button>
@@ -155,7 +204,7 @@
         </section>
         <section class="section section-2">
             <div class="article">
-                <img src="static/images/lonely.jpg " alt="Article 1" class="article-image" />
+                <img src="{% static 'images/brain.jpg' %}" alt="Image" class="image" />
                 <div class="article-content">
                     <h2>Demystifying Mental Health</h2>
                     <p>
@@ -175,7 +224,7 @@
                     </p>
                     <button class="read-more-button">Read More</button>
                 </div>
-                <img src="static/images/lonely.jpg " alt="Article 2" class="article-image" />
+                <img src="{% static 'images/lonely.jpg' %}" alt="Image" class="image" />
             </div>
         </section>
         <!-- Repeat this pattern for sections 3-7 -->
@@ -209,40 +258,29 @@
 
             const dateP = document.createElement('p');
             dateP.textContent = `Date: ${article.date}`;
+            dateP.classList.add('date');
 
-            // Create an image element
             const image = document.createElement('img');
-            image.src = article.image; // Set the image source to the base64-encoded image data
-            image.alt = article.title; // Set alt text for accessibility
-
-            articleDiv.appendChild(titleH2);
-            articleDiv.appendChild(contentP);
-            articleDiv.appendChild(dateP);
-            articleDiv.appendChild(image); // Append the image element to the article div
-
-            articlesSection.appendChild(articleDiv);
+            image.src = article.image;
+            image.alt = article.title;
 
             const deleteBtn = document.createElement('button');
             deleteBtn.textContent = 'Delete';
             deleteBtn.classList.add('delete-btn');
-            deleteBtn.addEventListener('click', function() {
-                // Remove the article from the UI
-                articleDiv.remove();
-                // Implement logic to delete the article from storage or database
-                // For example, you can send an AJAX request to the server to delete the article
-            });
-
-            // Append the delete button to the article div
-            articleDiv.appendChild(deleteBtn);
 
             deleteBtn.addEventListener('click', function() {
-                // Remove the article from the UI
                 articleDiv.remove();
-
-                // Remove the article from local storage
                 const updatedArticles = articles.filter(a => a.title !== titleH2.textContent);
                 localStorage.setItem('articles', JSON.stringify(updatedArticles));
             });
+
+            articleDiv.appendChild(titleH2); // Append the title before the image
+            articleDiv.appendChild(deleteBtn);
+            articleDiv.appendChild(image);
+            articleDiv.appendChild(contentP);
+            articleDiv.appendChild(dateP);
+
+            articlesSection.appendChild(articleDiv);
         });
     };
 </script>

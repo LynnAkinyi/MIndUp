@@ -1,10 +1,11 @@
+{%load static%}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
     <title>About Us</title>
     <style>
         /* styles.css */
@@ -32,8 +33,8 @@
         /* Team member styles */
         
         .team-member img {
-            max-width: 100%;
-            border-radius: 50%;
+            max-width: 50%;
+            border-radius: 10px;
         }
         /* Our Story styles */
         
@@ -45,13 +46,6 @@
         .values ul {
             list-style: none;
             font-size: 18px;
-        }
-        /* Footer styles */
-        
-        footer {
-            background-color: #333;
-            color: #fff;
-            padding: 10px;
         }
     </style>
 </head>
@@ -66,8 +60,8 @@
 
     <section class="team-members">
         <div class="team-member">
-            <img src="team1.jpg" alt="Team Member 1" />
-            <h2>John Doe</h2>
+            <img src="{% static 'images/counsell.jpg' %}" alt="Therapist 1">
+            <h2>Lynn Akinyi</h2>
             <p>CEO & Founder</p>
         </div>
         <!-- Repeat similar structure for other team members -->
@@ -90,7 +84,44 @@
     </section>
 
     <footer>
-        <p>© 2024 Your Company</p>
+        <div class="footer-container ">
+            <div class="footer-section ">
+                <h3>Reach us</h3>
+                <p><a href="tel:+254768608120 ">+25476860 8120</a></p>
+                <p><a href="mailto:2003749@students.kcau.ac.ke ">2003749@students.kcau.ac.ke</a></p>
+                <p><a href="https://www.google.com/maps/search/?api=1&query=Nairobi,Kenya " target="_blank "><i class="fas fa-map-marker-alt "></i> Nairobi, Kenya</a></p>
+            </div>
+            <div class="footer-section ">
+                <h3>Company</h3>
+                <a href="{% url 'about' %} ">About</a>
+                <a href="{% url 'contact' %} ">Contact Us</a>
+                <div class="social-links ">
+                    <p>Follow Us On</p>
+                    <a href="https://www.twitter.com ">
+                        <img src="{% static 'images/twitter.png' %}" alt="Facebook " />
+                    </a>
+                    <a href="https://www.linkedin.com/in/lynn-akinyi/ ">
+                        <img src="{% static 'images/linkedin (1).png' %}" alt="Twitter " />
+                    </a>
+                    <a href="https://www.instagram.com/_a_ly.nn/ ">
+                        <img src="{% static 'images/instagram (1).png' %}" alt="Twitter " />
+                    </a>
+
+                </div>
+            </div>
+            <div class="footer-section ">
+                <h3>Legal</h3>
+                <p>Privacy Policy</p>
+                <p>Terms & Services</p>
+                <p>Terms of Use</p>
+            </div>
+            <div class="footer-section ">
+                <h3>Quick Links</h3>
+                <a href="{% url 'dir' %} ">Therapist Directory</a>
+                <a href="{% url 'faq' %} ">FAQs</a>
+                <a href="{% url 'community' %} ">Community</a>
+            </div>
+        </div>
     </footer>
 </body>
 

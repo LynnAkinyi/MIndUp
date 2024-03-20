@@ -1,3 +1,4 @@
+{% load static%}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -37,7 +38,7 @@
         
         .article-card img {
             max-width: 50%;
-            border-radius: 50%;
+            border-radius: 10px;
             display: block;
             margin-left: auto;
             margin-right: auto;
@@ -74,7 +75,7 @@
         <!-- Article testimonials go here -->
         <!-- Example: -->
         <div class="article-card">
-            <img src="images/partner.jpg" alt="Patient Photo">
+            <img src="{% static 'images/partner.jpg' %}" alt="Therapist 1">
             <h2>Emily's Transformation</h2>
             <p>Read how therapy changed Emily's life...</p>
         </div>
