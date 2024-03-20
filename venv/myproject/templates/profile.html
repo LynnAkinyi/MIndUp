@@ -61,12 +61,20 @@
                 <label for="phone">Phone:</label>
                 <input type="tel" id="phone" name="phone">
             </div>
+            <div class="input-group">
+                <p>Role:</p>
+                <input type="radio" id="therapist" name="role" value="therapist">
+                <label for="therapist">Therapist</label><br>
+                <input type="radio" id="member" name="role" value="member">
+                <label for="member">Member</label><br>
+            </div>
 
             <div class="saved-info">
                 <p><strong>Profile Picture:</strong> <img id="saved-profile-picture" src="" alt="Profile Picture"></p>
                 <p><strong>Name:</strong> <span id="saved-name"></span></p>
                 <p><strong>Email:</strong> <span id="saved-email"></span></p>
                 <p><strong>Phone:</strong> <span id="saved-phone"></span></p>
+                <p><strong>Role:</strong> <span id="saved-role"></span></p>
 
             </div>
         </div>
@@ -83,12 +91,14 @@
             const name = document.getElementById('name').value;
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
+            const role = document.querySelector('input[name="role"]:checked').value;
 
             // Store values in local storage
             const userData = {
                 name: name,
                 email: email,
-                phone: phone
+                phone: phone,
+                role: role
             };
             localStorage.setItem('userProfile', JSON.stringify(userData));
 
@@ -134,10 +144,11 @@
         window.addEventListener('load', () => {
             const userProfile = JSON.parse(localStorage.getItem('userProfile'));
 
-            if (userProfile && userProfile.name && userProfile.email && userProfile.phone) {
+            if (userProfile && userProfile.name && userProfile.email && userProfile.phone && userProfile.role) {
                 document.getElementById('saved-name').textContent = userProfile.name;
                 document.getElementById('saved-email').textContent = userProfile.email;
                 document.getElementById('saved-phone').textContent = userProfile.phone;
+                document.getElementById('saved-role').textContent = userProfile.role;
 
                 const inputGroups = document.querySelectorAll('.input-group');
                 inputGroups.forEach(group => group.style.display = 'none');
