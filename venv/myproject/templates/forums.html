@@ -191,8 +191,15 @@
 
     <div class="main">
         <div class="container">
-            <div class="volunteer">Volunteer</div>
-            <div class="groups">Groups</div>
+            <div class="volunteer">Volunteer
+                <br>
+                <button>Volunteer as Listener</button>
+
+            </div>
+            <div class="groups">Groups<br> {% if profile.role == 'therapist' %}
+                <button>Create</button> {% endif %}
+            </div>
+            <div id="newDivContainer"></div>
             <div class="chat-container">
                 <div class="chat-header">
                     <h1>Tranquil Mind <i class="fas fa-comment"></i></h1>
@@ -254,6 +261,14 @@
             // Scroll to the bottom of the chat container
             messageContainer.scrollTop = messageContainer.scrollHeight;
         };
+
+        document.getElementById('createButton').addEventListener('click', function() {
+            var newDiv = document.createElement('div');
+            newDiv.style.width = '100px';
+            newDiv.style.height = 'auto';
+            newDiv.style.background = 'black';
+            document.getElementById('newDivContainer').appendChild(newDiv);
+        });
     </script>
 </body>
 

@@ -85,6 +85,17 @@
         .book-appointment-button:hover {
             background-color: #E2D2C7;
         }
+        
+        .therapists {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+        
+        .therapist-card {
+            margin: 10px;
+            /* Adjust as needed */
+        }
     </style>
     <!-- Link to your CSS file -->
     <title>Therapist Directory</title>
@@ -131,9 +142,11 @@
         </div>
         <div class="therapists">
             {% for therapist in therapists %}
-            <div class="therapist">
-                <h2>{{ therapist.user.username }}</h2>
+            <div class="therapist-card">
+                <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}">
+                <h2>{{ therapist.name }}</h2>
                 <p>Role: {{ therapist.role }}</p>
+                <a href="book.html" class="book-appointment-button">Book Appointment</a>
             </div>
             {% empty %}
             <p>No therapists found.</p>

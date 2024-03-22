@@ -51,5 +51,11 @@ class Task(models.Model):
     creation_date = models.DateTimeField('Creation Date', default=now)
     
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=10, choices=[('member', 'Member'), ('therapist', 'Therapist')], default='member')
+    ROLE_CHOICES = [
+        ('therapist', 'Therapist'),
+        ('member', 'Member'),
+    ]
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    name = models.CharField(max_length=200, null=True)
+    image = models.ImageField(upload_to='profile_images/', blank=True)
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='member')

@@ -1,7 +1,8 @@
 from django import forms
+from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import Article
+from .models import Article, Profile
 
 class ArticleForm(forms.ModelForm):  # Use ModelForm instead of Form
     class Meta:
@@ -17,4 +18,16 @@ class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)
 
+class ProfileForm(forms.ModelForm):
+    ROLE_CHOICES = [
+        ('therapist', 'Therapist'),
+        ('member', 'Member'),
+    ]
 
+    name = forms.CharField(widget=forms.TextInput())
+    image = forms.ImageField()
+    role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.RadioSelect)
+
+    class Meta:
+        model = Profile
+        fields = ['name', 'image', 'role']

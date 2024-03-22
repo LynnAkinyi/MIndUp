@@ -2,8 +2,10 @@ from django.urls import path
 from . import views
 from .views import forums
 from .views import user_details
+from django.contrib import admin
 
-urlpatterns = [
+urlpatterns = [    # Existing URL patterns
+    path('admin/', admin.site.urls),
     path('', views.index, name='home'),
     path('about/', views.about, name='about'),
     path('blog/', views.blog, name='blog'),
@@ -30,5 +32,6 @@ urlpatterns = [
     path('forums/', forums, name='forums'),
     path('api/user/details/', user_details, name='user_details'),
     path('therapists/', views.view_all_therapists, name='view_all_therapists'),
-
+    path('save_profile/', views.save_profile, name='save_profile'),
+    
 ]

@@ -11,6 +11,9 @@ from django.http import JsonResponse
 from .models import Article
 from .models import MindfulnessTask, ExerciseTask
 from .models import Profile
+from django.views.decorators.http import require_POST
+from .forms import ProfileForm
+
 
 def tasks(request):
     mindfulness_task = MindfulnessTask.objects.get_or_create()[0]
@@ -67,8 +70,6 @@ def faq(request):
 def testimonies(request):
     return render(request, 'testimonies.html')
 
-def profile(request):
-    return render(request, 'profile.html')
 
 def forums(request):
     return render(request, 'forums.html')
@@ -170,3 +171,40 @@ def view_all_therapists(request):
     therapists = Profile.objects.filter(role='therapist')
     return render(request, 'dir.html', {'therapists': therapists})
 
+
+@login_required
+@csrf_exempt
+def save_profile(request):
+    if request.method == 'POST':
+        profile, created = Profile.objects.get_or_create(user=request.user)
+        profile.name = request.POST.get('name')
+        profile.email = request.POST.get('email')
+        profile.phone = request.POST.get('phone')
+        profile.role = request.POST.get('role')
+        if 'profile_picture' in request.FILES:
+            profile.profile_picture = request.FILES['profile_picture']
+        profile.save()
+        return JsonResponse({'status': 'success'})
+    else:
+        return JsonResponse({'status': 'bad request'}, status=400)
+    
+    
+def profile(request):
+    if request.method == 'POST':
+        form = ProfileForm(request.POST, request.FILES)
+        if form.is_valid():
+            profile = form.save()
+            if profile.role == 'therapist':
+                return redirect('view_all_therapists')
+            else:  # profile.role == 'member'
+                return redirect('dashboard')
+
+    return render(request, 'profile.html', {'form': ProfileForm})
+
+def view_all_therapists(request):
+    therapists = Profile.objects.filter(role='therapist')
+    return render(request, 'dir.html', {'therapists': therapists})
+
+def forums(request):
+    profile = Profile.objects.get(user=request.user)
+    return render(request, 'forums.html', {'profile': profile})

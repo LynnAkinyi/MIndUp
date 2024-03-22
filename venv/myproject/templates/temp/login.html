@@ -1,168 +1,84 @@
-<!DOCTYPE html>
-<html lang="en">
+<div class="container">
+    <h1>{{ request.user.username }}'s Profile</h1>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login Page</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background: url("images/Backdrop.png") center/cover no-repeat;
-            font-family: Inter;
-        }
-        
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        
-        .login-form {
-            background: #f6efe9;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 90%;
-            /* Adjusted width for smaller screens */
-            max-width: 400px;
-            /* Set maximum width for better readability */
-        }
-        
-        .login-form h2 {
-            color: #6a2d0a;
-        }
-        
-        p {
-            color: #6a2d0a;
-        }
-        
-        label {
-            display: flex;
-            display-content: flex-start;
-            margin-top: 10px;
-            margin-left: 0;
-            /* Removed margin-left for mobile */
-            color: #6a2d0a;
-        }
-        
-        input {
-            width: calc(100% - 20px);
-            /* Adjusted width to fill container */
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        
-        button {
-            width: calc(100% - 40px);
-            /* Adjusted width to fill container */
-            background: #8a4c1d;
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 50px;
-            margin: 15px 0;
-            /* Adjusted margin */
-            cursor: pointer;
-            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
-        }
-        
-        button:hover {
-            background-color: #e5cfbe;
-            color: #6a2d0a;
-            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.5));
-        }
-        
-        .alternative-logins {
-            margin-top: 20px;
-        }
-        
-        .alternative-logins p {
-            color: #8a4c1d;
-        }
-        
-        .social-icons {
-            display: flex;
-            justify-content: center;
-        }
-        
-        .google-icon,
-        .twitter-icon,
-        .facebook-icon {
-            display: inline-block;
-            width: 30px;
-            height: 30px;
-            margin: 0 5px;
-            cursor: pointer;
-            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
-        }
-        
-        .google-icon {
-            background: url("images/google.png") center/cover no-repeat;
-        }
-        
-        .twitter-icon {
-            background: url("images/twitter (1).png") center/cover no-repeat;
-        }
-        
-        .facebook-icon {
-            background: url("images/facebook.png") center/cover no-repeat;
-        }
-        
-        a {
-            text-decoration: none;
-            color: #3c1b08;
-        }
-        
-        a:hover {
-            text-decoration: underline;
-        }
-        /* Media query for smaller screens */
-        
-        @media screen and (max-width: 600px) {
-            .login-form {
-                width: 90%;
-                /* Adjusted width for smaller screens */
-                max-width: 300px;
-                /* Set maximum width for better readability */
-            }
-        }
-    </style>
-</head>
-
-<body>
-    <div class="login-container">
-        <form class="login-form" method="POST">
+    <!-- Personal Information Section -->
+    <div class="section">
+        <h2 class="section-title">Personal Information</h2>
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <h2>Welcome back!</h2>
-            <p>Enter your Credentials to access your account</p>
-            <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" required placeholder="Enter Your Email" />
-
-            <label for="password">Password</label>
-            <input type="password" id="password" name="password" required placeholder="Password" />
-
-            <button type="submit">Login</button>
-
-            <div class="alternative-logins">
-                <p>Or login with:</p>
-                <div class="social-icons">
-                    <a href="#" class="google-icon" id="google-icon"></a>
-                    <a href="#" class="twitter-icon"></a>
-                    <a href="#" class="facebook-icon"></a>
-                </div>
+            <div class="input-group">
+                <label for="profile-picture">Profile Picture:</label>
+                <input type="file" id="profile-picture" name="profile-picture" accept="image/*" onchange="displaySelectedImage()">
+            </div>
+            <img id="selected-image" src="#" alt="Selected image" style="display: none;" />
+            <div class="input-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name">
+            </div>
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div class="input-group">
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone">
+            </div>
+            <div class="input-group">
+                <p>Role:</p>
+                <input type="radio" id="therapist" name="role" value="therapist">
+                <label for="therapist">Therapist</label><br>
+                <input type="radio" id="member" name="role" value="member">
+                <label for="member">Member</label><br>
             </div>
 
-            <p>Don't have an account? <a href="signup.html">Sign Up</a></p>
+            <div class="saved-info">
+                <p><strong>Profile Picture:</strong> <img id="saved-profile-picture" src="" alt="Profile Picture"></p>
+                <p><strong>Name:</strong> <span id="saved-name"></span></p>
+                <p><strong>Email:</strong> <span id="saved-email"></span></p>
+                <p><strong>Phone:</strong> <span id="saved-phone"></span></p>
+                <p><strong>Role:</strong> <span id="saved-role"></span></p>
+
+            </div>
         </form>
     </div>
-</body>
 
-</html>
+    <!-- Save/Edit Button -->
+    <button class="btn" id="save-btn" onclick="saveProfile()">Save</button>
+
+
+</div>
+
+<script>
+    function saveProfile() {
+        // Get input values
+        const name = document.querySelector('#name').value;
+        const email = document.querySelector('#email').value;
+        const phone = document.querySelector('#phone').value;
+        const role = document.querySelector('input[name="role"]:checked').value;
+
+        // Create a FormData object to handle the file upload
+        const formData = new FormData();
+        formData.append('profile_picture', document.querySelector('#profile-picture').files[0]);
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('phone', phone);
+        formData.append('role', role);
+
+        // Send a POST request to the server
+        fetch('/save_profile/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken') // You need to get the CSRF token
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Profile saved successfully!');
+                } else {
+                    alert('An error occurred.');
+                }
+            });
+    }
+</script>
