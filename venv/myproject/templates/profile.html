@@ -35,6 +35,14 @@
         .saved-info {
             display: none;
         }
+        
+        #selected-image {
+            display: none;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
     </style>
 </head>
 
@@ -47,8 +55,9 @@
             <h2 class="section-title">Personal Information</h2>
             <div class="input-group">
                 <label for="profile-picture">Profile Picture:</label>
-                <input type="file" id="profile-picture" name="profile-picture" accept="image/*">
+                <input type="file" id="profile-picture" name="profile-picture" accept="image/*" onchange="displaySelectedImage()">
             </div>
+            <img id="selected-image" src="#" alt="Selected image" style="display: none;" />
             <div class="input-group">
                 <label for="name">Name:</label>
                 <input type="text" id="name" name="name">
@@ -92,13 +101,15 @@
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
             const role = document.querySelector('input[name="role"]:checked').value;
+            const profilePicture = localStorage.getItem('profilePicture'); // Retrieve the profile picture from local storage
 
             // Store values in local storage
             const userData = {
                 name: name,
                 email: email,
                 phone: phone,
-                role: role
+                role: role,
+                profilePicture: profilePicture // Save the profile picture
             };
             localStorage.setItem('userProfile', JSON.stringify(userData));
 
@@ -113,8 +124,24 @@
             // Display the uploaded profile picture
             function displaySelectedImage() {
                 const profilePicture = document.getElementById('profile-picture').files[0];
-                const selectedImage = document.getElementById('profile-picture');
-                selectedImage.src = URL.createObjectURL(profilePicture);
+                const reader = new FileReader();
+
+                reader.onloadend = function() {
+                    const selectedImage = document.getElementById('selected-image');
+                    selectedImage.src = reader.result;
+                    selectedImage.style.display = 'block';
+
+                    // Replace the icon in the dashboard with the chosen image
+                    const profileLink = document.getElementById('profile-link');
+                    profileLink.innerHTML = `<img src="${reader.result}" alt="Profile picture" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">`;
+
+                    // Save the image in local storage
+                    localStorage.setItem('profilePicture', reader.result);
+                }
+
+                if (profilePicture) {
+                    reader.readAsDataURL(profilePicture);
+                }
             }
 
             // Hide input fields and show saved information
@@ -128,6 +155,7 @@
 
             alert('Profile saved successfully!');
         }
+
 
         function editProfile() {
             // Show input fields and hide saved information

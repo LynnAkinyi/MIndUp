@@ -44,3 +44,5 @@ class ChatConsumer(AsyncWebsocketConsumer):
         username = event["username"]
         time = event["time"]
         await self.send(text_data=json.dumps({"message": message, "username": username, "time": time}))
+        
+        

@@ -295,7 +295,6 @@ logout
             <span class="material-icons">person</span>
         </a>
 
-
         <!-- <span class="material-icons">
 menu
 </span> -->
@@ -556,6 +555,90 @@ menu
                 }
             }
             return cookieValue;
+        }
+
+        const upcomingEventsDiv = document.getElementById('upcoming-events');
+
+        // Clear the existing content of the div
+        upcomingEventsDiv.innerHTML = '';
+
+        // Function to generate meeting links for the given date
+        function generateMeetingLink(date) {
+            // Example logic to generate meeting links based on the date
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1; // Months are zero indexed, so we add 1
+            const day = date.getDate();
+
+            // Example: Generate Google Meet link
+            const googleMeetLink = `https://meet.google.com/your-meeting-id?date=${year}-${month}-${day}`;
+
+            // Example: Generate Zoom meeting link
+            const zoomMeetingLink = `https://zoom.us/j/your-meeting-id?date=${year}-${month}-${day}`;
+
+            // You can add more logic here to generate links for other platforms
+
+            // Return an object containing both meeting links
+            return {
+                googleMeetLink,
+                zoomMeetingLink
+            };
+        }
+
+        // Display upcoming events with embedded meeting links
+        function displayUpcomingEvents(selectedDates) {
+            // Check if there are at least two selected dates
+            if (selectedDates.length >= 2) {
+                const sortedDates = selectedDates.sort(); // Sort the dates
+
+                for (let i = 0; i < sortedDates.length - 1; i++) {
+                    const currentDate = new Date(sortedDates[i]);
+                    const nextDate = new Date(sortedDates[i + 1]);
+
+                    // Calculate the difference in days between the current date and the next date
+                    const timeDifference = Math.abs(nextDate.getTime() - currentDate.getTime());
+                    const dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+                    // Check if the day difference is exactly one day
+                    if (dayDifference === 1) {
+                        const startDate = currentDate.toLocaleDateString(); // Get the start date
+
+                        // Generate meeting links for the current date
+                        const meetingLinks = generateMeetingLink(currentDate);
+
+                        // Create a list item for the event
+                        const eventListItem = document.createElement('li');
+                        const googleMeetLinkElement = document.createElement('a');
+                        googleMeetLinkElement.textContent = "Google Meet";
+                        googleMeetLinkElement.href = meetingLinks.googleMeetLink;
+                        googleMeetLinkElement.target = "_blank"; // Open link in a new tab/window
+                        eventListItem.appendChild(googleMeetLinkElement);
+
+                        const zoomMeetingLinkElement = document.createElement('a');
+                        zoomMeetingLinkElement.textContent = "Zoom";
+                        zoomMeetingLinkElement.href = meetingLinks.zoomMeetingLink;
+                        zoomMeetingLinkElement.target = "_blank"; // Open link in a new tab/window
+                        eventListItem.appendChild(zoomMeetingLinkElement);
+
+                        upcomingEventsDiv.appendChild(eventListItem);
+                    }
+                }
+            }
+        }
+
+        function previewProfilePicture(event) {
+            const input = event.target;
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                const dataURL = reader.result;
+                const profilePicturePreview = document.getElementById('profile-picture-preview');
+                profilePicturePreview.src = dataURL;
+
+                const profileLink = document.getElementById('profile-link');
+                profileLink.removeChild(profileLink.firstChild); // Remove the previous icon
+            };
+
+            reader.readAsDataURL(input.files[0]);
         }
     </script>
 </body>

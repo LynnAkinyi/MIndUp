@@ -45,8 +45,11 @@ class Task(models.Model):
         (INCOMPLETE, "Incomplete")
     ]
 
-    detail = models.CharField(max_length=200, null=False, blank=False)
+    detail = models.CharField(max_length=200, default='Default detail')
     status = models.CharField(max_length=200, choices=STATUS, default=INCOMPLETE)
     category = models.CharField(max_length=200, default=None)
     creation_date = models.DateTimeField('Creation Date', default=now)
     
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    role = models.CharField(max_length=10, choices=[('member', 'Member'), ('therapist', 'Therapist')], default='member')

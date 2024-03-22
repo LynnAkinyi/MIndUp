@@ -10,6 +10,7 @@ from django.views.generic import TemplateView
 from django.http import JsonResponse
 from .models import Article
 from .models import MindfulnessTask, ExerciseTask
+from .models import Profile
 
 def tasks(request):
     mindfulness_task = MindfulnessTask.objects.get_or_create()[0]
@@ -165,4 +166,7 @@ def delete_article(request, article_id):
     article.delete()
     return redirect('article_list')
 
+def view_all_therapists(request):
+    therapists = Profile.objects.filter(role='therapist')
+    return render(request, 'dir.html', {'therapists': therapists})
 

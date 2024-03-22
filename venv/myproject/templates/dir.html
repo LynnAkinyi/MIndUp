@@ -125,7 +125,19 @@
         </div>
         <!-- Repeat for other therapists -->
         <div class="view-all-button-container">
-            <button class="view-all-button">View All Therapists</button>
+            <a href="{% url 'view_all_therapists' %}">
+                <button class="view-all-button">View All Therapists</button>
+            </a>
+        </div>
+        <div class="therapists">
+            {% for therapist in therapists %}
+            <div class="therapist">
+                <h2>{{ therapist.user.username }}</h2>
+                <p>Role: {{ therapist.role }}</p>
+            </div>
+            {% empty %}
+            <p>No therapists found.</p>
+            {% endfor %}
         </div>
     </section>
 

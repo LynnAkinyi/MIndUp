@@ -144,6 +144,7 @@ LOGIN_URL = 'login'
 
 ASGI_APPLICATION = 'myproject.asgi.application'
 
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
