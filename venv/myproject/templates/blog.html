@@ -200,7 +200,21 @@
         <button class="read-more-button" id="post-article-button">Post Article</button>
 
         <section class="section section-3" id="articles">
-
+            {% for article in articles %}
+            <div class="article">
+                <img src="{{ article.image.url }}" alt="{{ article.title }}" class="image" />
+                <div class="article-content">
+                    <h2>{{ article.title }}</h2>
+                    <p>{{ article.content }}</p>
+                    <p><i>  Published on: {{ article.date }}</i></p>
+                    <button class="read-more-button">Read More</button>
+                    <form action="{% url 'delete_article' article.id %}" method="POST">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-button">Delete</button>
+                    </form>
+                </div>
+            </div>
+            {% endfor %}
         </section>
         <section class="section section-2">
             <div class="article">
@@ -243,7 +257,7 @@
         const articlesSection = document.getElementById('articles');
 
         // Retrieve existing articles from local storage
-        const articles = JSON.parse(localStorage.getItem('articles')) || [];
+        <!-- const articles = JSON.parse(localStorage.getItem('articles')) || []; -->
 
         // Loop through the articles and create elements for each one
         articles.forEach(article => {

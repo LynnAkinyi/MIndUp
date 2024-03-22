@@ -287,15 +287,16 @@ logout
 
         <span class="material-icons" id="notificationIcon">
     notifications
-</span>
-        <div id="notificationDropdown" style="display: none;">
-            <!-- Add your notifications here -->
-        </div>
-        <a href="{% url 'profile' %}">
-            <span class="material-icons">person</span>
-        </a>
+   
+        </span>
 
-        <!-- <span class="material-icons">
+        <!-- Add your notifications here -->
+    </div>
+    <a href="{% url 'profile' %}">
+        <span class="material-icons">person</span>
+    </a>
+
+    <!-- <span class="material-icons">
 menu
 </span> -->
     </div>
@@ -305,14 +306,14 @@ menu
         <h2>Hello, {{ request.user.username }}, Welcome Back!</h2>
         <!-- Add this inside your .main div -->
         <div class="row">
-            <div class="column"><b><i>Member Overview</i></b>
+            <div class="column" id="memberOverview"><b><i>Member Overview</i></b>
                 <div class="saved-info" id="saved-info">
-
+                    <p><b>Name:</b> {{ request.user.username }}</p>
                     <div class="dashboard-info" id="dashboard-info"></div>
                 </div>
 
             </div>
-            <div class="column"><b><i>Upcoming Events</i></b>
+            <div class="column" id="upcomingEvents"><b><i>Upcoming Events</i></b>
                 <div class="selected-dates">
                     <ul id="upcoming-events"></ul>
                 </div>
@@ -328,15 +329,32 @@ menu
 
         </div>
         <div class="row">
-            <div class="column"><b><i>Progress</i></b>
+            <div class="column" id="progress"><b><i>Progress</i></b>
                 <canvas id="myChart" style="width:100%;max-width:700px;"></canvas>
             </div>
-            <div class="column"><b><i>What's new</i></b>
-                <canvas id="myChart" style="width:100%;max-width:700px;"></canvas>
+            <div class="column" id="whatsNew">
+                <b><i>What's new</i></b> {% for article in articles %}
+                <div class="article">
+                    <h2>{{ article.title }}</h2>
+                    <p><i>Published on: {{ article.date }}</i></p>
+                </div>
+                {% endfor %}
             </div>
+            <div id="articleCount" style="display: none;">{{ articles|length }}</div>
         </div>
     </div>
     <script>
+        var role = "{{ role }}";
+        var username = "{{ user.username }}";
+
+        if (role === "therapist") {
+
+            document.getElementById('appointment').style.display = 'none';
+            document.getElementById('progress').style.display = 'none';
+        } else if (role === "member") {
+
+        }
+
         document.getElementById('notificationIcon').addEventListener('click', function() {
             var dropdown = document.getElementById('notificationDropdown');
             dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
@@ -640,6 +658,8 @@ menu
 
             reader.readAsDataURL(input.files[0]);
         }
+
+        // check for new articles every 5 seconds
     </script>
 </body>
 

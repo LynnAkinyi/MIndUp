@@ -65,7 +65,8 @@
 
 <body>
     <h1>Create New Article</h1>
-    <form onsubmit="createArticle(); return false;">
+    <form method="POST" enctype="multipart/form-data" onsubmit="createArticle(); return false;">
+        {% csrf_token %} {{ form.as_p }}
         <label for="image">Image:</label><br>
         <input type="file" id="articleImage" name="image"><br>
         <label for="title">Title:</label><br>
@@ -80,32 +81,30 @@
         function createArticle() {
             const articleTitle = document.getElementById('articleTitle').value;
             const articleContent = document.getElementById('articleContent').value;
-            const articleImage = document.getElementById('articleImage').files[0]; // Get the selected image file
+            const articleImage = document.getElementById('articleImage').files[0];
 
             if (articleTitle && articleContent && articleImage) {
-                // Retrieve existing articles from local storage or initialize an empty array
-                let articles = JSON.parse(localStorage.getItem('articles')) || [];
+                let formData = new FormData();
+                formData.append('title', articleTitle);
+                formData.append('content', articleContent);
+                formData.append('image', articleImage);
 
-                // Convert the image file to a base64-encoded string
-                const reader = new FileReader();
-                reader.readAsDataURL(articleImage);
-                reader.onload = function() {
-                    const imageData = reader.result;
+                // Get the CSRF token
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
-                    // Add the new article to the array
-                    articles.push({
-                        title: articleTitle,
-                        content: articleContent,
-                        image: imageData, // Store the base64-encoded image data
-                        date: new Date().toISOString().slice(0, 10)
-                    });
-
-                    // Store the updated array back in local storage
-                    localStorage.setItem('articles', JSON.stringify(articles));
-
-                    // Redirect to the blog page
-                    window.location.href = blogUrl;
-                };
+                fetch('/create_article/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = blogUrl;
+                    } else {
+                        alert('There was an error creating the article.');
+                    }
+                });
             } else {
                 alert('Please fill in all fields.');
             }

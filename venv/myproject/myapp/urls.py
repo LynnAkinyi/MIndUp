@@ -5,7 +5,7 @@ from .views import user_details
 from django.contrib import admin
 
 urlpatterns = [    # Existing URL patterns
-    path('admin/', admin.site.urls),
+    
     path('', views.index, name='home'),
     path('about/', views.about, name='about'),
     path('blog/', views.blog, name='blog'),
@@ -34,5 +34,6 @@ urlpatterns = [    # Existing URL patterns
     path('api/user/details/', user_details, name='user_details'),
     path('therapists/', views.view_all_therapists, name='view_all_therapists'),
     path('save_profile/', views.save_profile, name='save_profile'),
-    
+    path('articles/', views.article_list, name='article_list'),
+    path('delete_article/<int:article_id>/', views.delete_article, name='delete_article'),
 ]

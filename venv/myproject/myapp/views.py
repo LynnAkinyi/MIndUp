@@ -8,11 +8,15 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.views.generic import TemplateView
 from django.http import JsonResponse
-from .models import Article
+from .forms import ArticleForm
 from .models import MindfulnessTask, ExerciseTask
 from .models import Profile
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm
+from .models import Article
+import base64
+import uuid
+from django.core.files.base import ContentFile
 
 
 def tasks(request):
@@ -33,7 +37,10 @@ def home(request):
 
 @login_required
 def dashboard(request):
-    return render(request, 'dashboard.html')
+    profile = Profile.objects.get(user=request.user)
+    articles = Article.objects.all()  # get all articles
+    context = {'role': profile.role, 'articles': articles}  # add articles to the context
+    return render(request, 'dashboard.html', context)
 
 def book(request):
     return render(request, 'book.html')
@@ -44,7 +51,14 @@ def chat(request):
 
 
 def create_article(request):
-    return render(request, 'create_article.html')
+    if request.method == 'POST':
+        form = ArticleForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('blog')
+    else:
+        form = ArticleForm()
+    return render(request, 'create_article.html', {'form': form})
 
 def save_article(request):
     if request.method == 'POST':
@@ -84,7 +98,8 @@ def community(request):
 
 @login_required
 def blog(request):
-    return render(request, 'blog.html')
+    articles = Article.objects.all()
+    return render(request, 'blog.html', {'articles': articles})
 
 def about(request):
     return render(request, 'about.html')
@@ -149,15 +164,6 @@ def user_details(request):
         # Handle GET requests or any other methods if needed
         pass
 
-def create_article(request):
-    if request.method == 'POST':
-        title = request.POST['title']
-        content = request.POST['content']
-        image = request.FILES.get('image')
-        Article.objects.create(title=title, content=content, image=image)
-        return redirect('article_list')
-    return render(request, 'create_article.html')
-
 def article_list(request):
     articles = Article.objects.all()
     return render(request, 'article_list.html', {'articles': articles})
@@ -165,7 +171,7 @@ def article_list(request):
 def delete_article(request, article_id):
     article = Article.objects.get(id=article_id)
     article.delete()
-    return redirect('article_list')
+    return redirect('blog')
 
 def view_all_therapists(request):
     therapists = Profile.objects.filter(role='therapist')
@@ -215,3 +221,5 @@ from django.shortcuts import get_object_or_404
 def forums(request):
     profile = Profile.objects.get(user=request.user)
     return render(request, 'forums.html', {'role': profile.role})
+
+

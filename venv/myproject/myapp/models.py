@@ -3,8 +3,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.timezone import now
-
-
+import datetime
+from django.utils import timezone
 
 
 class UserRole(models.Model):
@@ -21,14 +21,10 @@ class Writer(models.Model):
         return u'%s' % (self.name)
 
 class Article(models.Model):
-    title = models.CharField(max_length=100)
-    content = models.TextField(default='')
-    date = models.DateField(null=True, blank=True)
-    image = models.ImageField(upload_to='article_images/', blank=True)
-
-    def __str__(self):
-        return self.title
-
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    image = models.ImageField(upload_to='articles/')
+    date = models.DateField(default=timezone.now)
 class MindfulnessTask(models.Model):
     duration = models.PositiveIntegerField(default=10)  # in minutes
     completed = models.BooleanField(default=False)
