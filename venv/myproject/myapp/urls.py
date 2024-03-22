@@ -26,6 +26,7 @@ urlpatterns = [    # Existing URL patterns
     path('faq/', views.faq, name='faq'),
     path('login/', views.user_login, name='login'),
     path('profile/', views.profile, name='profile'),
+    path('profile/dashboard', views.dashboard, name='dashboard'),
     path('community/testimonies.html/', views.testimonies, name='testimonies'),
     path('signup/', views.user_signup, name='signup'),
     path('logout/', views.user_logout, name='logout'),

@@ -191,15 +191,17 @@
 
     <div class="main">
         <div class="container">
-            <div class="volunteer">Volunteer
+            <div id="volunteerDiv" style="display: none;" class="volunteer">Volunteer
                 <br>
-                <button>Volunteer as Listener</button>
+                <button id="volunteerButton">Volunteer as Listener</button>
+                <div id="volunteerNames"></div>
+            </div>
+            <div class="groups">Groups<br>
+                <button id="createButton" style="display: none;">Create</button>
+                <button id="joinButton" style="display: none;">Join Group</button>
+                <div id="newDivContainer"></div>
+            </div>
 
-            </div>
-            <div class="groups">Groups<br> {% if profile.role == 'therapist' %}
-                <button>Create</button> {% endif %}
-            </div>
-            <div id="newDivContainer"></div>
             <div class="chat-container">
                 <div class="chat-header">
                     <h1>Tranquil Mind <i class="fas fa-comment"></i></h1>
@@ -261,6 +263,19 @@
             // Scroll to the bottom of the chat container
             messageContainer.scrollTop = messageContainer.scrollHeight;
         };
+
+        var role = "{{ role }}";
+        var username = "{{ user.username }}";
+        if (role === "therapist") {
+            document.getElementById('createButton').style.display = 'block';
+        } else if (role === "member") {
+            document.getElementById('joinButton').style.display = 'block';
+            document.getElementById('volunteerDiv').style.display = 'block';
+            document.getElementById('volunteerButton').addEventListener('click', function() {
+                var volunteerNamesDiv = document.getElementById('volunteerNames');
+                volunteerNamesDiv.innerHTML += username + "<br>";
+            });
+        }
 
         document.getElementById('createButton').addEventListener('click', function() {
             var newDiv = document.createElement('div');

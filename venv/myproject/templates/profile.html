@@ -7,3 +7,10 @@
     <label for="member">Member</label><br>
     <button>Submit</button>
 </form>
+
+{% if role_picked %}
+<script>
+    alert("You've already picked a role.");
+    window.location.href = 'dashboard';
+</script>
+{% endif %}

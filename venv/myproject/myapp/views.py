@@ -193,18 +193,25 @@ def profile(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
-            profile = form.save()
+            if Profile.objects.filter(user=request.user).exists():
+                return render(request, 'profile.html', {'form': form, 'role_picked': True})
+            profile = form.save(commit=False)
+            profile.user = request.user
+            profile.save()
             if profile.role == 'therapist':
                 return redirect('view_all_therapists')
             else:  # profile.role == 'member'
                 return redirect('dashboard')
-
-    return render(request, 'profile.html', {'form': ProfileForm})
+    else:
+        form = ProfileForm()
+    return render(request, 'profile.html', {'form': form})
 
 def view_all_therapists(request):
     therapists = Profile.objects.filter(role='therapist')
     return render(request, 'dir.html', {'therapists': therapists})
 
+from django.shortcuts import get_object_or_404
+
 def forums(request):
     profile = Profile.objects.get(user=request.user)
-    return render(request, 'forums.html', {'profile': profile})
+    return render(request, 'forums.html', {'role': profile.role})

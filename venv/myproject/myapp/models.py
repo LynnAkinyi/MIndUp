@@ -55,7 +55,7 @@ class Profile(models.Model):
         ('therapist', 'Therapist'),
         ('member', 'Member'),
     ]
-    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, null=True)
     image = models.ImageField(upload_to='profile_images/', blank=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='member')

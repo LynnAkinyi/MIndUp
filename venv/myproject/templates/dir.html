@@ -148,9 +148,7 @@
                 <p>Role: {{ therapist.role }}</p>
                 <a href="book.html" class="book-appointment-button">Book Appointment</a>
             </div>
-            {% empty %}
-            <p>No therapists found.</p>
-            {% endfor %}
+            {% empty %} {% endfor %}
         </div>
     </section>
 
