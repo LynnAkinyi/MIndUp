@@ -93,8 +93,8 @@
 </head>
 
 <body>
-    <div class="book">
-        <header>
+    <div class="book" id="booked">
+        <header id="booked">
             <img src="images/practice.jpg" alt="Therapist Photo">
             <h1>Dr. Jane Doe</h1>
             <p>Specializes in anxiety and stress management</p>
@@ -150,6 +150,12 @@
                 window.location.replace("{% url 'dashboard' %}");
             }
         });
+
+        function updateHeader(name, imageSrc) {
+            // Update header with therapist's name and image
+            document.getElementById('therapistName').innerText = name;
+            document.getElementById('therapistImage').src = imageSrc;
+        }
     </script>
 </body>
 

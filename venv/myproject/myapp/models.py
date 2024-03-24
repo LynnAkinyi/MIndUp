@@ -55,3 +55,12 @@ class Profile(models.Model):
     name = models.CharField(max_length=200, null=True)
     image = models.ImageField(upload_to='profile_images/', blank=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='member')
+
+class Group(models.Model):
+    name = models.CharField(max_length=200)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+
+class Therapist(models.Model):
+    name = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='therapists/')
+    role = models.CharField(max_length=200, choices=Profile.ROLE_CHOICES, default='therapist')

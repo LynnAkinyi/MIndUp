@@ -104,10 +104,10 @@
 <body>
     <header>
         <h1>Find Your Therapist</h1>
-        <input type="text" id="search" placeholder="Search therapists...">
+        <input type="text" id="search" placeholder="Search therapists..." onkeyup="searchFunction()">
     </header>
     <h2>Top Therapists</h2>
-    <section class="top-therapists">
+    <section class="top-therapists" id="therapists">
 
         <div class="therapist-card">
             <img src="{% static 'images/counsell.jpg' %}" alt="Therapist 1">
@@ -143,7 +143,7 @@
         <div class="therapists">
             {% for therapist in therapists %}
             <div class="therapist-card">
-                <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}">
+                <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}')">
                 <h2>{{ therapist.name }}</h2>
                 <p>Role: {{ therapist.role }}</p>
                 <a href="book.html" class="book-appointment-button">Book Appointment</a>
@@ -151,7 +151,30 @@
             {% empty %} {% endfor %}
         </div>
     </section>
+    <script>
+        function searchFunction() {
+            var input, filter, therapists, txtValue;
+            input = document.getElementById('search');
+            filter = input.value.toUpperCase();
+            therapists = document.getElementById("therapists").getElementsByTagName('div');
 
+            for (var i = 0; i < therapists.length; i++) {
+                txtValue = therapists[i].textContent || therapists[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    therapists[i].style.display = "";
+                } else {
+                    therapists[i].style.display = "none";
+                }
+            }
+        }
+        // Get all "Book Appointment" buttons
+        var buttons = document.querySelectorAll('.book-appointment-button');
+
+        function book(image, name) {
+            document.querySelector('#booked img').src = image;
+            document.querySelector('#booked h1').innerText = name;
+        }
+    </script>
 
 </body>
 

@@ -159,7 +159,7 @@
             grid-column: 1 / -1;
         }
         
-        .article .delete-btn {
+        .delete-btn {
             position: absolute;
             top: 10px;
             right: 10px;
@@ -210,7 +210,7 @@
                     <button class="read-more-button">Read More</button>
                     <form action="{% url 'delete_article' article.id %}" method="POST">
                         {% csrf_token %}
-                        <button type="submit" class="delete-button">Delete</button>
+                        <button type="submit" class="delete-btn">Delete</button>
                     </form>
                 </div>
             </div>

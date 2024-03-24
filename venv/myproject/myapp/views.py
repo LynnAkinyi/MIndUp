@@ -13,10 +13,11 @@ from .models import MindfulnessTask, ExerciseTask
 from .models import Profile
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm
-from .models import Article
+from .models import Article, Group
 import base64
 import uuid
 from django.core.files.base import ContentFile
+from django.views import View
 
 
 def tasks(request):
@@ -37,9 +38,14 @@ def home(request):
 
 @login_required
 def dashboard(request):
-    profile = Profile.objects.get(user=request.user)
-    articles = Article.objects.all()  # get all articles
+    try:
+        profile = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        return redirect('profile')
+    
+    articles = Article.objects.all().order_by('-date')     # get all articles
     context = {'role': profile.role, 'articles': articles}  # add articles to the context
+    
     return render(request, 'dashboard.html', context)
 
 def book(request):
@@ -49,13 +55,12 @@ def chat(request):
     users = User.objects.all()  # Fetch all users from the database
     return render(request, 'chat.html', {'users': users})
 
-
 def create_article(request):
     if request.method == 'POST':
         form = ArticleForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
-            return redirect('blog')
+            article = form.save()  # Save the form and get the article instance
+            return render(request, 'article_detail.html', {'article': article})  # Render the template with the article instance
     else:
         form = ArticleForm()
     return render(request, 'create_article.html', {'form': form})
@@ -98,7 +103,7 @@ def community(request):
 
 @login_required
 def blog(request):
-    articles = Article.objects.all()
+    articles = Article.objects.all().order_by('-date')
     return render(request, 'blog.html', {'articles': articles})
 
 def about(request):
@@ -195,6 +200,7 @@ def save_profile(request):
         return JsonResponse({'status': 'bad request'}, status=400)
     
     
+    
 def profile(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
@@ -219,7 +225,20 @@ def view_all_therapists(request):
 from django.shortcuts import get_object_or_404
 
 def forums(request):
-    profile = Profile.objects.get(user=request.user)
+    try:
+        profile = Profile.objects.get(user=request.user)
+    except Profile.DoesNotExist:
+        return redirect('profile')
     return render(request, 'forums.html', {'role': profile.role})
 
+class CreateGroupView(View):
+    def post(self, request, *args, **kwargs):
+        group_name = request.POST.get('name')
+        new_group = Group(name=group_name, creator=request.user)
+        new_group.save()
+        return JsonResponse({'message': 'Group created successfully'}, status=200)
 
+class GetGroupsView(View):
+    def get(self, request, *args, **kwargs):
+        groups = Group.objects.values('name')
+        return JsonResponse({'groups': list(groups)}, safe=False)
