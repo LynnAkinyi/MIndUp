@@ -45,20 +45,18 @@
             box-sizing: border-box;
         }
         
-        button[type="submit"] {
-            background-color: #4CAF50;
+        .read-more-button {
+            margin: 20px;
+            padding: 10px 50px;
+            background-color: #8a4c1d;
             color: white;
-            padding: 12px 20px;
             border: none;
-            border-radius: 4px;
+            border-radius: 50px;
             cursor: pointer;
-            width: 100%;
-            display: block;
-            font-size: 16px;
         }
         
-        button[type="submit"]:hover {
-            background-color: #45a049;
+        .read-more-button:hover {
+            background-color: #a79589;
         }
     </style>
 </head>
@@ -67,13 +65,8 @@
     <h1>Create New Article</h1>
     <form method="POST" enctype="multipart/form-data" onsubmit="createArticle(); return false;">
         {% csrf_token %} {{ form.as_p }}
-        <label for="image">Image:</label><br>
-        <input type="file" id="articleImage" name="image"><br>
-        <label for="title">Title:</label><br>
-        <input type="text" id="articleTitle" name="title"><br>
-        <label for="content">Content:</label><br>
-        <textarea id="articleContent" name="content" rows="4" cols="50"></textarea><br>
-        <button type="submit">Submit</button>
+
+        <button type="submit" class="read-more-button">Submit</button>
     </form>
     <script>
         const blogUrl = "{% url 'blog' %}";

@@ -64,7 +64,7 @@ def create_article(request):
         form = ArticleForm(request.POST, request.FILES)
         if form.is_valid():
             article = form.save()  # Save the form and get the article instance
-            return render(request, 'article_detail.html', {'article': article})  # Render the template with the article instance
+            return redirect('blog')  # Redirect to the blog page
     else:
         form = ArticleForm()
     return render(request, 'create_article.html', {'form': form})
@@ -107,7 +107,7 @@ def community(request):
 
 @login_required
 def blog(request):
-    articles = Article.objects.all().order_by('-date')
+    articles = Article.objects.order_by('-date')  # Order articles by date in descending order
     return render(request, 'blog.html', {'articles': articles})
 
 def about(request):

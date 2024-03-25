@@ -1,13 +1,5 @@
 <form method="POST" action="{% url 'profile' %}" enctype="multipart/form-data" style="width: 300px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 4px;">
     {% csrf_token %} {{ form.as_p }}
-    <label for="role" style="font-weight: bold;">Role:</label><br>
-    <input type="radio" id="therapist" name="role" value="therapist">
-    <label for="therapist">Therapist</label><br>
-    <input type="radio" id="member" name="role" value="member">
-    <label for="member">Member</label><br>
-    <label for="image" style="font-weight: bold;">Profile Image:</label><br>
-    <input type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)">
-    <img id="preview" src="" style="max-width: 200px; max-height: 200px;"><br>
     <button style="background-color: #4CAF50; color: white; padding: 10px 20px; margin: 10px 0; border: none; cursor: pointer;">Save details</button>
     <button type="button" style="background-color: #f44336; color: white; padding: 10px 20px; margin: 10px 0; border: none; cursor: pointer;" onclick="confirmDelete()">Edit</button>
 </form>
