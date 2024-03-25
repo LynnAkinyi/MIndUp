@@ -243,6 +243,7 @@
             var messages = JSON.parse(localStorage.getItem('messages')) || [];
             var messageContainer = document.querySelector("#id_chat_item_container");
 
+
             // Display each message
             messages.forEach(function(message) {
                 var div = document.createElement("div");
@@ -255,6 +256,9 @@
                 messageContainer.appendChild(div);
             });
         };
+
+
+
 
         const chatSocket = new WebSocket("ws://" + window.location.host + "/");
         chatSocket.onopen = function(e) {
@@ -324,21 +328,13 @@
         }
 
         document.getElementById('createButton').addEventListener('click', function() {
-
-            var newDiv = document.createElement('div');
-            newDiv.style.width = '100px';
-            newDiv.style.height = 'auto';
-            newDiv.style.background = 'black';
-            document.getElementById('newDivContainer').appendChild(newDiv);
-        });
-
-        document.getElementById('createButton').addEventListener('click', function() {
-
             var groupName = prompt("Please enter the group name");
             if (groupName == null || groupName == "") {
                 alert("You must enter a group name");
                 return;
             }
+
+            // Create a new chat container
             var newDiv = document.createElement('div');
             newDiv.style.width = '100%';
             newDiv.style.height = 'auto';
@@ -370,7 +366,6 @@
             newDiv.appendChild(newChatContainer);
 
             document.getElementById('newDivContainer').appendChild(newDiv);
-
 
             var newMessageSendInput = newChatInputContainer.querySelector('input');
             var newMessageSendButton = newChatInputContainer.querySelector('button');

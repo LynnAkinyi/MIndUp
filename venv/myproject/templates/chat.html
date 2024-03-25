@@ -210,7 +210,7 @@
             <h2>Users</h2>
             {% for user in users %}
             <li class="user-wrapper">
-                <span class="material-icons">person</span>
+                <!-- <span class="material-icons">person</span> -->
                 <span id="{{ user.username }}">{{ user.username }}</span>
             </li>
             {% endfor %}
@@ -250,79 +250,116 @@
                 var div = document.createElement("div");
                 div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
                 div.innerHTML = `<div class="message-content">
-            <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
-            <span class="message-text">${message.message}</span>
-            <span class="message-timestamp">${message.time}</span>
-        </div>`;
+                <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
+                <span class="message-text">${message.message}</span>
+                <span class="message-timestamp">${message.time}</span>
+            </div>`;
                 messageContainer.appendChild(div);
             });
-        };
 
-        const chatSocket = new WebSocket("ws://" + window.location.host + "/");
-        chatSocket.onopen = function(e) {
-            console.log("The connection was set up successfully!");
-        };
-        chatSocket.onclose = function(e) {
-            console.log("Something unexpected happened!");
-        };
-        document.querySelector("#id_message_send_input").focus();
-        document.querySelector("#id_message_send_input").onkeyup = function(e) {
-            if (e.keyCode == 13) {
-                document.querySelector("#id_message_send_button").click();
-            }
-        };
+            // Add event listeners to the user elements in the sidebar
+            var users = document.querySelectorAll(".user-wrapper");
+            users.forEach(function(user) {
+                user.addEventListener("click", function() {
+                    var recipient = this.querySelector("span").textContent;
 
-        document.querySelector("#id_message_send_button").onclick = function(e) {
-            var messageInput = document.querySelector("#id_message_send_input").value;
-            var currentTime = new Date();
-            var time = currentTime.toLocaleTimeString();
-            chatSocket.send(JSON.stringify({
-                message: messageInput,
-                username: "{{request.user.username}}",
-                time: time
-            }));
-
-            // Store the message in localStorage
-            var messages = JSON.parse(localStorage.getItem('messages')) || [];
-            messages.push({
-                message: messageInput,
-                username: "{{request.user.username}}",
-                time: time
+                    // Create a new chat container for the chosen recipient
+                    createNewChat(recipient);
+                });
             });
-            localStorage.setItem('messages', JSON.stringify(messages));
         };
 
+        // Function to create a new chat container
+        function createNewChat(recipient) {
+            // Create elements for the new chat container
+            var newDiv = document.createElement('div');
+            newDiv.className = 'chat-container';
+            newDiv.innerHTML = `
+        <div class="chat-header">
+            <h1>Chat with ${recipient}</h1>
+        </div>
+        <div class="chat__item__container" id="id_chat_item_container_${recipient}">
+            <!-- Messages will be displayed here with a scrollbar -->
+        </div>
+        <div class="chat-input-container">
+            <input type="text" id="id_message_send_input_${recipient}" placeholder="Type your message..." />
+            <button type="submit" id="id_message_send_button_${recipient}"><i class="fas fa-paper-plane"></i> Send</button>
+        </div>
+    `;
 
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            var messageContainer = document.querySelector("#id_chat_item_container");
-            var div = document.createElement("div");
-            div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-            div.innerHTML = `<div class="message-content">
-        <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-        <span class="message-text">${data.message}</span>
-        <span class="message-timestamp">${data.time}</span>
-    </div>`;
-            document.querySelector("#id_message_send_input").value = "";
-            messageContainer.appendChild(div);
+            // Append the new chat container to the main container
+            document.querySelector(".main").appendChild(newDiv);
 
-            // Retrieve existing messages from localStorage
-            var messages = JSON.parse(localStorage.getItem('messages')) || [];
+            // Create a new WebSocket connection for this chat session
+            var chatSocket = new WebSocket("ws://" + window.location.host + "/");
 
-            // Add the new message to the array
-            messages.push({
-                message: data.message,
-                username: data.username,
-                time: data.time
-            });
+            var messageInput = document.querySelector(`#id_message_send_input_${recipient}`);
+            var messageSendButton = document.querySelector(`#id_message_send_button_${recipient}`);
 
-            // Store the updated array back in localStorage
-            localStorage.setItem('messages', JSON.stringify(messages));
+            messageInput.focus();
+            messageInput.onkeyup = function(e) {
+                if (e.keyCode == 13) {
+                    messageSendButton.click();
+                }
+            };
 
-            // Scroll to the bottom of the chat container
-            messageContainer.scrollTop = messageContainer.scrollHeight;
-        };
+            messageSendButton.onclick = function(e) {
+                var message = messageInput.value;
+                var currentTime = new Date();
+                var time = currentTime.toLocaleTimeString();
+
+                chatSocket.send(JSON.stringify({
+                    message: message,
+                    username: "{{request.user.username}}",
+                    time: time,
+                    recipient: recipient
+                }));
+
+                // Store the message in localStorage
+                var messages = JSON.parse(localStorage.getItem('messages')) || [];
+                messages.push({
+                    message: message,
+                    username: "{{request.user.username}}",
+                    time: time,
+                    recipient: recipient
+                });
+                localStorage.setItem('messages', JSON.stringify(messages));
+
+                messageInput.value = "";
+            };
+
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                var messageContainer = document.querySelector(`#id_chat_item_container_${recipient}`);
+                var div = document.createElement("div");
+                div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                div.innerHTML = `<div class="message-content">
+            <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+            <span class="message-text">${data.message}</span>
+            <span class="message-timestamp">${data.time}</span>
+        </div>`;
+                messageContainer.appendChild(div);
+
+                // Retrieve existing messages from localStorage
+                var messages = JSON.parse(localStorage.getItem('messages')) || [];
+
+                // Add the new message to the array
+                messages.push({
+                    message: data.message,
+                    username: data.username,
+                    time: data.time,
+                    recipient: data.recipient
+                });
+
+                // Store the updated array back in localStorage
+                localStorage.setItem('messages', JSON.stringify(messages));
+
+                // Scroll to the bottom of the chat container
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            };
+        }
     </script>
+
 </body>
 
 </html>

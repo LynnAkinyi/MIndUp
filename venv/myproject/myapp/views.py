@@ -12,8 +12,8 @@ from .forms import ArticleForm
 from .models import MindfulnessTask, ExerciseTask
 from .models import Profile
 from django.views.decorators.http import require_POST
-from .forms import ProfileForm
-from .models import Article, Group, Therapist
+from .forms import ProfileForm, TestimoniesForm
+from .models import Article, Group, Therapist, Testimonies
 import base64
 import uuid
 from django.core.files.base import ContentFile
@@ -177,11 +177,6 @@ def article_list(request):
     articles = Article.objects.all()
     return render(request, 'article_list.html', {'articles': articles})
 
-def delete_article(request, article_id):
-    article = Article.objects.get(id=article_id)
-    article.delete()
-    return redirect('blog')
-
 def view_all_therapists(request):
     therapists = Profile.objects.filter(role='therapist')
     return render(request, 'dir.html', {'therapists': therapists})
@@ -246,3 +241,28 @@ class GetGroupsView(View):
     def get(self, request, *args, **kwargs):
         groups = Group.objects.values('name')
         return JsonResponse({'groups': list(groups)}, safe=False)
+
+def testimonies(request):
+    if request.method == 'POST':
+        form = TestimoniesForm(request.POST)
+        if form.is_valid():
+            testimonial = form.save(commit=False)
+            testimonial.user = request.user
+            testimonial.save()
+            return redirect('testimonies')
+    else:
+        form = TestimoniesForm()
+
+    testimonials = Testimonies.objects.all()
+    return render(request, 'testimonies.html', {'form': form, 'testimonials': testimonials})
+
+def delete_testimonial(request, testimonial_id):
+    testimonial = get_object_or_404(Testimonies, id=testimonial_id)
+    if request.user == testimonial.user:
+        testimonial.delete()
+    return redirect('testimonies')
+
+def delete_article(request, article_id):
+    article = Article.objects.get(id=article_id)
+    article.delete()
+    return redirect('blog')

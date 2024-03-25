@@ -43,6 +43,43 @@
             margin-left: auto;
             margin-right: auto;
         }
+        
+        .testimonial-card {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 10px;
+        }
+        
+        .testimonial-card:nth-child(even) {
+            background-color: #E7E6E6;
+        }
+        
+        .testimonial-card:nth-child(odd) {
+            background-color: #F6EFE9;
+        }
+        
+        .delete-btn {
+            top: 10px;
+            right: 10px;
+            width: 50px;
+            background-color: #6A2D0A;
+            color: #fff;
+            border-radius: 40px;
+        }
+        
+        .read-more-button {
+            margin: 20px;
+            padding: 10px 50px;
+            background-color: #8a4c1d;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+        
+        .read-more-button:hover {
+            background-color: #a79589;
+        }
         /* Responsive design */
         
         @media (max-width: 768px) {
@@ -61,6 +98,21 @@
         <h1>Real Stories of Healing</h1>
     </header>
 
+    <section class="Testimonies">
+        {% for testimonial in testimonials %}
+        <div class="testimonial-card">
+            <p>{{ testimonial.text }}</p>
+            {% if testimonial.video %}
+            <iframe src="{{ testimonial.video }}" frameborder="0" allowfullscreen></iframe> {% endif %}
+            <i><p>Posted by {{ testimonial.user.username }} on {{ testimonial.created_at }}</p></i> {% if testimonial.user == request.user %}
+            <form method="POST" action="{% url 'delete_testimonial' testimonial.id %}">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn ">Delete</button>
+            </form>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </section>
     <section class="videos">
         <!-- Video testimonials go here -->
         <!-- Example: -->
@@ -81,6 +133,10 @@
         </div>
         <!-- Repeat for other articles -->
     </section>
+    <form method="POST" action="{% url 'testimonies' %}">
+        {% csrf_token %} {{ form.as_p }}
+        <button type="submit" class="read-more-button">Post Testimonial</button>
+    </form>
 </body>
 
 </html>

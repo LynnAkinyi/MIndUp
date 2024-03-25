@@ -64,3 +64,9 @@ class Therapist(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to='therapists/')
     role = models.CharField(max_length=200, choices=Profile.ROLE_CHOICES, default='therapist')
+
+class Testimonies(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    text = models.TextField()
+    video = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)

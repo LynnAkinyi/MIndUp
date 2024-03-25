@@ -43,4 +43,5 @@ urlpatterns = [    # Existing URL patterns
     path('delete_article/<int:article_id>/', views.delete_article, name='delete_article'),
     path('create_group/', CreateGroupView.as_view(), name='create_group'),
     path('get_groups/', GetGroupsView.as_view(), name='get_groups'),
+    path('delete_testimonial/<int:testimonial_id>/', views.delete_testimonial, name='delete_testimonial'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

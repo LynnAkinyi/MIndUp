@@ -3,7 +3,13 @@ from django.forms import ModelForm
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Article, Profile
+from .models import Testimonies
 
+
+class TestimoniesForm(forms.ModelForm):
+    class Meta:
+        model = Testimonies
+        fields = ['text', 'video']
 
 class ArticleForm(forms.ModelForm):
     class Meta:

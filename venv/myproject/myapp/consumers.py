@@ -28,9 +28,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 }
             )
         else:
-            # Handle forum/group chat messages
+            # Handle group chat messages
             await self.channel_layer.group_send(
-                "group_chat",
+                "group-chat",
                 {
                     "type": "send_message",
                     "message": message,
@@ -44,5 +44,3 @@ class ChatConsumer(AsyncWebsocketConsumer):
         username = event["username"]
         time = event["time"]
         await self.send(text_data=json.dumps({"message": message, "username": username, "time": time}))
-        
-        
