@@ -3,6 +3,7 @@
 
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -12,6 +13,7 @@
             max-width: 80vw;
             margin: 0 auto;
             padding: 10px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
         }
         
         .chat-header {
@@ -124,33 +126,60 @@
         }
         
         .sidenav {
-            height: 100%;
-            width: 200px;
+            background-color: #E7E6E6;
+            border-radius: 10px;
+            width: 230px;
             position: fixed;
-            z-index: 1;
-            top: 0px;
+            top: 0;
             left: 0;
-            background-color: #A79589;
+            box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+            height: 100%;
             overflow-x: hidden;
-            padding-top: 20px;
-            border-radius: 0px 20px 20px 0px;
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            /* Add a transition effect */
         }
         
         .sidenav ul {
-            list-style: none;
+            list-style-type: none;
+            margin: 30px;
             padding: 0;
-            margin: 0;
+            justify-content: center;
         }
         
         .sidenav li {
-            padding: 10px;
+            padding: 10px 15px;
             cursor: pointer;
-            border-bottom: 1px solid #ccc;
-            transition: background-color 0.3s ease;
+            margin: 20px;
+            transition: 0.25s;
         }
         
         .sidenav li:hover {
-            background-color: #ccc;
+            background-color: #8A441D;
+            color: #fff;
+            border-radius: 40px;
+        }
+        
+        #id_recipient_input {
+            width: 98%;
+            margin-left: 1%;
+            margin-right: 1%;
+            padding: 8px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .hide-sidenav {
+            left: -250px;
+        }
+        
+        .active {
+            background-color: #8A441D;
+            color: #fff;
         }
         
         .main {
@@ -158,16 +187,35 @@
             height: 100%;
             margin-left: 200px;
         }
+        
+        .user-wrapper {
+            display: flex;
+            align-items: center;
+        }
+        
+        .material-icons {
+            color: #8A441D;
+            font-size: 28px;
+            cursor: pointer;
+            margin-right: 15px;
+            /* Adjusted margin */
+        }
     </style>
 </head>
 
 <body>
     <div class="sidenav" id="sidenav">
+
         <ul>
+            <h2>Users</h2>
             {% for user in users %}
-            <li>{{ user.username }}</li>
+            <li class="user-wrapper">
+                <span class="material-icons">person</span>
+                <span id="{{ user.username }}">{{ user.username }}</span>
+            </li>
             {% endfor %}
         </ul>
+        <input type="hidden" id="id_recipient_input" />
     </div>
 
     <div class="main">
@@ -192,6 +240,24 @@
         </div>
     </div>
     <script>
+        window.onload = function() {
+            // Retrieve the messages from localStorage
+            var messages = JSON.parse(localStorage.getItem('messages')) || [];
+            var messageContainer = document.querySelector("#id_chat_item_container");
+
+            // Display each message
+            messages.forEach(function(message) {
+                var div = document.createElement("div");
+                div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                div.innerHTML = `<div class="message-content">
+            <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
+            <span class="message-text">${message.message}</span>
+            <span class="message-timestamp">${message.time}</span>
+        </div>`;
+                messageContainer.appendChild(div);
+            });
+        };
+
         const chatSocket = new WebSocket("ws://" + window.location.host + "/");
         chatSocket.onopen = function(e) {
             console.log("The connection was set up successfully!");
@@ -205,6 +271,7 @@
                 document.querySelector("#id_message_send_button").click();
             }
         };
+
         document.querySelector("#id_message_send_button").onclick = function(e) {
             var messageInput = document.querySelector("#id_message_send_input").value;
             var currentTime = new Date();
@@ -214,19 +281,44 @@
                 username: "{{request.user.username}}",
                 time: time
             }));
+
+            // Store the message in localStorage
+            var messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.push({
+                message: messageInput,
+                username: "{{request.user.username}}",
+                time: time
+            });
+            localStorage.setItem('messages', JSON.stringify(messages));
         };
+
+
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             var messageContainer = document.querySelector("#id_chat_item_container");
             var div = document.createElement("div");
             div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
             div.innerHTML = `<div class="message-content">
-                <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-                <span class="message-text">${data.message}</span>
-                <span class="message-timestamp">${data.time}</span>
-            </div>`;
+        <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+        <span class="message-text">${data.message}</span>
+        <span class="message-timestamp">${data.time}</span>
+    </div>`;
             document.querySelector("#id_message_send_input").value = "";
             messageContainer.appendChild(div);
+
+            // Retrieve existing messages from localStorage
+            var messages = JSON.parse(localStorage.getItem('messages')) || [];
+
+            // Add the new message to the array
+            messages.push({
+                message: data.message,
+                username: data.username,
+                time: data.time
+            });
+
+            // Store the updated array back in localStorage
+            localStorage.setItem('messages', JSON.stringify(messages));
+
             // Scroll to the bottom of the chat container
             messageContainer.scrollTop = messageContainer.scrollHeight;
         };

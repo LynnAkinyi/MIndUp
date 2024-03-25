@@ -109,6 +109,19 @@
             margin-right: auto;
         }
         
+        #volunteerButton,
+        #createButton,
+        #joinButton {
+            display: inline-block;
+            background-color: #8A441D;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
         .chat-message span {
             font-weight: bold;
             color: white;
@@ -191,13 +204,13 @@
 
     <div class="main">
         <div class="container">
-            <div id="volunteerDiv" style="display: none;" class="volunteer">Volunteer
+            <div id="volunteerDiv" style="display: none;" class="volunteer"><i>Volunteer</i>
                 <br>
                 <button id="volunteerButton">Volunteer as Listener</button>
                 <div id="volunteerNames"></div>
             </div>
-            <div class="groups">Groups<br>
-                <button id="createButton" style="display: none;">Create</button>
+            <div class="groups"><i>Groups</i><br>
+                <button id="createButton" style="display: none;">Create Group</button>
                 <button id="joinButton" style="display: none;">Join Group</button>
                 <div id="newDivContainer"></div>
             </div>
@@ -225,6 +238,24 @@
 
     </div>
     <script>
+        window.onload = function() {
+            // Retrieve the messages from localStorage
+            var messages = JSON.parse(localStorage.getItem('messages')) || [];
+            var messageContainer = document.querySelector("#id_chat_item_container");
+
+            // Display each message
+            messages.forEach(function(message) {
+                var div = document.createElement("div");
+                div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                div.innerHTML = `<div class="message-content">
+            <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
+            <span class="message-text">${message.message}</span>
+            <span class="message-timestamp">${message.time}</span>
+        </div>`;
+                messageContainer.appendChild(div);
+            });
+        };
+
         const chatSocket = new WebSocket("ws://" + window.location.host + "/");
         chatSocket.onopen = function(e) {
             console.log("The connection was set up successfully!");
@@ -238,6 +269,7 @@
                 document.querySelector("#id_message_send_button").click();
             }
         };
+
         document.querySelector("#id_message_send_button").onclick = function(e) {
             var messageInput = document.querySelector("#id_message_send_input").value;
             var currentTime = new Date();
@@ -247,7 +279,18 @@
                 username: "{{request.user.username}}",
                 time: time
             }));
+
+            // Store the message in localStorage
+            var messages = JSON.parse(localStorage.getItem('messages')) || [];
+            messages.push({
+                message: messageInput,
+                username: "{{request.user.username}}",
+                time: time
+            });
+            localStorage.setItem('messages', JSON.stringify(messages));
         };
+
+
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             var messageContainer = document.querySelector("#id_chat_item_container");
@@ -260,6 +303,9 @@
             </div>`;
             document.querySelector("#id_message_send_input").value = "";
             messageContainer.appendChild(div);
+
+
+
             // Scroll to the bottom of the chat container
             messageContainer.scrollTop = messageContainer.scrollHeight;
         };

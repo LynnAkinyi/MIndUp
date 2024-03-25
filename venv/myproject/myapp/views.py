@@ -13,7 +13,7 @@ from .models import MindfulnessTask, ExerciseTask
 from .models import Profile
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm
-from .models import Article, Group
+from .models import Article, Group, Therapist
 import base64
 import uuid
 from django.core.files.base import ContentFile
@@ -48,8 +48,12 @@ def dashboard(request):
     
     return render(request, 'dashboard.html', context)
 
-def book(request):
-    return render(request, 'book.html')
+def book(request, therapist_id=None):
+    if therapist_id is not None:
+        therapist = Therapist.objects.get(id=therapist_id)
+    else:
+        therapist = None
+    return render(request, 'book.html', {'therapist': therapist})
 
 def chat(request):
     users = User.objects.all()  # Fetch all users from the database

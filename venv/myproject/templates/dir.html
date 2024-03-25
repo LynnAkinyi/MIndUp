@@ -146,7 +146,7 @@
                 <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}')">
                 <h2>{{ therapist.name }}</h2>
                 <p>Role: {{ therapist.role }}</p>
-                <a href="book.html" class="book-appointment-button">Book Appointment</a>
+                <a href="book.html" class="book-appointment-button" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}', '{{ therapist.role }}')">Book Appointment</a>
             </div>
             {% empty %} {% endfor %}
         </div>
@@ -170,9 +170,10 @@
         // Get all "Book Appointment" buttons
         var buttons = document.querySelectorAll('.book-appointment-button');
 
-        function book(image, name) {
-            document.querySelector('#booked img').src = image;
-            document.querySelector('#booked h1').innerText = name;
+        function book(imageUrl, name, role) {
+            localStorage.setItem('therapistImage', imageUrl);
+            localStorage.setItem('therapistName', name);
+            localStorage.setItem('therapistRole', role);
         }
     </script>
 
