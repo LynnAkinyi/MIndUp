@@ -185,6 +185,21 @@
         .date-item .delete-btn {
             margin-left: 10px;
         }
+        /* Add this CSS to display the notification dot */
+        
+        #notificationIcon {
+            position: relative;
+        }
+        
+        .dot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 10px;
+            width: 10px;
+            background-color: #F6EFE9;
+            border-radius: 50%;
+        }
         
         @media (max-width: 600px) {
             .sidenav {
@@ -285,10 +300,12 @@ logout
     <div class="topnav">
         <input type="text" id="searchInput" placeholder="Search...">
 
-        <span class="material-icons" id="notificationIcon">
+        <!-- Notification Icon -->
+        <a href="{% url 'read' %}"><span class="material-icons" id="notificationIcon">
     notifications
-   
+    {% if articles %}<span class="dot"></span>{% endif %}
         </span>
+</a>
         <a href="{% url 'profile' %}">
             <span class="material-icons">person</span>
         </a>
@@ -334,7 +351,7 @@ menu
                 <canvas id="myChart" style="width:100%;max-width:700px;"></canvas>
             </div>
             <div class="column" id="whatsNew">
-                <b><i>What's new</i></b> {% for article in articles %}
+                <b><i>What's new</i></b>{% for article in articles %}
                 <div class="article">
                     <h2>{{ article.title }}</h2>
                     <p><i>Published on: {{ article.date }}</i></p>
@@ -345,6 +362,22 @@ menu
         </div>
     </div>
     <script>
+        // Fetch user data from the server when the dashboard page loads
+        window.onload = function() {
+            fetch('/get_user_data/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token // Use the token received after successful login
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display user data on the dashboard
+                    document.getElementById('username').textContent = data.username;
+                    document.getElementById('email').textContent = data.email;
+                    // ... Display other user data ...
+                });
+        }
         var role = "{{ role }}";
         var username = "{{ user.username }}";
 
@@ -417,6 +450,7 @@ menu
 
         // Retrieve the date from the query parameters in the URL
         const selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
+
 
         // Function to schedule an appointment and redirect to dashboard
         function scheduleAppointment() {
@@ -659,6 +693,7 @@ menu
 
             reader.readAsDataURL(input.files[0]);
         }
+
 
         // check for new articles every 5 seconds
     </script>

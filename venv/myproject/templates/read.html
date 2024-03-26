@@ -103,21 +103,6 @@
             align-items: center;
         }
         
-        .read-more-button {
-            margin: 20px;
-            padding: 10px 50px;
-            background-color: #8a4c1d;
-            color: white;
-            border: none;
-            border-radius: 50px;
-            cursor: pointer;
-        }
-        
-        .read-more-button:hover {
-            background-color: #a79589;
-        }
-        /* styles.css */
-        
         .container {
             display: flex;
             align-items: center;
@@ -159,16 +144,6 @@
             grid-column: 1 / -1;
         }
         
-        .delete-btn {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 50px;
-            background-color: #6A2D0A;
-            color: #fff;
-            border-radius: 40px;
-        }
-        
         .article p {
             grid-row: 3;
             grid-column: 1;
@@ -204,10 +179,7 @@
                 <img src="{% static 'images/man.png' %}" alt="Image" class="image" />
             </div>
         </div>
-        <a href="{% url 'read' %}">
-            <button class="read-more-button">Start Reading</button>
-        </a>
-        <button class="read-more-button" id="post-article-button">Post Article</button>
+
 
         <section class="section section-3" id="articles">
             {% for article in articles %}
@@ -217,13 +189,6 @@
                     <h2>{{ article.title }}</h2>
                     <p>{{ article.content }}</p>
                     <p><i>  Published on: {{ article.date }}</i></p>
-                    <a href="{% url 'read' %}">
-                        <button class="read-more-button">Read More</button>
-                    </a>
-                    <form action="{% url 'delete_article' article.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="delete-btn">Delete</button>
-                    </form>
                 </div>
             </div>
             {% endfor %}
@@ -236,9 +201,7 @@
                     <p>
                         Contrary to common misconceptions, mental health is not solely about mental illnesses but encompasses our emotional, psychological, and social well-being. It's about how we handle stress, relate to others, and make choices.
                     </p>
-                    <a href="{% url 'read' %}">
-                        <button class="read-more-button">Read More</button>
-                    </a>
+
                 </div>
             </div>
         </section>
@@ -250,9 +213,7 @@
                         Stress is an unavoidable part of life, but how we manage it greatly influences our mental health. In this article, we explore ten proven strategies to effectively cope with stress in our daily lives. From mindfulness practices and relaxation techniques
                         to time management and positive affirmations, these tools empower individuals to build resilience and maintain mental well-being in the face of life's challenges.
                     </p>
-                    <a href="{% url 'read' %}">
-                        <button class="read-more-button">Read More</button>
-                    </a>
+
                 </div>
                 <img src="{% static 'images/lonely.jpg' %}" alt="Image" class="image" />
             </div>
@@ -293,24 +254,6 @@
             const image = document.createElement('img');
             image.src = article.image;
             image.alt = article.title;
-
-            const deleteBtn = document.createElement('button');
-            deleteBtn.textContent = 'Delete';
-            deleteBtn.classList.add('delete-btn');
-
-            deleteBtn.addEventListener('click', function() {
-                articleDiv.remove();
-                const updatedArticles = articles.filter(a => a.title !== titleH2.textContent);
-                localStorage.setItem('articles', JSON.stringify(updatedArticles));
-            });
-
-            articleDiv.appendChild(titleH2); // Append the title before the image
-            articleDiv.appendChild(deleteBtn);
-            articleDiv.appendChild(image);
-            articleDiv.appendChild(contentP);
-            articleDiv.appendChild(dateP);
-
-            articlesSection.appendChild(articleDiv);
         });
     };
 </script>

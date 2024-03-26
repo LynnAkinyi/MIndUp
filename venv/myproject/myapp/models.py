@@ -25,6 +25,7 @@ class Article(models.Model):
     content = models.TextField()
     image = models.ImageField(upload_to='articles/')
     date = models.DateField(default=timezone.now)
+    is_new = models.BooleanField(default=True)
 class MindfulnessTask(models.Model):
     duration = models.PositiveIntegerField(default=10)  # in minutes
     completed = models.BooleanField(default=False)

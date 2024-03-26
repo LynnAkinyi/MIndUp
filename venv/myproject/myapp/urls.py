@@ -28,6 +28,7 @@ urlpatterns = [    # Existing URL patterns
     path('dashboard/tasks.html', views.tasks, name='tasks'),
     path('details/', views.details, name='details'), 
     path('faq/', views.faq, name='faq'),
+    path('read/', views.read, name='read'),
     path('login/', views.user_login, name='login'),
     path('profile/', views.profile, name='profile'),
     path('community/testimonies.html/', views.testimonies, name='testimonies'),
