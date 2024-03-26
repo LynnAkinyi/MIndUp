@@ -58,8 +58,7 @@ class Profile(models.Model):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='member')
 
 class Group(models.Model):
-    name = models.CharField(max_length=200)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
 
 class Therapist(models.Model):
     name = models.CharField(max_length=200)

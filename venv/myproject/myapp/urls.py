@@ -42,7 +42,10 @@ urlpatterns = [    # Existing URL patterns
     path('save_profile/', views.save_profile, name='save_profile'),
     path('articles/', views.article_list, name='article_list'),
     path('delete_article/<int:article_id>/', views.delete_article, name='delete_article'),
-    path('create_group/', CreateGroupView.as_view(), name='create_group'),
-    path('get_groups/', GetGroupsView.as_view(), name='get_groups'),
+    path('groups', views.get_groups, name='get_groups'),
+    path('groups', views.create_group, name='create_group'),
+    path('save_group/', views.save_group, name='save_group'),
+    path('get_groups/', views.get_groups, name='get_groups'),
+  
     path('delete_testimonial/<int:testimonial_id>/', views.delete_testimonial, name='delete_testimonial'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
