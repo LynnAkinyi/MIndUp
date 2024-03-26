@@ -58,7 +58,8 @@ class Profile(models.Model):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='member')
 
 class Group(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=200)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
 
 class Therapist(models.Model):
     name = models.CharField(max_length=200)

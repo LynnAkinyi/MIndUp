@@ -20,6 +20,7 @@
         header {
             text-align: center;
             padding: 20px;
+            margin-top: 100px;
         }
         
         .book {
@@ -95,8 +96,10 @@
 <body>
     <div class="book">
         <header>
-            <img id="therapistImage" src="{{ therapist.image.url }}">
-            <h1 id="therapistName">{{ therapist.name }}</h1>
+            <img id="therapistImage" src="" alt="Therapist Image">
+
+            <!-- Add an h1 element with an id 'therapistName' to display the therapist's name -->
+            <h1 id="therapistName"></h1>
             <p id="therapistRole">{{ therapist.role }}</p>
             <p>Specializes in anxiety and stress management</p>
         </header>
@@ -119,7 +122,7 @@
             <!-- Example: -->
             <div class="review">
                 <p>⭐️⭐️⭐️⭐️⭐️</p>
-                <p>"Dr. Jane is amazing!"</p>
+                <p id="therapistReview"></p>
             </div>
             <!-- Repeat for other reviews -->
         </section>
@@ -151,6 +154,22 @@
                 window.location.replace("{% url 'dashboard' %}");
             }
         });
+
+        window.onload = function() {
+            // Retrieve the selected therapist's image URL and name from localStorage
+            var imageUrl = localStorage.getItem('selectedTherapistImageUrl');
+            var therapistName = localStorage.getItem('selectedTherapistName');
+            var therapistRole = localStorage.getItem('selectedTherapistRole');
+
+            // Update the src attribute of the img element with the selected therapist's image URL
+            document.getElementById('therapistImage').src = imageUrl;
+            // Update the text content of the h1 element with the selected therapist's name
+            document.getElementById('therapistName').textContent = therapistName;
+            // Update the text content of the p element with the selected therapist's role
+            document.getElementById('therapistRole').textContent = therapistRole;
+            // Update the text content of the p element with the selected therapist's review
+            document.getElementById('therapistReview').textContent = `${therapistName} is amazing!`;
+        }
     </script>
 </body>
 

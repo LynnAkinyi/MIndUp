@@ -18,6 +18,8 @@ import base64
 import uuid
 from django.core.files.base import ContentFile
 from django.views import View
+from django.http import HttpResponse
+
 
 
 def tasks(request):
@@ -274,35 +276,21 @@ def delete_article(request, article_id):
 @csrf_exempt
 def create_group(request):
     if request.method == 'POST':
-        data = json.loads(request.body)
-        group = Group(name=data['name'])
-        group.save()
-        return JsonResponse({'id': group.id, 'name': group.name})
+        group_name = request.POST.get('group_name')
+        if group_name:
+            group = Group.objects.create(name=group_name)
+            return JsonResponse({'success': True, 'group_name': group.name})
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
 
-def get_groups(request):
-    groups = Group.objects.all()
-    group_names = [group.name for group in groups]
-    return JsonResponse({'groups': group_names})
 
-@csrf_exempt
-def save_group(request):
+def fetch_group_messages(request):
     if request.method == 'POST':
         group_name = request.POST.get('group_name')
         if group_name:
-            # Save the group to the server here
-            # For example, you can save it to the database
-            # Assuming you have a Group model with a name field
-            group = Group.objects.create(name=group_name)
-            return JsonResponse({'success': True})
-        else:
-            return JsonResponse({'success': False, 'error': 'No group name provided'})
-    else:
-        return JsonResponse({'success': False, 'error': 'Invalid request method'})
-
-def group_page(request, group_name):
-    # Logic to retrieve group information
-    context = {
-        'group_name': group_name,
-        # Other context data
-    }
-    return render(request, 'forum.html', context)
+            try:
+                group = Group.objects.get(name=group_name)
+                messages = group.messages.values('message', 'username', 'timestamp')
+                return JsonResponse({'success': True, 'messages': list(messages)})
+            except Group.DoesNotExist:
+                return JsonResponse({'success': False, 'error': 'Group not found'})
+    return JsonResponse({'success': False, 'error': 'Invalid request'})

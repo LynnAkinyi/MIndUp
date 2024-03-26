@@ -323,11 +323,63 @@
             });
         }
 
+        // Attach multiple event listeners to the 'load' event
+        window.addEventListener('load', function() {
+            // Retrieve the saved groups from local storage and display each group
+            var groups = retrieveGroups();
+            groups.forEach(function(groupName) {
+                displayGroup(groupName);
+            });
+
+            // Retrieve the messages from local storage and display each message
+            var messages = JSON.parse(localStorage.getItem('messages')) || [];
+            var messageContainer = document.querySelector("#id_chat_item_container");
+            messages.forEach(function(message) {
+                var div = document.createElement("div");
+                div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                div.innerHTML = `<div class="message-content">
+            <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
+            <span class="message-text">${message.message}</span>
+            <span class="message-timestamp">${message.time}</span>
+        </div>`;
+                messageContainer.appendChild(div);
+            });
+        });
+
+        // Attach multiple event listeners to the 'load' event
+        window.addEventListener('load', function() {
+
+            // Retrieve the saved groups from local storage and display each group
+            var groups = retrieveGroups();
+            groups.forEach(function(groupName) {
+                displayGroup(groupName);
+            });
+
+            // Retrieve the messages from local storage and display each message
+            var messages = JSON.parse(localStorage.getItem('messages')) || [];
+            var messageContainer = document.querySelector("#id_chat_item_container");
+            messages.forEach(function(message) {
+                var div = document.createElement("div");
+                div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                div.innerHTML = `<div class="message-content">
+            <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
+            <span class="message-text">${message.message}</span>
+            <span class="message-timestamp">${message.time}</span>
+        </div>`;
+                messageContainer.appendChild(div);
+            });
+        });
+
         document.getElementById('createButton').addEventListener('click', function() {
             var groupName = prompt("Please enter the group name");
-            if (groupName == null || groupName == "") {
+            if (groupName == null || groupName.trim() === "") {
                 alert("You must enter a group name");
                 return;
+
+                // Save the new group to the local storage
+                var groups = retrieveGroups();
+                groups.push(groupName);
+                saveGroups(groups);
             }
 
             // Create a new chat container
@@ -348,12 +400,12 @@
 
             var newChatItemContainer = document.createElement('div');
             newChatItemContainer.className = 'chat__item__container';
-            newChatItemContainer.id = 'id_chat_item_container';
+            newChatItemContainer.id = 'id_chat_item_container'; // Ensure unique IDs
 
             var newChatInputContainer = document.createElement('div');
             newChatInputContainer.className = 'chat-input-container';
-            newChatInputContainer.innerHTML = '<input type="text" id="id_message_send_input" placeholder="Type your message..." />' +
-                '<button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>';
+            newChatInputContainer.innerHTML = '<input type="text" class="message-send-input" placeholder="Type your message..." />' +
+                '<button type="submit" class="message-send-button"><i class="fas fa-paper-plane"></i> Send</button>';
 
             newChatContainer.appendChild(newChatHeader);
             newChatContainer.appendChild(newChatItemContainer);
@@ -363,16 +415,17 @@
 
             document.getElementById('newDivContainer').appendChild(newDiv);
 
-            var newMessageSendInput = newChatInputContainer.querySelector('input');
-            var newMessageSendButton = newChatInputContainer.querySelector('button');
+            var newMessageSendInput = newChatInputContainer.querySelector('.message-send-input');
+            var newMessageSendButton = newChatInputContainer.querySelector('.message-send-button');
 
             newMessageSendInput.focus();
-            newMessageSendInput.onkeyup = function(e) {
+            newMessageSendInput.addEventListener('keyup', function(e) {
                 if (e.keyCode == 13) {
                     newMessageSendButton.click();
                 }
-            };
-            newMessageSendButton.onclick = function(e) {
+            });
+
+            newMessageSendButton.addEventListener('click', function(e) {
                 var messageInput = newMessageSendInput.value;
                 var currentTime = new Date();
                 var time = currentTime.toLocaleTimeString();
@@ -382,168 +435,40 @@
                     time: time
                 }));
                 newMessageSendInput.value = "";
-            };
-        });
 
-        // Function to retrieve groups from local storage
-        function retrieveGroups() {
-            return JSON.parse(localStorage.getItem('groups')) || [];
-        }
-
-        // Function to save groups to local storage
-        function saveGroups(groups) {
-            localStorage.setItem('groups', JSON.stringify(groups));
-        }
-
-        window.onload = function() {
-            // Retrieve the messages from localStorage
-            var messages = JSON.parse(localStorage.getItem('messages')) || [];
-            var messageContainer = document.querySelector("#id_chat_item_container");
-
-            // Display each message
-            messages.forEach(function(message) {
-                var div = document.createElement("div");
-                div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-                div.innerHTML = `<div class="message-content">
-    <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
-    <span class="message-text">${message.message}</span>
-    <span class="message-timestamp">${message.time}</span>
-</div>`;
-                messageContainer.appendChild(div);
-            });
-
-            // Retrieve and display saved groups
-            var savedGroups = retrieveGroups();
-            savedGroups.forEach(function(groupName) {
-                displayGroup(groupName);
-            });
-        };
-
-        // Function to display a group
-        function displayGroup(groupName) {
-            var newDiv = document.createElement('div');
-            newDiv.style.width = '100%';
-            newDiv.style.height = 'auto';
-            newDiv.style.background = '#f1f1f1';
-            newDiv.style.marginBottom = '20px';
-            newDiv.style.borderRadius = '5px';
-            newDiv.style.padding = '10px';
-
-            var newChatContainer = document.createElement('div');
-            newChatContainer.className = 'chat-container';
-
-            var newChatHeader = document.createElement('div');
-            newChatHeader.className = 'chat-header';
-            newChatHeader.innerHTML = '<h1>' + groupName + ' <i class="fas fa-comment"></i></h1>';
-
-            var newChatItemContainer = document.createElement('div');
-            newChatItemContainer.className = 'chat__item__container';
-            newChatItemContainer.id = 'id_chat_item_container';
-
-            var newChatInputContainer = document.createElement('div');
-            newChatInputContainer.className = 'chat-input-container';
-            newChatInputContainer.innerHTML = '<input type="text" id="id_message_send_input" placeholder="Type your message..." />' +
-                '<button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>';
-
-            newChatContainer.appendChild(newChatHeader);
-            newChatContainer.appendChild(newChatItemContainer);
-            newChatContainer.appendChild(newChatInputContainer);
-
-            newDiv.appendChild(newChatContainer);
-
-            document.getElementById('newDivContainer').appendChild(newDiv);
-
-            var newMessageSendInput = newChatInputContainer.querySelector('input');
-            var newMessageSendButton = newChatInputContainer.querySelector('button');
-
-            newMessageSendInput.focus();
-            newMessageSendInput.onkeyup = function(e) {
-                if (e.keyCode == 13) {
-                    newMessageSendButton.click();
-                }
-            };
-            newMessageSendButton.onclick = function(e) {
-                var messageInput = newMessageSendInput.value;
-                var currentTime = new Date();
-                var time = currentTime.toLocaleTimeString();
-                chatSocket.send(JSON.stringify({
+                // Store the message in localStorage
+                var messages = JSON.parse(localStorage.getItem('messages')) || [];
+                messages.push({
                     message: messageInput,
                     username: "{{request.user.username}}",
                     time: time
-                }));
-                newMessageSendInput.value = "";
-            };
-        }
-
-        // Event listener for creating a new group
-        document.getElementById('createButton').addEventListener('click', function() {
-            var groupName = prompt("Please enter the group name");
-            if (groupName == null || groupName == "") {
-                alert("You must enter a group name");
-                return;
-            }
-
-            // Save the new group to local storage
-            var savedGroups = retrieveGroups();
-            savedGroups.push(groupName);
-            saveGroups(savedGroups);
-
-            // Display the new group
-            displayGroup(groupName);
-        });
-
-        // Function to display a group in the list with a clickable link
-        function displayGroupList(groupName) {
-            var groupListContainer = document.getElementById('groupList');
-            var groupListItem = document.createElement('div');
-            groupListItem.textContent = groupName;
-            groupListItem.classList.add('group-item'); // Add a class for styling and event handling
-            groupListContainer.appendChild(groupListItem);
-            groupListItem.addEventListener('click', function() {
-                // Redirect the user to the specific group page
-                window.location.href = '/group/' + encodeURIComponent(groupName); // Modify the URL as needed
+                });
+                localStorage.setItem('messages', JSON.stringify(messages));
             });
-        }
 
-
-        // Event listener for creating a new group
-        document.getElementById('createButton').addEventListener('click', function() {
-            var groupName = prompt("Please enter the group name");
-            if (groupName == null || groupName == "") {
-                alert("You must enter a group name");
-                return;
-            }
-
-            // Save the new group to local storage
-            var savedGroups = retrieveGroups();
-            savedGroups.push(groupName);
-            saveGroups(savedGroups);
-
-            // Display the new group in the list
-            displayGroupList(groupName);
-
-            // Display the new group chat container
-            displayGroup(groupName);
+            // Save the new group to the local storage
+            var groups = retrieveGroups();
+            groups.push(groupName);
+            saveGroups(groups);
         });
 
         // Function to retrieve groups from local storage
         function retrieveGroups() {
-            return JSON.parse(localStorage.getItem('groups')) || [];
+            var groups = JSON.parse(localStorage.getItem('groups')) || [];
+            if (groups.length === 0) {
+                groups = [
+                    // Add any default groups here, if needed
+                ];
+                saveGroups(groups);
+            }
+            return groups;
         }
+
 
         // Function to save groups to local storage
         function saveGroups(groups) {
             localStorage.setItem('groups', JSON.stringify(groups));
         }
-
-        // Display existing groups on window load
-        window.onload = function() {
-            var savedGroups = retrieveGroups();
-            savedGroups.forEach(function(groupName) {
-                displayGroupList(groupName);
-                displayGroup(groupName);
-            });
-        };
     </script>
 </body>
 

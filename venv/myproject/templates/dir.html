@@ -140,16 +140,18 @@
                 <button class="view-all-button">View All Therapists</button>
             </a>
         </div>
+        <!-- dir.html -->
         <div class="therapists">
             {% for therapist in therapists %}
             <div class="therapist-card">
-                <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}')">
+                <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}', '{{ therapist.role }}')">
                 <h2>{{ therapist.name }}</h2>
                 <p>Role: {{ therapist.role }}</p>
                 <a href="book.html" class="book-appointment-button" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}', '{{ therapist.role }}')">Book Appointment</a>
             </div>
             {% empty %} {% endfor %}
         </div>
+
     </section>
     <script>
         function searchFunction() {
@@ -170,10 +172,11 @@
         // Get all "Book Appointment" buttons
         var buttons = document.querySelectorAll('.book-appointment-button');
 
-        function book(imageUrl, name, role) {
-            localStorage.setItem('therapistImage', imageUrl);
-            localStorage.setItem('therapistName', name);
-            localStorage.setItem('therapistRole', role);
+        function book(imageUrl, therapistName, therapistRole) {
+            // Store the selected therapist's image URL and name in localStorage
+            localStorage.setItem('selectedTherapistImageUrl', imageUrl);
+            localStorage.setItem('selectedTherapistName', therapistName);
+            localStorage.setItem('selectedTherapistRole', therapistRole);
         }
     </script>
 
