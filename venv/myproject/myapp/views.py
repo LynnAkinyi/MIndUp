@@ -100,6 +100,23 @@ def forums(request):
     volunteers = Volunteer.objects.all()
     return render(request, 'forums.html', {'groups': groups, 'volunteers': volunteers})
 
+def get_groups(request):
+    groups = Group.objects.all().values_list('name', flat=True)
+    return JsonResponse({'groups': list(groups)})
+@csrf_exempt
+def save_group(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        group_name = data.get('name')
+        if group_name:
+            group = Group(name=group_name)
+            group.save()
+            return JsonResponse({'message': 'Group created successfully'})
+        else:
+            return JsonResponse({'error': 'Group name not provided'}, status=400)
+    else:
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
 def contact(request):
     return render(request, 'contact.html')
 

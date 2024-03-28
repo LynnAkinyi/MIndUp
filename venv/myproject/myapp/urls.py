@@ -5,7 +5,7 @@ from .views import user_details
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import CreateGroupView, GetGroupsView
+from .views import CreateGroupView, GetGroupsView, get_groups, save_group
 
 
 urlpatterns = [    # Existing URL patterns
@@ -15,7 +15,7 @@ urlpatterns = [    # Existing URL patterns
     path('blog/', views.blog, name='blog'),
     path('blog/blog.html', views.blog, name='blog'),
     path('contact/', views.contact, name='contact'),
-    path('community/book.html/<int:therapist_id>/', views.book, name='book'),
+    path('community/book.html/<int:therapist_id>/', views.book, name='book'),path('community/book.html', views.book, name='book'),
     path('community/chat.html/', views.chat, name='chat'),
     path('community/', views.community, name='community'),
     path('community/dir.html/', views.dir, name='dir'),
@@ -43,6 +43,8 @@ urlpatterns = [    # Existing URL patterns
     path('articles/', views.article_list, name='article_list'),
     path('delete_article/<int:article_id>/', views.delete_article, name='delete_article'),
     path('create_group/', views.create_group, name='create_group'),
+    path('save_group/', save_group, name='save_group'),
     path('fetch_group_messages/', views.fetch_group_messages, name='fetch_group_messages'),
+    path('get_groups/', get_groups, name='get_groups'),
     path('delete_testimonial/<int:testimonial_id>/', views.delete_testimonial, name='delete_testimonial'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
