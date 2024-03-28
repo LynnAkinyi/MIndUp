@@ -96,7 +96,9 @@ def testimonies(request):
 
 
 def forums(request):
-    return render(request, 'forums.html')
+    groups = Group.objects.all()
+    volunteers = Volunteer.objects.all()
+    return render(request, 'forums.html', {'groups': groups, 'volunteers': volunteers})
 
 def contact(request):
     return render(request, 'contact.html')

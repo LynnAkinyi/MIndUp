@@ -1,7 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <style>
         body {
@@ -200,276 +203,127 @@
 </head>
 
 <body>
-
-
-    <div class="main">
-        <div id="groupList" class="groups-list"></div>
-        <div class="container">
-            <div id="volunteerDiv" style="display: none;" class="volunteer"><i>Volunteer</i>
-                <br>
-                <button id="volunteerButton">Volunteer as Listener</button>
-                <div id="volunteerNames"></div>
-            </div>
-            <div class="groups"><i>Groups</i><br>
-                <button id="createButton" style="display: none;">Create Group</button>
-                <button id="joinButton" style="display: none;">Join Group</button>
-                <div id="newDivContainer"></div>
-            </div>
-
-            <div class="chat-container">
-                <div class="chat-header">
-                    <h1>Tranquil Mind <i class="fas fa-comment"></i></h1>
-                </div>
-
-                <div class="chat__item__container" id="id_chat_item_container">
-                    <!-- Messages will be displayed here with a scrollbar -->
-                </div>
-                <div class="chat-input-container">
-                    <input type="text" id="id_message_send_input" placeholder="Type your message..." />
-                    <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
-                </div>
-            </div>
-
-        </div>
-
+    <div class="group">
+        <ul id="groupList">
+            <h3>Groups</h3>
+        </ul>
     </div>
+    <div class="voluntee">
+        <h3>Volunteers</h3>
+        <ul id="volunteeList"></ul>
+    </div>
+    <button id="createButton">Create Group</button>
+    <button>Join Group</button>
+    <button id="volunteerButton">Volunteer as Listener</button>
+
     <script>
-        window.onload = function() {
-            // Retrieve the messages from localStorage
-            var messages = JSON.parse(localStorage.getItem('messages')) || [];
-            var messageContainer = document.querySelector("#id_chat_item_container");
+        // Function to create a chat container
+        function createChatContainer(groupName) {
+            var newDiv = document.createElement('div');
+            newDiv.innerHTML = `
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h1>${groupName} <i class="fas fa-comment"></i></h1>
+                        <div>Members</div>
+                    </div>
+                    <div class="chat__item__container" id="id_chat_item_container_${groupName.replace(/\s+/g, '_')}">
+                        <!-- Messages will be displayed here with a scrollbar -->
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="id_message_send_input_${groupName.replace(/\s+/g, '_')}" placeholder="Type your message..." />
+                        <button type="submit" id="id_message_send_button_${groupName.replace(/\s+/g, '_')}"><i class="fas fa-paper-plane"></i> Send</button>
+                    </div>
+                </div>`;
 
-
-            // Display each message
-            messages.forEach(function(message) {
-                var div = document.createElement("div");
-                div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-                div.innerHTML = `<div class="message-content">
-            <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
-            <span class="message-text">${message.message}</span>
-            <span class="message-timestamp">${message.time}</span>
-        </div>`;
-                messageContainer.appendChild(div);
-            });
-        };
-
-
-
-
-        const chatSocket = new WebSocket("ws://" + window.location.host + "/");
-        chatSocket.onopen = function(e) {
-            console.log("The connection was set up successfully!");
-        };
-        chatSocket.onclose = function(e) {
-            console.log("Something unexpected happened!");
-        };
-        document.querySelector("#id_message_send_input").focus();
-        document.querySelector("#id_message_send_input").onkeyup = function(e) {
-            if (e.keyCode == 13) {
-                document.querySelector("#id_message_send_button").click();
-            }
-        };
-
-        document.querySelector("#id_message_send_button").onclick = function(e) {
-            var messageInput = document.querySelector("#id_message_send_input").value;
-            var currentTime = new Date();
-            var time = currentTime.toLocaleTimeString();
-            chatSocket.send(JSON.stringify({
-                message: messageInput,
-                username: "{{request.user.username}}",
-                time: time
-            }));
-
-            // Store the message in localStorage
-            var messages = JSON.parse(localStorage.getItem('messages')) || [];
-            messages.push({
-                message: messageInput,
-                username: "{{request.user.username}}",
-                time: time
-            });
-            localStorage.setItem('messages', JSON.stringify(messages));
-        };
-
-
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            var messageContainer = document.querySelector("#id_chat_item_container");
-            var div = document.createElement("div");
-            div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-            div.innerHTML = `<div class="message-content">
-                <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-                <span class="message-text">${data.message}</span>
-                <span class="message-timestamp">${data.time}</span>
-            </div>`;
-            document.querySelector("#id_message_send_input").value = "";
-            messageContainer.appendChild(div);
-
-
-
-            // Scroll to the bottom of the chat container
-            messageContainer.scrollTop = messageContainer.scrollHeight;
-        };
-
-        var role = "{{ role }}";
-        var username = "{{ user.username }}";
-        if (role === "therapist") {
-            document.getElementById('createButton').style.display = 'block';
-        } else if (role === "member") {
-            document.getElementById('joinButton').style.display = 'block';
-            document.getElementById('volunteerDiv').style.display = 'block';
-            document.getElementById('volunteerButton').addEventListener('click', function() {
-                var volunteerNamesDiv = document.getElementById('volunteerNames');
-                volunteerNamesDiv.innerHTML += username + "<br>";
-            });
+            // Append the new div to the body (or any other container)
+            document.body.appendChild(newDiv);
         }
 
-        // Attach multiple event listeners to the 'load' event
-        window.addEventListener('load', function() {
-            // Retrieve the saved groups from local storage and display each group
-            var groups = retrieveGroups();
-            groups.forEach(function(groupName) {
-                displayGroup(groupName);
-            });
-
-            // Retrieve the messages from local storage and display each message
-            var messages = JSON.parse(localStorage.getItem('messages')) || [];
-            var messageContainer = document.querySelector("#id_chat_item_container");
-            messages.forEach(function(message) {
-                var div = document.createElement("div");
-                div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-                div.innerHTML = `<div class="message-content">
-            <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
-            <span class="message-text">${message.message}</span>
-            <span class="message-timestamp">${message.time}</span>
-        </div>`;
-                messageContainer.appendChild(div);
-            });
-        });
-
-        // Attach multiple event listeners to the 'load' event
-        window.addEventListener('load', function() {
-
-            // Retrieve the saved groups from local storage and display each group
-            var groups = retrieveGroups();
-            groups.forEach(function(groupName) {
-                displayGroup(groupName);
-            });
-
-            // Retrieve the messages from local storage and display each message
-            var messages = JSON.parse(localStorage.getItem('messages')) || [];
-            var messageContainer = document.querySelector("#id_chat_item_container");
-            messages.forEach(function(message) {
-                var div = document.createElement("div");
-                div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-                div.innerHTML = `<div class="message-content">
-            <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
-            <span class="message-text">${message.message}</span>
-            <span class="message-timestamp">${message.time}</span>
-        </div>`;
-                messageContainer.appendChild(div);
-            });
-        });
+        // Function to handle redirection to a specific group
+        function redirectToGroup(groupName) {
+            // Implement your redirection logic here, such as navigating to a specific URL
+            console.log("Redirecting to group:", groupName);
+        }
 
         document.getElementById('createButton').addEventListener('click', function() {
             var groupName = prompt("Please enter the group name");
             if (groupName == null || groupName.trim() === "") {
                 alert("You must enter a group name");
                 return;
-
-                // Save the new group to the local storage
-                var groups = retrieveGroups();
-                groups.push(groupName);
-                saveGroups(groups);
             }
 
             // Create a new chat container
-            var newDiv = document.createElement('div');
-            newDiv.style.width = '100%';
-            newDiv.style.height = 'auto';
-            newDiv.style.background = '#f1f1f1';
-            newDiv.style.marginBottom = '20px';
-            newDiv.style.borderRadius = '5px';
-            newDiv.style.padding = '10px';
+            createChatContainer(groupName);
 
-            var newChatContainer = document.createElement('div');
-            newChatContainer.className = 'chat-container';
+            // Display the group name in the 'group' div
+            var groupList = document.getElementById('groupList');
+            var listItem = document.createElement('li');
+            listItem.textContent = groupName;
+            listItem.classList.add('group-item'); // Add a class for styling and event binding
+            groupList.appendChild(listItem);
 
-            var newChatHeader = document.createElement('div');
-            newChatHeader.className = 'chat-header';
-            newChatHeader.innerHTML = '<h1>' + groupName + ' <i class="fas fa-comment"></i></h1>';
-
-            var newChatItemContainer = document.createElement('div');
-            newChatItemContainer.className = 'chat__item__container';
-            newChatItemContainer.id = 'id_chat_item_container'; // Ensure unique IDs
-
-            var newChatInputContainer = document.createElement('div');
-            newChatInputContainer.className = 'chat-input-container';
-            newChatInputContainer.innerHTML = '<input type="text" class="message-send-input" placeholder="Type your message..." />' +
-                '<button type="submit" class="message-send-button"><i class="fas fa-paper-plane"></i> Send</button>';
-
-            newChatContainer.appendChild(newChatHeader);
-            newChatContainer.appendChild(newChatItemContainer);
-            newChatContainer.appendChild(newChatInputContainer);
-
-            newDiv.appendChild(newChatContainer);
-
-            document.getElementById('newDivContainer').appendChild(newDiv);
-
-            var newMessageSendInput = newChatInputContainer.querySelector('.message-send-input');
-            var newMessageSendButton = newChatInputContainer.querySelector('.message-send-button');
-
-            newMessageSendInput.focus();
-            newMessageSendInput.addEventListener('keyup', function(e) {
-                if (e.keyCode == 13) {
-                    newMessageSendButton.click();
-                }
-            });
-
-            newMessageSendButton.addEventListener('click', function(e) {
-                var messageInput = newMessageSendInput.value;
-                var currentTime = new Date();
-                var time = currentTime.toLocaleTimeString();
-                chatSocket.send(JSON.stringify({
-                    message: messageInput,
-                    username: "{{request.user.username}}",
-                    time: time
-                }));
-                newMessageSendInput.value = "";
-
-                // Store the message in localStorage
-                var messages = JSON.parse(localStorage.getItem('messages')) || [];
-                messages.push({
-                    message: messageInput,
-                    username: "{{request.user.username}}",
-                    time: time
-                });
-                localStorage.setItem('messages', JSON.stringify(messages));
-            });
-
-            // Save the new group to the local storage
-            var groups = retrieveGroups();
+            // Store the group name in localStorage
+            var groups = JSON.parse(localStorage.getItem('groups')) || [];
             groups.push(groupName);
-            saveGroups(groups);
+            localStorage.setItem('groups', JSON.stringify(groups));
         });
 
-        // Function to retrieve groups from local storage
-        function retrieveGroups() {
+        // Function to load chat containers from local storage
+        function loadChatContainers() {
             var groups = JSON.parse(localStorage.getItem('groups')) || [];
-            if (groups.length === 0) {
-                groups = [
-                    // Add any default groups here, if needed
-                ];
-                saveGroups(groups);
+            groups.forEach(function(groupName) {
+                createChatContainer(groupName);
+            });
+        }
+
+        // Load the groups from localStorage when the page loads
+        window.addEventListener('load', function() {
+            loadChatContainers();
+            var groupList = document.getElementById('groupList');
+            var groups = JSON.parse(localStorage.getItem('groups')) || [];
+            groups.forEach(function(groupName) {
+                var listItem = document.createElement('li');
+                listItem.textContent = groupName;
+                listItem.classList.add('group-item'); // Add a class for styling and event binding
+                listItem.addEventListener('click', function() {
+                    alert("You clicked on " + groupName);
+                });
+                groupList.appendChild(listItem);
+            });
+        });
+
+        // Event listener for "Volunteer as Listener" button
+        document.getElementById('volunteerButton').addEventListener('click', function() {
+            var volunteerName = prompt("Please enter your name");
+            if (volunteerName) {
+                // Add volunteer name to the volunteer list
+                var volunteeList = document.getElementById('volunteeList');
+                var listItem = document.createElement('li');
+                listItem.textContent = volunteerName;
+                volunteeList.appendChild(listItem);
+
+                // Store volunteer name in local storage
+                var volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+                volunteers.push(volunteerName);
+                localStorage.setItem('volunteers', JSON.stringify(volunteers));
             }
-            return groups;
-        }
+        });
 
-
-        // Function to save groups to local storage
-        function saveGroups(groups) {
-            localStorage.setItem('groups', JSON.stringify(groups));
-        }
+        // Load volunteers from localStorage when the page loads
+        window.addEventListener('load', function() {
+            var volunteeList = document.getElementById('volunteeList');
+            var volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+            volunteers.forEach(function(volunteerName) {
+                var listItem = document.createElement('li');
+                listItem.textContent = volunteerName;
+                volunteeList.appendChild(listItem);
+            });
+        });
     </script>
 </body>
+
+
+
+
 
 </html>

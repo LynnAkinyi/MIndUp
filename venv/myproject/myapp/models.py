@@ -61,7 +61,9 @@ class Profile(models.Model):
 
 class Group(models.Model):
     name = models.CharField(max_length=200)
-    created_at = models.DateTimeField(default=timezone.now, editable=False)
+
+class Volunteer(models.Model):
+    name = models.CharField(max_length=200)
 
 class Therapist(models.Model):
     name = models.CharField(max_length=200)

@@ -31,9 +31,7 @@ class TaskAdmin(admin.ModelAdmin):
 class ProfileAdmin(admin.ModelAdmin):
     list_display = ('user', 'name', 'role')
 
-@admin.register(Group)
-class GroupAdmin(admin.ModelAdmin):
-    list_display = ('name', 'created_at')
+
 
 @admin.register(Therapist)
 class TherapistAdmin(admin.ModelAdmin):
