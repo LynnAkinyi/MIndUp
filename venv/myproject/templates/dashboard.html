@@ -326,7 +326,9 @@ menu
             <div class="column" id="memberOverview"><b><i>Member Overview</i></b>
                 <div class="saved-info" id="saved-info">
                     <p><b>Name:</b> {{ request.user.username }}</p>
-                    <p><b>Role:</b> {{ role }}</p>
+                    <p><b>Email:</b> {{ request.user.profile.email }}</p>
+                    <p><b>Role:</b> {{ request.user.profile.get_role_display }}</p>
+                    <p><b>specialty:</b> {{ request.user.profile.specialty }}</p>
 
                 </div>
 
@@ -384,7 +386,7 @@ menu
         if (role === "therapist") {
 
             document.getElementById('appointment').style.display = 'none';
-            document.getElementById('progress').style.display = 'none';
+
         } else if (role === "member") {
 
         }

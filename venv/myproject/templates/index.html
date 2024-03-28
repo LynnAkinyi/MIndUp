@@ -20,6 +20,42 @@
             padding: 10px;
             width: 49px;
         }
+        
+        .content-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .welcome-image {
+            margin-right: 20px;
+            /* Adjust margin as needed */
+            width: 200px;
+            /* Adjust image width as needed */
+            height: auto;
+            /* Maintain aspect ratio */
+            border-radius: 10px;
+        }
+        
+        .text-content {
+            /* Styles for the text content */
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 10px 25px;
+            font-size: 1.2em;
+            text-decoration: none;
+            color: #fff;
+            border-radius: 30px;
+            background: #6a2d0a;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 40px;
+        }
+        
+        .cta-button:hover {
+            background-color: #e5cfbe;
+            color: #6a2d0a;
+        }
     </style>
 </head>
 
@@ -63,11 +99,12 @@ menu
 
                 <div class="welcome-text">
                     <h1>Welcome to Tranquil Mind</h1>
+                    <img src="static/images/mental.jpg" alt="Image" class="welcome-image" />
+                    <p><i>You are not alone. This is a safe and supportive space dedicated to your mental well-being.</i>
 
-                    <p>
-                        You are not alone. This is a safe and supportive space dedicated to your mental well-being.
                     </p>
-                    <a href="{% url 'dashboard' %}" class="cta-button">Explore Now</a>
+                    <p> <i>Join resilience-building workshops conducted by experts on our platform.</i></p>
+                    <a href="{% url 'dashboard' %}" class="cta-button">Join Now</a>
                 </div>
             </div>
         </section>

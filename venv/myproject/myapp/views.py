@@ -13,7 +13,7 @@ from .models import MindfulnessTask, ExerciseTask
 from .models import Profile
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm, TestimoniesForm
-from .models import Article, Group, Therapist, Testimonies
+from .models import Article, Group, Therapist, Testimonies, Appointment
 import base64
 import uuid
 from django.core.files.base import ContentFile
@@ -86,11 +86,6 @@ def details(request):
 def read(request):
     articles = Article.objects.order_by('-date')  # Order articles by date in descending order
     return render(request, 'read.html', {'articles': articles})
-
-
-def dir(request):
-    return render(request, 'dir.html')
-
 
 def faq(request):
     return render(request, 'faq.html')
@@ -183,7 +178,7 @@ def article_list(request):
     articles = Article.objects.all()
     return render(request, 'article_list.html', {'articles': articles})
 
-def view_all_therapists(request):
+def dir(request):
     therapists = Profile.objects.filter(role='therapist')
     return render(request, 'dir.html', {'therapists': therapists})
 
@@ -210,6 +205,7 @@ def profile(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
+            form.save()
             if Profile.objects.filter(user=request.user).exists():
                 return render(request, 'profile.html', {'form': form, 'role_picked': True})
             profile = form.save(commit=False)
@@ -220,7 +216,7 @@ def profile(request):
             else:  # profile.role == 'member'
                 return redirect('dashboard')
     else:
-        form = ProfileForm()
+        form = ProfileForm(instance=request.user.profile)
     return render(request, 'profile.html', {'form': form})
 
 def view_all_therapists(request):
@@ -294,3 +290,25 @@ def fetch_group_messages(request):
             except Group.DoesNotExist:
                 return JsonResponse({'success': False, 'error': 'Group not found'})
     return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+
+def book_appointment(request, therapist_id):
+    # Get the therapist
+    therapist = Therapist.objects.get(id=therapist_id)
+
+    # Create a new appointment
+    appointment = Appointment(therapist=therapist, date=request.POST['date'])
+    appointment.save()
+
+    # Redirect to the therapist's profile page
+    return redirect('therapist_profile', therapist_id=therapist.id)
+
+def therapist_profile(request, therapist_id):
+    # Get the therapist
+    therapist = Therapist.objects.get(id=therapist_id)
+
+    # Get the appointments for this therapist
+    appointments = Appointment.objects.filter(therapist=therapist)
+
+    # Render the profile page
+    return render(request, 'therapist_profile.html', {'therapist': therapist, 'appointments': appointments})

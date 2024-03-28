@@ -121,16 +121,16 @@ section p {
   padding: 10px 25px;
   font-size: 1.2em;
   text-decoration: none;
-  color: #6a2d0a;
+  color: #fff;
   border-radius: 30px;
-  background: #e5cfbe;
+  background: #6a2d0a;
   transition: background-color 0.3s, color 0.3s;
   margin-top: 40px;
 }
 
 .cta-button:hover {
-  background-color: #6a2d0a;
-  color: #fff;
+  background-color: #e5cfbe;
+  color: #6a2d0a;
 }
 .container {
   max-width: 900px; /* Adjust this value to change the maximum width of the content */

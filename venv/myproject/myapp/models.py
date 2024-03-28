@@ -54,8 +54,10 @@ class Profile(models.Model):
     ]
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, null=True)
+    email = models.EmailField(null=True, blank=True)
     image = models.ImageField(upload_to='profile_images/', blank=True)
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='member')
+    specialty = models.CharField(max_length=200, null=True, blank=True)
 
 class Group(models.Model):
     name = models.CharField(max_length=200)
@@ -64,10 +66,19 @@ class Group(models.Model):
 class Therapist(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to='therapists/')
+    email = models.EmailField(null=True, blank=True)
     role = models.CharField(max_length=200, choices=Profile.ROLE_CHOICES, default='therapist')
+    specialty = models.CharField(max_length=200, null=True, blank=True)
 
 class Testimonies(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
     video = models.URLField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+
+class Appointment(models.Model):
+    therapist = models.ForeignKey(Therapist, on_delete=models.CASCADE)
+    date = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f'Appointment at {self.date} with {self.therapist.name}'

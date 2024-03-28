@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,6 +8,11 @@
     <title>Task Progress Tracker</title>
     <!-- Include Chart.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <style>
+        body {
+            background-color: #F6EFE9;
+        }
+    </style>
 </head>
 
 <body>
@@ -14,20 +20,25 @@
         <h2>Tasks to be completed:</h2>
         <ul>
             <li>
-                Task 1
-                <input type="radio" name="task1" value="incomplete"> Incomplete
-                <input type="radio" name="task1" value="quarter"> 1/4 Done
-                <input type="radio" name="task1" value="half"> 1/2 Done
-                <input type="radio" name="task1" value="three-quarters"> 3/4 Done
-                <input type="radio" name="task1" value="complete"> Complete
+                <h2>Movement</h2>
+                <input type="radio" name="task1" value="incomplete"> Incomplete<br>
+                <input type="radio" name="task1" value="quarter"> 1/4 Done<br>
+                <input type="radio" name="task1" value="half"> 1/2 Done<br>
+                <input type="radio" name="task1" value="three-quarters"> 3/4 Done<br>
+                <input type="radio" name="task1" value="complete"> Complete<br>
             </li>
             <li>
-                Task 2
-                <input type="radio" name="task2" value="incomplete"> Incomplete
-                <input type="radio" name="task2" value="quarter"> 1/4 Done
-                <input type="radio" name="task2" value="half"> 1/2 Done
-                <input type="radio" name="task2" value="three-quarters"> 3/4 Done
-                <input type="radio" name="task2" value="complete"> Complete
+                <h2>Anxiety Breathing Technique</h2>
+
+                <input type="radio" name="task2" value="incomplete"> Incomplete<br>
+                <video width="320" height="240" controls>
+    <source src="{% static 'videos/btech.mp4' %}" type="video/mp4">
+    Your browser does not support the video tag.
+</video><br>
+                <input type="radio" name="task2" value="quarter"> 1/4 Done<br>
+                <input type="radio" name="task2" value="half"> 1/2 Done<br>
+                <input type="radio" name="task2" value="three-quarters"> 3/4 Done<br>
+                <input type="radio" name="task2" value="complete"> Complete<br>
             </li>
             <!-- Add more tasks as needed -->
         </ul>

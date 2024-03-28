@@ -31,9 +31,11 @@ class ProfileForm(forms.ModelForm):
     ]
 
     name = forms.CharField(widget=forms.TextInput())
+    email = forms.EmailField(widget=forms.EmailInput())
     image = forms.ImageField()
     role = forms.ChoiceField(choices=ROLE_CHOICES, widget=forms.RadioSelect)
+    specialty = forms.CharField(widget=forms.TextInput())
 
     class Meta:
         model = Profile
-        fields = ['name', 'image', 'role']
+        fields = ['name', 'email', 'image', 'role', 'specialty']

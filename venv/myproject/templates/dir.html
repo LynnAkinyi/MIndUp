@@ -107,50 +107,29 @@
         <input type="text" id="search" placeholder="Search therapists..." onkeyup="searchFunction()">
     </header>
     <h2>Top Therapists</h2>
+
     <section class="top-therapists" id="therapists">
 
-        <div class="therapist-card">
-            <img src="{% static 'images/counsell.jpg' %}" alt="Therapist 1">
-            <h2>Dr. Lynn Akinyi </h2>
-            <p>Specializes in anxiety and stress management.</p>
-            <a href="book.html" class="book-appointment-button">Book Appointment</a>
-        </div>
-        <div class="therapist-card">
-            <img src="{% static 'images/womt.png' %}" alt="Therapist 1">
-            <h2>Dr. Lynn Akinyi </h2>
-            <p>Specializes in anxiety and stress management.</p>
-            <a href="book.html" class="book-appointment-button">Book Appointment</a>
-        </div>
-        <div class="therapist-card">
-            <img src="{% static 'images/counsell.jpg' %}" alt="Therapist 1">
-            <h2>Dr. Lynn Akinyi </h2>
-            <p>Specializes in anxiety and stress management.</p>
-            <a href="book.html" class="book-appointment-button">Book Appointment</a>
-        </div>
-        <div class="therapist-card">
-            <img src="{% static 'images/the.png' %}" alt="Therapist 1">
-            <h2>Dr. Lynn Akinyi</h2>
-            <p>Specializes in anxiety and stress management.</p>
-            <a href="book.html" class="book-appointment-button">Book Appointment</a>
 
+        <div class="therapists">
+            {% for therapist in therapists %}
+            <div class="therapist-card">
+                <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}', '{{ therapist.role }}', '{{ therapist.id }}')">
+                <h2>{{ therapist.name }}</h2>
+                <p>Email: {{ therapist.email }}</p>
+                <p>Role: {{ therapist.role }}</p>
+                <p>Specialty: {{ therapist.specialty }}</p>
+                <a href="book.html" class="book-appointment-button" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}', '{{ therapist.role }}'), '{{ therapist.id }}'">Book Appointment</a>
+            </div>
+            {% empty %} {% endfor %}
         </div>
-        <!-- Repeat for other therapists -->
         <div class="view-all-button-container">
             <a href="{% url 'view_all_therapists' %}">
                 <button class="view-all-button">View All Therapists</button>
             </a>
         </div>
         <!-- dir.html -->
-        <div class="therapists">
-            {% for therapist in therapists %}
-            <div class="therapist-card">
-                <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}', '{{ therapist.role }}')">
-                <h2>{{ therapist.name }}</h2>
-                <p>Role: {{ therapist.role }}</p>
-                <a href="book.html" class="book-appointment-button" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}', '{{ therapist.role }}')">Book Appointment</a>
-            </div>
-            {% empty %} {% endfor %}
-        </div>
+
 
     </section>
     <script>
@@ -172,11 +151,13 @@
         // Get all "Book Appointment" buttons
         var buttons = document.querySelectorAll('.book-appointment-button');
 
-        function book(imageUrl, therapistName, therapistRole) {
-            // Store the selected therapist's image URL and name in localStorage
+        function book(imageUrl, therapistName, therapistRole, therapistEmail, therapistSpecialty, therapistId) {
+            // Store the selected therapist's details in localStorage
             localStorage.setItem('selectedTherapistImageUrl', imageUrl);
             localStorage.setItem('selectedTherapistName', therapistName);
             localStorage.setItem('selectedTherapistRole', therapistRole);
+            localStorage.setItem('selectedTherapistEmail', therapistEmail);
+            localStorage.setItem('selectedTherapistSpecialty', therapistSpecialty);
         }
     </script>
 

@@ -97,11 +97,10 @@
     <div class="book">
         <header>
             <img id="therapistImage" src="" alt="Therapist Image">
-
-            <!-- Add an h1 element with an id 'therapistName' to display the therapist's name -->
             <h1 id="therapistName"></h1>
             <p id="therapistRole">{{ therapist.role }}</p>
-            <p>Specializes in anxiety and stress management</p>
+            <p id="therapistSpecialty">{{ therapist.specialty }}</p>
+            <p id="therapistEmail">{{ therapist.email }}</p>
         </header>
 
         <section class="availability">
@@ -138,6 +137,11 @@
                 </form>
             </form>
         </section>
+
+        <section class="appointments">
+            <h2>Scheduled Appointments</h2>
+            <ul id="scheduledAppointmentsList"></ul>
+        </section>
     </div>
     <script>
         document.getElementById("scheduleButton").addEventListener('click', function(event) {
@@ -156,10 +160,13 @@
         });
 
         window.onload = function() {
-            // Retrieve the selected therapist's image URL and name from localStorage
+            // Retrieve the selected therapist's image URL, name, and role from localStorage
             var imageUrl = localStorage.getItem('selectedTherapistImageUrl');
             var therapistName = localStorage.getItem('selectedTherapistName');
             var therapistRole = localStorage.getItem('selectedTherapistRole');
+            var therapistSpecialty = localStorage.getItem('selectedTherapistSpecialty');
+            var therapistEmail = localStorage.getItem('selectedTherapistEmail');
+            var therapistId = localStorage.getItem('selectedTherapistId');
 
             // Update the src attribute of the img element with the selected therapist's image URL
             document.getElementById('therapistImage').src = imageUrl;
@@ -167,8 +174,44 @@
             document.getElementById('therapistName').textContent = therapistName;
             // Update the text content of the p element with the selected therapist's role
             document.getElementById('therapistRole').textContent = therapistRole;
+            // Update the text content of the p element with the selected therapist's specialty
+            document.getElementById('therapistSpecialty').textContent = therapistSpecialty;
+            // Update the text content of the p element with the selected therapist's email
+            document.getElementById('therapistEmail').textContent = therapistEmail;
             // Update the text content of the p element with the selected therapist's review
             document.getElementById('therapistReview').textContent = `${therapistName} is amazing!`;
+
+            var therapistId = localStorage.getItem('selectedTherapistId');
+            // ...
+
+            // Filter the appointments to only include those associated with the selected therapist
+            var therapistAppointments = appointments.filter(function(appointment) {
+                return appointment.therapistId === therapistId;
+            });
+
+            // Retrieve the appointments from localStorage
+            var appointments = JSON.parse(localStorage.getItem('appointments')) || [];
+
+            // Filter the appointments to only include those associated with the selected therapist
+            var therapistAppointments = appointments.filter(function(appointment) {
+                return appointment.therapistId === therapistName;
+            });
+
+            // Display the therapist's appointments in the "scheduledAppointmentsList" element
+            var scheduledAppointmentsListElement = document.getElementById('scheduledAppointmentsList');
+            therapistAppointments.forEach(function(appointment) {
+                var listItem = document.createElement('li');
+                listItem.textContent = appointment.date;
+                scheduledAppointmentsListElement.appendChild(listItem);
+            });
+
+            // Check if the user is a member
+            var isMember = "{{ user.profile.role }}" === "member";
+
+            // Hide the scheduled appointments section for members
+            if (isMember) {
+                document.querySelector('.appointments').style.display = 'none';
+            }
         }
     </script>
 </body>

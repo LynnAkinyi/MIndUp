@@ -1,13 +1,21 @@
+<section class="User Details">
+    <h2>User Details</h2>
+    <img src="{{ request.user.profile.image.url }}" alt="Profile Image" id="profile-pic" width="200 px" ;/>
+    <p><b>Name:</b> {{ request.user.username }}</p>
+    <p><b>Email:</b> {{ request.user.profile.email }}</p>
+    <p><b>Role:</b> {{ request.user.profile.get_role_display }}</p>
+    <p><b>specialty:</b> {{ request.user.profile.specialty }}</p>
+    <!-- Add more fields as needed -->
+</section>
+
+
 <form method="POST" action="{% url 'profile' %}" enctype="multipart/form-data" style="width: 300px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 4px;">
     {% csrf_token %} {{ form.as_p }}
     <button style="background-color: #8a4c1d; color: white; padding: 10px 20px; margin: 10px 0; border: none; cursor: pointer; border-radius:20px;">Save details</button>
     <button type="button" style="background-color: #351a06; color: white; padding: 10px 20px; margin: 10px 0; border: none; cursor: pointer; border-radius:20px;" onclick="confirmDelete()">Edit</button>
 </form>
-
-
-
-{% if role_picked %}
+<!-- {% if role_picked %}
 <script>
     alert("You've already picked a role.");
 </script>
-{% endif %}
+{% endif %} -->
