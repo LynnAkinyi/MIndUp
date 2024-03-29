@@ -9,6 +9,7 @@ from . import views
 from .views import create_group, create_volunteer
 
 
+
 urlpatterns = [    # Existing URL patterns
     
     path('', views.index, name='home'),
@@ -50,4 +51,5 @@ urlpatterns = [    # Existing URL patterns
     path('groups/join/', views.join_group, name='join_group'),
     path('groups_and_members/', views.get_all_groups_and_members, name='groups_and_members'),
     path('groups/get_members/<str:group_name>/', views.get_group_members, name='get_group_members'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

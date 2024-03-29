@@ -23,6 +23,9 @@ from django.views.generic import ListView, DetailView
 from django.views.decorators.http import require_http_methods
 from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
+
 
 
 
@@ -347,3 +350,5 @@ def therapist_profile(request, therapist_id):
 
     # Render the profile page
     return render(request, 'therapist_profile.html', {'therapist': therapist, 'appointments': appointments})
+
+
