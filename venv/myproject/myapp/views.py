@@ -13,7 +13,7 @@ from .models import MindfulnessTask, ExerciseTask
 from .models import Profile
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm, TestimoniesForm
-from .models import Article, Group, Therapist, Testimonies, Appointment
+from .models import Article,  Therapist, Testimonies, Appointment
 import base64
 import uuid
 from django.core.files.base import ContentFile
@@ -96,26 +96,13 @@ def testimonies(request):
 
 
 def forums(request):
-    groups = Group.objects.all()
-    volunteers = Volunteer.objects.all()
-    return render(request, 'forums.html', {'groups': groups, 'volunteers': volunteers})
+    
+    return render(request, 'forums.html')
 
-def get_groups(request):
-    groups = Group.objects.all().values_list('name', flat=True)
-    return JsonResponse({'groups': list(groups)})
-@csrf_exempt
-def save_group(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        group_name = data.get('name')
-        if group_name:
-            group = Group(name=group_name)
-            group.save()
-            return JsonResponse({'message': 'Group created successfully'})
-        else:
-            return JsonResponse({'error': 'Group name not provided'}, status=400)
-    else:
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+
+
 
 def contact(request):
     return render(request, 'contact.html')
@@ -220,13 +207,12 @@ def save_profile(request):
     
     
     
+@login_required
 def profile(request):
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            if Profile.objects.filter(user=request.user).exists():
-                return render(request, 'profile.html', {'form': form, 'role_picked': True})
             profile = form.save(commit=False)
             profile.user = request.user
             profile.save()
@@ -235,8 +221,14 @@ def profile(request):
             else:  # profile.role == 'member'
                 return redirect('dashboard')
     else:
-        form = ProfileForm(instance=request.user.profile)
+        try:
+            profile_instance = request.user.profile
+            form = ProfileForm(instance=profile_instance)
+        except Profile.DoesNotExist:
+            form = ProfileForm()
     return render(request, 'profile.html', {'form': form})
+
+
 
 def view_all_therapists(request):
     therapists = Profile.objects.filter(role='therapist')
@@ -251,17 +243,7 @@ def forums(request):
         return redirect('profile')
     return render(request, 'forums.html', {'role': profile.role})
 
-class CreateGroupView(View):
-    def post(self, request, *args, **kwargs):
-        group_name = request.POST.get('name')
-        new_group = Group(name=group_name, creator=request.user)
-        new_group.save()
-        return JsonResponse({'message': 'Group created successfully'}, status=200)
 
-class GetGroupsView(View):
-    def get(self, request, *args, **kwargs):
-        groups = Group.objects.values('name')
-        return JsonResponse({'groups': list(groups)}, safe=False)
 
 def testimonies(request):
     if request.method == 'POST':
@@ -287,28 +269,6 @@ def delete_article(request, article_id):
     article = Article.objects.get(id=article_id)
     article.delete()
     return redirect('blog')
-
-@csrf_exempt
-def create_group(request):
-    if request.method == 'POST':
-        group_name = request.POST.get('group_name')
-        if group_name:
-            group = Group.objects.create(name=group_name)
-            return JsonResponse({'success': True, 'group_name': group.name})
-    return JsonResponse({'success': False, 'error': 'Invalid request'})
-
-
-def fetch_group_messages(request):
-    if request.method == 'POST':
-        group_name = request.POST.get('group_name')
-        if group_name:
-            try:
-                group = Group.objects.get(name=group_name)
-                messages = group.messages.values('message', 'username', 'timestamp')
-                return JsonResponse({'success': True, 'messages': list(messages)})
-            except Group.DoesNotExist:
-                return JsonResponse({'success': False, 'error': 'Group not found'})
-    return JsonResponse({'success': False, 'error': 'Invalid request'})
 
 
 def book_appointment(request, therapist_id):

@@ -5,7 +5,8 @@ from .views import user_details
 from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import CreateGroupView, GetGroupsView, get_groups, save_group
+from . import views
+
 
 
 urlpatterns = [    # Existing URL patterns
@@ -42,9 +43,8 @@ urlpatterns = [    # Existing URL patterns
     path('save_profile/', views.save_profile, name='save_profile'),
     path('articles/', views.article_list, name='article_list'),
     path('delete_article/<int:article_id>/', views.delete_article, name='delete_article'),
-    path('create_group/', views.create_group, name='create_group'),
-    path('save_group/', save_group, name='save_group'),
-    path('fetch_group_messages/', views.fetch_group_messages, name='fetch_group_messages'),
-    path('get_groups/', get_groups, name='get_groups'),
     path('delete_testimonial/<int:testimonial_id>/', views.delete_testimonial, name='delete_testimonial'),
+    
+    # path('volunteer/', views.volunteer, name='volunteer'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

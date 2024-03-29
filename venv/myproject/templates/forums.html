@@ -199,6 +199,11 @@
             margin: 5px;
             text-align: center;
         }
+        
+        .highlighted {
+            background-color: black;
+            /* Or any other color */
+        }
     </style>
 </head>
 
@@ -208,15 +213,16 @@
             <h3>Groups</h3>
         </ul>
     </div>
+
     <div class="voluntee">
         <h3>Volunteers</h3>
         <ul id="volunteeList"></ul>
+        <button id="createButton" type="submit">Create Group</button>
     </div>
-    <button id="createButton">Create Group</button>
-    <button>Join Group</button>
-    <button id="volunteerButton">Volunteer as Listener</button>
+    <button id="volunteerButton" type="submit">Volunteer as Listener</button>
 
     <script>
+        var loggedInUser = "{{ request.user.username }}";
         // Function to create a chat container
         function createChatContainer(groupName) {
             var newDiv = document.createElement('div');
@@ -224,7 +230,9 @@
                 <div class="chat-container">
                     <div class="chat-header">
                         <h1>${groupName} <i class="fas fa-comment"></i></h1>
+                        <button>Join Group</button>
                         <div>Members</div>
+                        
                     </div>
                     <div class="chat__item__container" id="id_chat_item_container_${groupName.replace(/\s+/g, '_')}">
                         <!-- Messages will be displayed here with a scrollbar -->
@@ -246,6 +254,7 @@
         }
 
         document.getElementById('createButton').addEventListener('click', function() {
+
             var groupName = prompt("Please enter the group name");
             if (groupName == null || groupName.trim() === "") {
                 alert("You must enter a group name");
@@ -294,8 +303,9 @@
 
         // Event listener for "Volunteer as Listener" button
         document.getElementById('volunteerButton').addEventListener('click', function() {
-            var volunteerName = prompt("Please enter your name");
-            if (volunteerName) {
+            var volunteerName = loggedInUser; // Get the logged in user's name
+            var volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
+            if (volunteerName && !volunteers.includes(volunteerName)) {
                 // Add volunteer name to the volunteer list
                 var volunteeList = document.getElementById('volunteeList');
                 var listItem = document.createElement('li');
@@ -303,14 +313,16 @@
                 volunteeList.appendChild(listItem);
 
                 // Store volunteer name in local storage
-                var volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
                 volunteers.push(volunteerName);
                 localStorage.setItem('volunteers', JSON.stringify(volunteers));
+            } else {
+                alert("You have already volunteered.");
             }
         });
 
         // Load volunteers from localStorage when the page loads
         window.addEventListener('load', function() {
+
             var volunteeList = document.getElementById('volunteeList');
             var volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
             volunteers.forEach(function(volunteerName) {

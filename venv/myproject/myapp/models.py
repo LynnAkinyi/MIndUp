@@ -59,11 +59,7 @@ class Profile(models.Model):
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='member')
     specialty = models.CharField(max_length=200, null=True, blank=True)
 
-class Group(models.Model):
-    name = models.CharField(max_length=200)
 
-class Volunteer(models.Model):
-    name = models.CharField(max_length=200)
 
 class Therapist(models.Model):
     name = models.CharField(max_length=200)

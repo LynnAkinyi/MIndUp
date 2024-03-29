@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserRole, Writer, Article, MindfulnessTask, ExerciseTask, Task, Profile, Group, Therapist, Testimonies
+from .models import UserRole, Writer, Article, MindfulnessTask, ExerciseTask, Task, Profile,Therapist, Testimonies
 
 # Register your models here.
 
