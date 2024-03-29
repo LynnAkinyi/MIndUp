@@ -220,117 +220,82 @@
         <button id="createButton" type="submit">Create Group</button>
     </div>
     <button id="volunteerButton" type="submit">Volunteer as Listener</button>
-
     <script>
         var loggedInUser = "{{ request.user.username }}";
-        // Function to create a chat container
-        function createChatContainer(groupName) {
-            var newDiv = document.createElement('div');
-            newDiv.innerHTML = `
-                <div class="chat-container">
-                    <div class="chat-header">
-                        <h1>${groupName} <i class="fas fa-comment"></i></h1>
-                        <button>Join Group</button>
-                        <div>Members</div>
-                        
-                    </div>
-                    <div class="chat__item__container" id="id_chat_item_container_${groupName.replace(/\s+/g, '_')}">
-                        <!-- Messages will be displayed here with a scrollbar -->
-                    </div>
-                    <div class="chat-input-container">
-                        <input type="text" id="id_message_send_input_${groupName.replace(/\s+/g, '_')}" placeholder="Type your message..." />
-                        <button type="submit" id="id_message_send_button_${groupName.replace(/\s+/g, '_')}"><i class="fas fa-paper-plane"></i> Send</button>
-                    </div>
-                </div>`;
-
-            // Append the new div to the body (or any other container)
-            document.body.appendChild(newDiv);
-        }
-
-        // Function to handle redirection to a specific group
-        function redirectToGroup(groupName) {
-            // Implement your redirection logic here, such as navigating to a specific URL
-            console.log("Redirecting to group:", groupName);
-        }
 
         document.getElementById('createButton').addEventListener('click', function() {
-
             var groupName = prompt("Please enter the group name");
             if (groupName == null || groupName.trim() === "") {
                 alert("You must enter a group name");
                 return;
             }
 
-            // Create a new chat container
-            createChatContainer(groupName);
-
-            // Display the group name in the 'group' div
-            var groupList = document.getElementById('groupList');
-            var listItem = document.createElement('li');
-            listItem.textContent = groupName;
-            listItem.classList.add('group-item'); // Add a class for styling and event binding
-            groupList.appendChild(listItem);
-
-            // Store the group name in localStorage
-            var groups = JSON.parse(localStorage.getItem('groups')) || [];
-            groups.push(groupName);
-            localStorage.setItem('groups', JSON.stringify(groups));
-        });
-
-        // Function to load chat containers from local storage
-        function loadChatContainers() {
-            var groups = JSON.parse(localStorage.getItem('groups')) || [];
-            groups.forEach(function(groupName) {
-                createChatContainer(groupName);
-            });
-        }
-
-        // Load the groups from localStorage when the page loads
-        window.addEventListener('load', function() {
-            loadChatContainers();
-            var groupList = document.getElementById('groupList');
-            var groups = JSON.parse(localStorage.getItem('groups')) || [];
-            groups.forEach(function(groupName) {
-                var listItem = document.createElement('li');
-                listItem.textContent = groupName;
-                listItem.classList.add('group-item'); // Add a class for styling and event binding
-                listItem.addEventListener('click', function() {
-                    alert("You clicked on " + groupName);
-                });
-                groupList.appendChild(listItem);
+            // Send a POST request to the server to create a new group
+            fetch('/groups/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    name: groupName,
+                    created_by: loggedInUser
+                })
+            }).then(function(response) {
+                if (response.ok) {
+                    alert("Group created successfully");
+                } else {
+                    alert("Failed to create group");
+                }
             });
         });
 
-        // Event listener for "Volunteer as Listener" button
         document.getElementById('volunteerButton').addEventListener('click', function() {
-            var volunteerName = loggedInUser; // Get the logged in user's name
-            var volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
-            if (volunteerName && !volunteers.includes(volunteerName)) {
-                // Add volunteer name to the volunteer list
-                var volunteeList = document.getElementById('volunteeList');
-                var listItem = document.createElement('li');
-                listItem.textContent = volunteerName;
-                volunteeList.appendChild(listItem);
+            var volunteerName = loggedInUser;
 
-                // Store volunteer name in local storage
-                volunteers.push(volunteerName);
-                localStorage.setItem('volunteers', JSON.stringify(volunteers));
-            } else {
-                alert("You have already volunteered.");
-            }
-        });
-
-        // Load volunteers from localStorage when the page loads
-        window.addEventListener('load', function() {
-
-            var volunteeList = document.getElementById('volunteeList');
-            var volunteers = JSON.parse(localStorage.getItem('volunteers')) || [];
-            volunteers.forEach(function(volunteerName) {
-                var listItem = document.createElement('li');
-                listItem.textContent = volunteerName;
-                volunteeList.appendChild(listItem);
+            // Send a POST request to the server to create a new volunteer
+            fetch('/volunteers/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    user: volunteerName
+                })
+            }).then(function(response) {
+                if (response.ok) {
+                    alert("Volunteered successfully");
+                } else {
+                    alert("Failed to volunteer");
+                }
             });
         });
+
+
+        // Fetch groups
+        fetch('/groups/')
+            .then(response => response.json())
+            .then(groups => {
+                const groupList = document.getElementById('groupList');
+                groups.forEach(group => {
+                    const li = document.createElement('li');
+                    li.textContent = group.name;
+                    groupList.appendChild(li);
+                });
+            });
+
+        // Fetch volunteers
+        fetch('/volunteers/')
+            .then(response => response.json())
+            .then(volunteers => {
+                const volunteerList = document.getElementById('volunteeList');
+                volunteers.forEach(volunteer => {
+                    const li = document.createElement('li');
+                    li.textContent = volunteer.user__username; // Change this line
+                    volunteerList.appendChild(li);
+                });
+            });
     </script>
 </body>
 

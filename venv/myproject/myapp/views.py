@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from django.http import JsonResponse
 from .forms import ArticleForm
 from .models import MindfulnessTask, ExerciseTask
-from .models import Profile
+from .models import Profile, Group, Volunteer
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm, TestimoniesForm
 from .models import Article,  Therapist, Testimonies, Appointment
@@ -19,6 +19,10 @@ import uuid
 from django.core.files.base import ContentFile
 from django.views import View
 from django.http import HttpResponse
+from django.views.generic import ListView, DetailView
+from django.views.decorators.http import require_http_methods
+from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -99,10 +103,35 @@ def forums(request):
     
     return render(request, 'forums.html')
 
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def create_group(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user = User.objects.get(username=data['created_by'])
+        Group.objects.create(name=data['name'], created_by=user)
+        return JsonResponse({'status': 'success'})
+    elif request.method == "GET":
+        groups = Group.objects.all()
+        groups_data = list(groups.values('name', 'created_by__username'))  # Convert queryset to list of dicts
+        return JsonResponse(groups_data, safe=False)
 
-
-
-
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def create_volunteer(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user = User.objects.get(username=data['user'])
+        try:
+            Volunteer.objects.get(user=user)
+            return JsonResponse({'status': 'failure', 'message': 'User is already a volunteer'})
+        except ObjectDoesNotExist:
+            Volunteer.objects.create(user=user)
+            return JsonResponse({'status': 'success'})
+    elif request.method == "GET":
+        volunteers = Volunteer.objects.all()
+        volunteers_data = list(volunteers.values('user__username'))  # Convert queryset to list of dicts
+        return JsonResponse(volunteers_data, safe=False)
 
 def contact(request):
     return render(request, 'contact.html')

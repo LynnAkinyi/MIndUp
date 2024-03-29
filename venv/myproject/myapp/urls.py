@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-
+from .views import create_group, create_volunteer
 
 
 urlpatterns = [    # Existing URL patterns
@@ -21,6 +21,7 @@ urlpatterns = [    # Existing URL patterns
     path('community/', views.community, name='community'),
     path('community/dir.html/', views.dir, name='dir'),
     path('community/forums.html/', views.forums, name='forums'),
+    path('community/forums.html', views.forums, name='forums'),
     path('create_article/', views.create_article, name='create_article'),
     path('blog/create_article.html', views.create_article, name='create_article'), 
     path('dashboard/', views.dashboard, name='dashboard'),
@@ -44,7 +45,8 @@ urlpatterns = [    # Existing URL patterns
     path('articles/', views.article_list, name='article_list'),
     path('delete_article/<int:article_id>/', views.delete_article, name='delete_article'),
     path('delete_testimonial/<int:testimonial_id>/', views.delete_testimonial, name='delete_testimonial'),
-    
+    path('groups/', create_group, name='create-group'),
+    path('volunteers/', create_volunteer, name='create-volunteer'),
     # path('volunteer/', views.volunteer, name='volunteer'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

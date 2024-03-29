@@ -5,7 +5,7 @@ from django.db import models
 from django.utils.timezone import now
 import datetime
 from django.utils import timezone
-
+from datetime import datetime
 
 class UserRole(models.Model):
     name = models.CharField(max_length=50)
@@ -80,3 +80,12 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f'Appointment at {self.date} with {self.therapist.name}'
+
+class Group(models.Model):
+    name = models.CharField(max_length=100)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    
+
+class Volunteer(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
