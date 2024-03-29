@@ -132,6 +132,33 @@ def create_volunteer(request):
         volunteers = Volunteer.objects.all()
         volunteers_data = list(volunteers.values('user__username'))  # Convert queryset to list of dicts
         return JsonResponse(volunteers_data, safe=False)
+    
+@csrf_exempt
+@require_http_methods(["POST"])
+def join_group(request):
+    data = json.loads(request.body)
+    user = User.objects.get(username=data['user'])
+    groups = Group.objects.filter(name=data['group_name'])
+    if not groups.exists():
+        return JsonResponse({'status': 'failure', 'message': 'Group does not exist'})
+    for group in groups:
+        group.members.add(user)
+        group.save()
+    return JsonResponse({'status': 'success'})
+
+
+def get_group_members(request, group_name):
+    group = Group.objects.get(name=group_name)
+    members = list(group.members.values('username'))
+    return JsonResponse(members, safe=False)
+
+def get_all_groups_and_members(request):
+    groups = Group.objects.all()
+    groups_and_members = []
+    for group in groups:
+        members = list(group.members.values('username'))
+        groups_and_members.append({'group': group.name, 'members': members})
+    return JsonResponse(groups_and_members, safe=False)
 
 def contact(request):
     return render(request, 'contact.html')

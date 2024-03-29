@@ -47,6 +47,7 @@ urlpatterns = [    # Existing URL patterns
     path('delete_testimonial/<int:testimonial_id>/', views.delete_testimonial, name='delete_testimonial'),
     path('groups/', create_group, name='create-group'),
     path('volunteers/', create_volunteer, name='create-volunteer'),
-    # path('volunteer/', views.volunteer, name='volunteer'),
-    
+    path('groups/join/', views.join_group, name='join_group'),
+    path('groups_and_members/', views.get_all_groups_and_members, name='groups_and_members'),
+    path('groups/get_members/<str:group_name>/', views.get_group_members, name='get_group_members'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

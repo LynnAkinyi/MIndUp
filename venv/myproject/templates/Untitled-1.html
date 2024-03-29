@@ -363,3 +363,139 @@
 </body>
 
 </html>
+
+<script>
+    var loggedInUser = "{{ request.user.username }}";
+    document.getElementById('createButton').addEventListener('click', function() {
+    var groupName = prompt("Please enter the group name");
+    if (groupName == null || groupName.trim() === "") {
+        alert("You must
+            enter a group name "); return; } // Send a POST request to the server to create a new group fetch('/groups/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' }, body: JSON.stringify({ name: groupName,
+            created_by: loggedInUser
+        })
+    }).then(function(response) {
+    if (response.ok) {
+        alert("Group created successfully");
+    } else {
+        alert("Failed to create group");
+    }
+    });
+    });
+    document.getElementById('volunteerButton').addEventListener('click', function() {
+    var
+        volunteerName = loggedInUser; // Send a POST request to the server to create a new volunteer fetch('/volunteers/', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}' }, body: JSON.stringify({ user: volunteerName
+    })
+    }).then(function(response) {
+    if (response.ok) {
+        alert("Volunteered successfully");
+    } else {
+        alert("Failed to volunteer");
+    }
+    });
+    }); // Fetch groups fetch('/groups/') .then(response => response.json()) .then(groups => { const groupList = document.getElementById('groupList');
+    groups.forEach(group => {
+    const li = document.createElement('li');
+    li.textContent = group.name;
+    groupList.appendChild(li);
+    });
+    }); // Fetch volunteers fetch('/volunteers/') .then(response => response.json()) .then(volunteers => { const volunteerList =
+    document.getElementById('volunteeList');
+    volunteers.forEach(volunteer => {
+                const li = document.createElement('li');
+                li.textContent = volunteer.user__username; // Change this line volunteerList.appendChild(li); }); }); document.getElementById('joinButton').addEventListener('click',
+                function() {
+                    var groupName = prompt("Please enter the name of the group you want to join");
+                    if (groupName == null || groupName.trim() === "") {
+                        alert("You must enter a group name");
+                        return;
+                    } // Send a POST request to the server to add the user to the
+                    group fetch('/groups/join/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            group_name: groupName,
+                            user: loggedInUser
+                        })
+                    }).then(function(response) {
+                            if (response.ok) { // Add
+                                the user to the members list in the HTML
+                                const membersList = document.getElementById('members');
+                                const li = document.createElement('li');
+                                li.textContent = loggedInUser;
+                                membersList.appendChild(li);
+                                alert("Joined group successfully");
+                            } else {
+                                alert("Failed
+                                    to join group "); } }); }); // Fetch groups fetch('/groups/') .then(response => response.json()) .then(groups => { groups.forEach(group => { // Fetch members for each group fetch('/groups/get_members/' + encodeURIComponent(group.name)) .then(response =>
+                                    response.json()).then(members => {
+                                    const membersList = document.getElementById('members');
+                                    members.forEach(member => {
+                                        const li = document.createElement('li');
+                                        li.textContent = member.username;
+                                        membersList.appendChild(li);
+                                    });
+                                });
+                            });
+                    }); // Fetch groups
+                and members fetch('/groups_and_members/').then(response => response.json()).then(groups_and_members => {
+                            groups_and_members.forEach(group_and_members => {
+                                const groupList = document.getElementById('groupList');
+                                const li = document.createElement('li');
+                                // Create a heading for the group name const groupHeading = document.createElement('h3'); groupHeading.textContent = group_and_members.group; li.appendChild(groupHeading); // Create a heading for the members list const membersHeading = document.createElement('p');
+                                membersHeading.textContent = 'Members';
+                                li.appendChild(membersHeading);
+                                const membersList = document.createElement('ul');
+                                group_and_members.members.forEach(member => {
+                                    const li = document.createElement('li');
+                                    li.textContent = member.username;
+                                    membersList.appendChild(li);
+                                }); // Append the members list to the group list item li.appendChild(membersList); // Append the list item to the group list groupList.appendChild(li); }); }); // Retrieve the messages from localStorage var messages = JSON.parse(localStorage.getItem('messages'))
+                                ||
+                                [];
+                                var messageContainer = document.querySelector("#id_chat_item_container"); // Display each message messages.forEach(function(message) { var div = document.createElement("div"); div.className = (message.username === "{{request.user.username}}") ?
+                                "chat-message right": "chat-message left";
+                                div.innerHTML = `
+<div class="message-content">
+    <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
+    <span class="message-text">${message.message}</span>
+    <span class="message-timestamp">${message.time}</span>
+</div>`;
+                                messageContainer.appendChild(div);
+                            });
+                            const chatSocket = new WebSocket("ws://" + window.location.host + "/");
+                            chatSocket.onopen = function(e) {
+                                console.log("The connection was set up successfully!");
+                            };
+                            chatSocket.onclose = function(e) {
+                                    console.log("Something
+                                        unexpected happened!"); }; document.querySelector("#
+                                        id_message_send_input ").focus(); document.querySelector("#
+                                        id_message_send_input ").onkeyup = function(e) { if (e.keyCode == 13) { document.querySelector("#
+                                        id_message_send_button ").click(); } }; document.querySelector("#
+                                        id_message_send_button ").onclick = function(e) {
+                                        var messageInput = document.querySelector("#id_message_send_input").value;
+                                        var currentTime = new Date();
+                                        var time = currentTime.toLocaleTimeString(); chatSocket.send(JSON.stringify({
+                                            message: messageInput,
+                                            username: "{{request.user.username}}",
+                                            time: time
+                                        })); // Store the message in localStorage var messages = JSON.parse(localStorage.getItem('messages')) || []; messages.push({ message: messageInput, username: "{{request.user.username}}", time: time }); localStorage.setItem('messages', JSON.stringify(messages));
+                                    };
+                                    chatSocket.onmessage = function(e) {
+                                            const data = JSON.parse(e.data);
+                                            var messageContainer = document.querySelector("#id_chat_item_container");
+                                            var div = document.createElement("div");
+                                            div.className = (data.username === "{{request.user.username}}") ?
+                                                "chat-message right" : "chat-message left";
+                                            div.innerHTML = `
+<div class="message-content">
+    <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+    <span class="message-text">${data.message}</span>
+    <span class="message-timestamp">${data.time}</span>
+</div>`;
+                                            document.querySelector("#id_message_send_input").value = "";
+                                            messageContainer.appendChild(div); // Scroll to the bottom of the chat container messageContainer.scrollTop = messageContainer.scrollHeight; };
+</script>

@@ -84,7 +84,7 @@ class Appointment(models.Model):
 class Group(models.Model):
     name = models.CharField(max_length=100)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    
+    members = models.ManyToManyField(User, related_name='groups_members') 
 
 class Volunteer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
