@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from .views import create_group, create_volunteer
+from .views import create_group, create_volunteer, create_chat_group, get_chat_groups
 
 
 
@@ -51,5 +51,6 @@ urlpatterns = [    # Existing URL patterns
     path('groups/join/', views.join_group, name='join_group'),
     path('groups_and_members/', views.get_all_groups_and_members, name='groups_and_members'),
     path('groups/get_members/<str:group_name>/', views.get_group_members, name='get_group_members'),
-    
+    path('create_chat_group/', create_chat_group, name='create_chat_group'),
+    path('get_chat_groups/', get_chat_groups, name='get_chat_groups'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

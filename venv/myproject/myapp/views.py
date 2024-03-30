@@ -13,7 +13,7 @@ from .models import MindfulnessTask, ExerciseTask
 from .models import Profile, Group, Volunteer
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm, TestimoniesForm
-from .models import Article,  Therapist, Testimonies, Appointment
+from .models import Article,  Therapist, Testimonies, Appointment, ChatGroup
 import base64
 import uuid
 from django.core.files.base import ContentFile
@@ -352,3 +352,15 @@ def therapist_profile(request, therapist_id):
     return render(request, 'therapist_profile.html', {'therapist': therapist, 'appointments': appointments})
 
 
+@csrf_exempt
+def create_chat_group(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        chat_group = ChatGroup.objects.create(title=title, created_by=request.user)
+        return JsonResponse({'title': chat_group.title}, status=201)
+
+def get_chat_groups(request):
+    if request.method == 'GET':
+        chat_groups = ChatGroup.objects.all()
+        chat_groups_json = serializers.serialize('json', chat_groups)
+        return JsonResponse({'groups': chat_groups_json}, safe=False)

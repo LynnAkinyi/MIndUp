@@ -14,7 +14,7 @@
             align-items: center;
             height: 100vh;
             margin-top: 0px;
-            padding: 80vh;
+            padding: 0px;
         }
         
         .chat-container {
@@ -209,199 +209,38 @@
 </head>
 
 <body>
-    <div class="group">
-        <ul id="groupList">
-            <h3>Groups</h3>
-        </ul>
-        <div class="chat-container">
-            <div class="chat-header">
-                <h1>Tranquil Mind <i class="fas fa-comment"></i></h1>
-            </div>
-
-            <div class="chat__item__container" id="id_chat_item_container">
-                <!-- Messages will be displayed here with a scrollbar -->
-            </div>
-            <div class="chat-input-container">
-                <input type="text" id="id_message_send_input" placeholder="Type your message..." />
-                <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
-            </div>
-        </div>
-        <button id="joinButton" type="submit">Join Group</button>
-        <ul id="members">
-
-        </ul>
-    </div>
-
-    <div class="voluntee">
-        <h3>Volunteers</h3>
-        <ul id="volunteeList"></ul>
-        <button id="createButton" type="submit">Create Group</button>
-    </div>
-    <button id="volunteerButton" type="submit">Volunteer as Listener</button>
-
+    <button id="createButton" type="submit">Create Group</button>
+    <ul id="groupList"></ul>
 
     <script>
         var loggedInUser = "{{ request.user.username }}";
 
         document.getElementById('createButton').addEventListener('click', function() {
-            var groupName = prompt("Please enter the group name");
-            if (groupName == null || groupName.trim() === "") {
-                alert("You must enter a group name");
-                return;
+            var groupName = prompt("Please enter group name");
+            if (groupName != null) {
+
+                // Create a new chat container and add it to the HTML
+                var newChatContainer = document.createElement('div');
+                newChatContainer.className = 'chat-container';
+                newChatContainer.style.border = '1px solid black'; // Add some basic styles to make the chat container visible
+                newChatContainer.style.margin = '5px';
+                newChatContainer.style.padding = '5px';
+                newChatContainer.innerHTML = `
+                    <div class="chat-header">
+                        <h1>${groupName} <i class="fas fa-comment"></i></h1>
+                    </div>
+                    <!-- Rest of the chat container HTML -->
+                    <div class="chat__item__container" id="id_chat_item_container">
+                        <!-- Messages will be displayed here with a scrollbar -->
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+                        <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
+                    </div>
+                `;
+                document.getElementById('groupList').appendChild(newChatContainer); // Append chat container to group list
             }
-
-
-            // Send a POST request to the server to create a new group
-            fetch('/groups/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({
-                    name: groupName,
-                    created_by: loggedInUser
-                })
-            }).then(function(response) {
-                if (response.ok) {
-                    alert("Group created successfully");
-                } else {
-                    alert("Failed to create group");
-                }
-            });
         });
-
-        document.getElementById('volunteerButton').addEventListener('click', function() {
-            var volunteerName = loggedInUser;
-
-            // Send a POST request to the server to create a new volunteer
-            fetch('/volunteers/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({
-                    user: volunteerName
-                })
-            }).then(function(response) {
-                if (response.ok) {
-                    alert("Volunteered successfully");
-                } else {
-                    alert("Failed to volunteer");
-                }
-            });
-        });
-
-
-        // Fetch groups
-        fetch('/groups/')
-            .then(response => response.json())
-            .then(groups => {
-                const groupList = document.getElementById('groupList');
-                groups.forEach(group => {
-                    const li = document.createElement('li');
-                    li.textContent = group.name;
-                    groupList.appendChild(li);
-                });
-            });
-
-        // Fetch volunteers
-        fetch('/volunteers/')
-            .then(response => response.json())
-            .then(volunteers => {
-                const volunteerList = document.getElementById('volunteeList');
-                volunteers.forEach(volunteer => {
-                    const li = document.createElement('li');
-                    li.textContent = volunteer.user__username; // Change this line
-                    volunteerList.appendChild(li);
-                });
-            });
-
-        document.getElementById('joinButton').addEventListener('click', function() {
-            var groupName = prompt("Please enter the name of the group you want to join");
-            if (groupName == null || groupName.trim() === "") {
-                alert("You must enter a group name");
-                return;
-            }
-
-            // Send a POST request to the server to add the user to the group
-            fetch('/groups/join/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({
-                    group_name: groupName,
-                    user: loggedInUser
-                })
-            }).then(function(response) {
-                if (response.ok) {
-                    // Add the user to the members list in the HTML
-                    const membersList = document.getElementById('members');
-                    const li = document.createElement('li');
-                    li.textContent = loggedInUser;
-                    membersList.appendChild(li);
-
-                    alert("Joined group successfully");
-                } else {
-                    alert("Failed to join group");
-                }
-            });
-        });
-
-        // Fetch groups
-        fetch('/groups/')
-            .then(response => response.json())
-            .then(groups => {
-                groups.forEach(group => {
-                    // Fetch members for each group
-                    fetch('/groups/get_members/' + encodeURIComponent(group.name))
-                        .then(response => response.json())
-                        .then(members => {
-                            const membersList = document.getElementById('members');
-                            members.forEach(member => {
-                                const li = document.createElement('li');
-                                li.textContent = member.username;
-                                membersList.appendChild(li);
-                            });
-                        });
-                });
-            });
-
-        // Fetch groups and members
-        fetch('/groups_and_members/')
-            .then(response => response.json())
-            .then(groups_and_members => {
-                groups_and_members.forEach(group_and_members => {
-                    const groupList = document.getElementById('groupList');
-                    const li = document.createElement('li');
-
-                    // Create a heading for the group name
-                    const groupHeading = document.createElement('h3');
-                    groupHeading.textContent = group_and_members.group;
-                    li.appendChild(groupHeading);
-
-                    // Create a heading for the members list
-                    const membersHeading = document.createElement('p');
-                    membersHeading.textContent = 'Members';
-                    li.appendChild(membersHeading);
-
-                    const membersList = document.createElement('ul');
-                    group_and_members.members.forEach(member => {
-                        const li = document.createElement('li');
-                        li.textContent = member.username;
-                        membersList.appendChild(li);
-                    });
-
-                    // Append the members list to the group list item
-                    li.appendChild(membersList);
-
-                    // Append the list item to the group list
-                    groupList.appendChild(li);
-                });
-            });
     </script>
 </body>
 
