@@ -84,8 +84,39 @@
                         break;
                 }
                 document.getElementById('bonusTask' + taskNumber).textContent = bonus;
+
+                // Get CSRF token
+                function getCookie(name) {
+                    let cookieValue = null;
+                    if (document.cookie && document.cookie !== '') {
+                        let cookies = document.cookie.split(';');
+                        for (let i = 0; i < cookies.length; i++) {
+                            let cookie = cookies[i].trim();
+                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                break;
+                            }
+                        }
+                    }
+                    return cookieValue;
+                }
+                let csrftoken = getCookie('csrftoken');
+
+                // Send the bonus to the server
+                fetch('/saveTaskData', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: JSON.stringify({
+                        taskNumber: taskNumber,
+                        bonus: bonus,
+                    }),
+                });
             });
         });
+
         // Collect the data
         let tasks = Array.from(document.querySelectorAll('.task-list li')).map((li, i) => 'Task ' + (i + 1));
         let bonuses = tasks.map(task => parseInt(document.getElementById('bonus' + task.replace(' ', '')).textContent));

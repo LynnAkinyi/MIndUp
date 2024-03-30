@@ -29,15 +29,36 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 
+@login_required
 def tasks(request):
-    mindfulness_task = MindfulnessTask.objects.get_or_create()[0]
-    exercise_task = ExerciseTask.objects.get_or_create()[0]
+    mindfulness_task = MindfulnessTask.objects.get_or_create(user=request.user)[0]
+    exercise_task = ExerciseTask.objects.get_or_create(user=request.user)[0]
 
     context = {
         'mindfulness_task': mindfulness_task,
         'exercise_task': exercise_task,
     }
     return render(request, 'tasks.html', context)
+
+
+@csrf_exempt
+def save_task_data(request):
+    if request.method == 'POST':
+        # Parse the JSON data from the request body
+        data = json.loads(request.body)
+
+        # Get the task number and bonus from the data
+        task_number = data.get('taskNumber')
+        bonus = data.get('bonus')
+
+        # TODO: Save the task number and bonus to the database
+
+        # Return a JSON response
+        return JsonResponse({'status': 'success'})
+
+    else:
+        # Return a 405 Method Not Allowed response if the request method is not POST
+        return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 def index(request):
     return render(request, 'index.html')
@@ -53,11 +74,20 @@ def dashboard(request):
         return redirect('profile')
 
     # Retrieve the appointments for the logged-in therapist
-    appointments = Appointment.objects.filter(therapist=profile)
+    therapist_appointments = Appointment.objects.filter(therapist=profile)
+
+    # Retrieve the appointments for the logged-in user
+    user_appointments = Appointment.objects.filter(user=request.user)
 
     articles = Article.objects.all().order_by('-date')     # get all articles
+
     # add articles and appointments to the context
-    context = {'role': profile.role, 'articles': articles, 'appointments': appointments}  
+    context = {
+        'role': profile.role, 
+        'articles': articles, 
+        'therapist_appointments': therapist_appointments,
+        'user_appointments': user_appointments
+    }  
     
     return render(request, 'dashboard.html', context)
 

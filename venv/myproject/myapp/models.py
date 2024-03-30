@@ -27,10 +27,12 @@ class Article(models.Model):
     date = models.DateField(default=timezone.now)
     is_new = models.BooleanField(default=True)
 class MindfulnessTask(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     duration = models.PositiveIntegerField(default=10)  # in minutes
     completed = models.BooleanField(default=False)
 
 class ExerciseTask(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     duration = models.PositiveIntegerField(default=30)  # in minutes
     completed = models.BooleanField(default=False)
 

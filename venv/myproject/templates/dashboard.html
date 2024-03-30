@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <title>Dashboard</title>
     <style>
         .sidenav {
@@ -341,7 +342,7 @@ menu
                 <section class="appointments">
                     <p><b>Scheduled Appointments</b></p>
                     <ul id="scheduledAppointmentsList">
-                        {% for appointment in appointments %}
+                        {% for appointment in therapist_appointments %}
                         <li>{{ appointment.date|date:"F d, Y" }} by {{ appointment.user.username }}</li>
                         {% empty %}
                         <li>No appointments scheduled yet.</li>
@@ -352,11 +353,17 @@ menu
             </div>
 
 
-            <div class="column" id="appointment"><b><i>Scheduled Appointments</i></b>
+            <div class="column" id="appointment">
+                <b><i>Scheduled Appointments</i></b>
                 <div class="selected-dates">
-                    <ul id="selectedDatesList"></ul>
+                    <ul id="selectedDatesList">
+                        {% for appointment in user_appointments %}
+                        <li>{{ appointment.date|date:"F d, Y" }}</li>
+                        {% empty %}
+                        <li>No appointments scheduled.</li>
+                        {% endfor %}
+                    </ul>
                 </div>
-
             </div>
 
         </div>
@@ -462,87 +469,7 @@ menu
         // JavaScript
 
 
-        // Retrieve the date from the query parameters in the URL
-        const selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
 
-
-        // Function to schedule an appointment and redirect to dashboard
-        function scheduleAppointment() {
-            const selectedDate = document.getElementById('appointmentDate').value;
-            if (selectedDate) {
-                // Retrieve existing selected dates from local storage or initialize an empty array
-                let selectedDates = JSON.parse(localStorage.getItem('selectedDates')) || [];
-
-                // Add the new selected date to the array
-                selectedDates.push(selectedDate);
-
-                // Store the updated array back in local storage
-                localStorage.setItem('selectedDates', JSON.stringify(selectedDates));
-
-                // Redirect to the dashboard page
-                window.location.href = 'dashboard.html';
-            }
-        }
-
-        // Display selected dates in the dashboard
-        window.onload = function() {
-            const dashboardLink = document.getElementById('dashboardLink');
-            dashboardLink.classList.add('active');
-            const appointmentDiv = document.getElementById('appointment');
-            const ul = document.createElement('ul');
-
-            selectedDates.forEach(date => {
-                const li = document.createElement('li');
-
-                li.classList.add('date-item');
-
-                const dateSpan = document.createElement('span'); // Create a span for the date text
-                dateSpan.textContent = date;
-                li.appendChild(dateSpan);
-
-                const deleteBtn = document.createElement('span');
-                deleteBtn.classList.add('material-icons', 'delete-btn');
-                deleteBtn.textContent = 'delete';
-                deleteBtn.addEventListener('click', function() {
-                    li.remove(); // Remove the date from the list
-                    // Update selectedDates array in local storage
-                    const updatedDates = selectedDates.filter(d => d !== date);
-                    localStorage.setItem('selectedDates', JSON.stringify(updatedDates));
-                });
-
-                li.appendChild(deleteBtn); // Add delete button to the list item
-                ul.appendChild(li); // Add list item to the unordered list
-            });
-
-            appointmentDiv.appendChild(ul); // Add unordered list to the appointment div
-
-            const upcomingEventsDiv = document.getElementById('upcoming-events');
-
-            // Clear the existing content of the div
-            upcomingEventsDiv.innerHTML = '';
-
-            // Check if there are at least two selected dates
-            if (selectedDates.length >= 2) {
-                const sortedDates = selectedDates.sort(); // Sort the dates
-
-                for (let i = 0; i < sortedDates.length - 1; i++) {
-                    const currentDate = new Date(sortedDates[i]);
-                    const nextDate = new Date(sortedDates[i + 1]);
-
-                    // Calculate the difference in days between the current date and the next date
-                    const timeDifference = Math.abs(nextDate.getTime() - currentDate.getTime());
-                    const dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
-
-                    // Check if the day difference is exactly one day
-                    if (dayDifference === 1) {
-                        const startDate = currentDate.toLocaleDateString(); // Get the start date
-                        const eventListItem = document.createElement('li');
-                        eventListItem.textContent = startDate;
-                        upcomingEventsDiv.appendChild(eventListItem);
-                    }
-                }
-            }
-        };
 
 
         // Retrieve the tasks and bonuses from localStorage

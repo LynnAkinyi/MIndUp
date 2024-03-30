@@ -30,6 +30,7 @@ urlpatterns = [    # Existing URL patterns
     path('dashboard/book.html/<int:therapist_id>/', views.book, name='book'),
     path('dashboard/book.html', views.book, name='book_without_id'),
     path('dashboard/tasks.html', views.tasks, name='tasks'),
+    path('saveTaskData', views.save_task_data),
     path('details/', views.details, name='details'), 
     path('faq/', views.faq, name='faq'),
     path('read/', views.read, name='read'),
