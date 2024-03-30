@@ -76,10 +76,11 @@ class Testimonies(models.Model):
 
 class Appointment(models.Model):
     therapist = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)  # New field
     date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'Appointment at {self.date} with {self.therapist.name}'
+        return f'Appointment at {self.date} with {self.therapist.name} scheduled by {self.user.username}'
 
 class Group(models.Model):
     name = models.CharField(max_length=100)

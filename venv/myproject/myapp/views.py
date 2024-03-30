@@ -76,7 +76,8 @@ def schedule_appointment(request, therapist_id):  # therapist_id is expected her
 
     # Create a new Appointment object with the selected date and save it to the database
     date = request.POST.get('date')
-    appointment = Appointment(therapist=therapist, date=date)
+    appointment = Appointment(therapist=therapist, user=request.user, date=date)
+    
     appointment.save()
 
     # Redirect the user to the dashboard

@@ -337,16 +337,18 @@ menu
                 <div class="selected-dates">
                     <ul id="upcoming-events"></ul>
                 </div>
+                {% if role == "therapist" %}
                 <section class="appointments">
-                    <h2>Scheduled Appointments</h2>
+                    <p><b>Scheduled Appointments</b></p>
                     <ul id="scheduledAppointmentsList">
                         {% for appointment in appointments %}
-                        <li>{{ appointment.date }}</li>
+                        <li>{{ appointment.date|date:"F d, Y" }} by {{ appointment.user.username }}</li>
                         {% empty %}
                         <li>No appointments scheduled yet.</li>
                         {% endfor %}
                     </ul>
                 </section>
+                {% endif %}
             </div>
 
 
