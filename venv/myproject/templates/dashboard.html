@@ -337,13 +337,23 @@ menu
                 <div class="selected-dates">
                     <ul id="upcoming-events"></ul>
                 </div>
+                <section class="appointments">
+                    <h2>Scheduled Appointments</h2>
+                    <ul id="scheduledAppointmentsList">
+                        {% for appointment in appointments %}
+                        <li>{{ appointment.date }}</li>
+                        {% empty %}
+                        <li>No appointments scheduled yet.</li>
+                        {% endfor %}
+                    </ul>
+                </section>
             </div>
 
-            <a href="book.html">
-                <div class="column" id="appointment"><b><i>Scheduled Appointments</i></b></a>
-            <div class="selected-dates">
-                <ul id="selectedDatesList"></ul>
-            </div>
+
+            <div class="column" id="appointment"><b><i>Scheduled Appointments</i></b>
+                <div class="selected-dates">
+                    <ul id="selectedDatesList"></ul>
+                </div>
 
             </div>
 

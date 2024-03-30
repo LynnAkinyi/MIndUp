@@ -75,7 +75,7 @@ class Testimonies(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
 class Appointment(models.Model):
-    therapist = models.ForeignKey(Therapist, on_delete=models.CASCADE)
+    therapist = models.ForeignKey(Profile, on_delete=models.CASCADE)
     date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

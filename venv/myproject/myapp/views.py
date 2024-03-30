@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import UserCreationForm, LoginForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.http import Http404, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from django.views.generic import TemplateView
@@ -51,18 +51,36 @@ def dashboard(request):
         profile = Profile.objects.get(user=request.user)
     except Profile.DoesNotExist:
         return redirect('profile')
-    
+
+    # Retrieve the appointments for the logged-in therapist
+    appointments = Appointment.objects.filter(therapist=profile)
+
     articles = Article.objects.all().order_by('-date')     # get all articles
-    context = {'role': profile.role, 'articles': articles}  # add articles to the context
+    # add articles and appointments to the context
+    context = {'role': profile.role, 'articles': articles, 'appointments': appointments}  
     
     return render(request, 'dashboard.html', context)
 
-def book(request, therapist_id=None):
-    if therapist_id is not None:
-        therapist = Therapist.objects.get(id=therapist_id)
-    else:
-        therapist = None
-    return render(request, 'book.html', {'therapist': therapist})
+def book(request, therapist_id):
+    # Retrieve the therapist and their appointments from the database
+    therapist = get_object_or_404(Profile, id=therapist_id, role='therapist')
+    appointments = Appointment.objects.filter(therapist=therapist)
+
+    # Render the book.html template with the therapist's details and their appointments
+    return render(request, 'book.html', {'therapist': therapist, 'appointments': appointments})
+
+@require_POST
+def schedule_appointment(request, therapist_id):  # therapist_id is expected here
+    # Retrieve the therapist from the database
+    therapist = get_object_or_404(Profile, id=therapist_id)
+
+    # Create a new Appointment object with the selected date and save it to the database
+    date = request.POST.get('date')
+    appointment = Appointment(therapist=therapist, date=date)
+    appointment.save()
+
+    # Redirect the user to the dashboard
+    return redirect('dashboard')
 
 def chat(request):
     users = User.objects.all()  # Fetch all users from the database
@@ -212,14 +230,14 @@ def user_logout(request):
     logout(request)
     return redirect('home')
 
-def schedule_appointment(request):
-    if request.method == 'POST':
-        selected_date = request.POST.get('appointment_date')
-        if selected_date:
-            # Perform any necessary operations, such as saving to the database
-            # Here, we'll just redirect to the dashboard with the selected date
-            return redirect('dashboard', appointment_date=selected_date)
-    return redirect('book')
+# def schedule_appointment(request):
+#     if request.method == 'POST':
+#         selected_date = request.POST.get('appointment_date')
+#         if selected_date:
+#             # Perform any necessary operations, such as saving to the database
+#             # Here, we'll just redirect to the dashboard with the selected date
+#             return redirect('dashboard', appointment_date=selected_date)
+#     return redirect('book')
 
 def forums(request):
     users = User.objects.all()  # Fetch all users from the database
@@ -264,13 +282,12 @@ def save_profile(request):
         return JsonResponse({'status': 'bad request'}, status=400)
     
     
-    
 @login_required
 def profile(request):
+    therapists = Profile.objects.filter(role='therapist')
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save()
             profile = form.save(commit=False)
             profile.user = request.user
             profile.save()
@@ -284,7 +301,14 @@ def profile(request):
             form = ProfileForm(instance=profile_instance)
         except Profile.DoesNotExist:
             form = ProfileForm()
-    return render(request, 'profile.html', {'form': form})
+    return render(request, 'profile.html', {'form': form, 'therapists': therapists})
+
+def therapist_detail(request, therapist_id):
+    try:
+        therapist = Profile.objects.get(id=therapist_id, role='therapist')
+    except Profile.DoesNotExist:
+        raise Http404("Therapist does not exist")
+    return render(request, 'therapist_detail.html', {'therapist': therapist})
 
 
 
@@ -329,26 +353,27 @@ def delete_article(request, article_id):
     return redirect('blog')
 
 
-def book_appointment(request, therapist_id):
-    # Get the therapist
-    therapist = Therapist.objects.get(id=therapist_id)
+# def book_appointment(request, therapist_id):
+#     # Get the therapist
+#     therapist = get_object_or_404(Profile, id=therapist_id, role='therapist')
 
-    # Create a new appointment
-    appointment = Appointment(therapist=therapist, date=request.POST['date'])
-    appointment.save()
+#     # Create a new appointment
+#     appointment = Appointment(therapist=therapist, date=request.POST['date'])
+#     appointment.save()
 
-    # Redirect to the therapist's profile page
-    return redirect('therapist_profile', therapist_id=therapist.id)
+#     # Redirect to the therapist's profile page
+#     return redirect('therapist_profile', therapist_id=therapist.id)
 
-def therapist_profile(request, therapist_id):
-    # Get the therapist
-    therapist = Therapist.objects.get(id=therapist_id)
 
-    # Get the appointments for this therapist
-    appointments = Appointment.objects.filter(therapist=therapist)
+# def therapist_profile(request, therapist_id):
+#     # Get the therapist
+#     therapist = get_object_or_404(Profile, id=therapist_id, role='therapist')
 
-    # Render the profile page
-    return render(request, 'therapist_profile.html', {'therapist': therapist, 'appointments': appointments})
+#     # Get the appointments for this therapist
+#     appointments = Appointment.objects.filter(therapist=therapist)
+
+#     # Render the profile page
+#     return render(request, 'therapist_profile.html', {'therapist': therapist, 'appointments': appointments})
 
 
 @csrf_exempt

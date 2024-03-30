@@ -115,13 +115,16 @@
             {% for therapist in therapists %}
             <div class="therapist-card">
                 <img src="{{ therapist.image.url }}" alt="{{ therapist.name }}" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}', '{{ therapist.role }}', '{{ therapist.id }}')">
-                <h2>{{ therapist.name }}</h2>
-                <p>Email: {{ therapist.email }}</p>
-                <p>Role: {{ therapist.role }}</p>
-                <p>Specialty: {{ therapist.specialty }}</p>
-                <a href="book.html" class="book-appointment-button" onclick="book('{{ therapist.image.url }}', '{{ therapist.name }}', '{{ therapist.role }}'), '{{ therapist.id }}'">Book Appointment</a>
+                <h2> <i>{{ therapist.name }}</i></h2>
+                <p><b>Therapist ID:</b> {{ therapist.id }}</p>
+                <p><b>Email:</b> {{ therapist.email }}</p>
+                <p><b>Role:</b> {{ therapist.role }}</p>
+                <p><b>Specialty:</b> {{ therapist.specialty }}</p>
+                <a href="{% url 'book' therapist.id %}" class="book-appointment-button">Book Appointment</a>
             </div>
-            {% empty %} {% endfor %}
+            {% empty %}
+            <p>No therapists found.</p>
+            {% endfor %}
         </div>
         <div class="view-all-button-container">
             <a href="{% url 'view_all_therapists' %}">
@@ -151,13 +154,15 @@
         // Get all "Book Appointment" buttons
         var buttons = document.querySelectorAll('.book-appointment-button');
 
-        function book(imageUrl, therapistName, therapistRole, therapistEmail, therapistSpecialty, therapistId) {
-            // Store the selected therapist's details in localStorage
-            localStorage.setItem('selectedTherapistImageUrl', imageUrl);
-            localStorage.setItem('selectedTherapistName', therapistName);
-            localStorage.setItem('selectedTherapistRole', therapistRole);
-            localStorage.setItem('selectedTherapistEmail', therapistEmail);
-            localStorage.setItem('selectedTherapistSpecialty', therapistSpecialty);
+        function book(image, name, role, id) {
+            // Store the therapist's details in localStorage
+            localStorage.setItem('therapistImage', image);
+            localStorage.setItem('therapistName', name);
+            localStorage.setItem('therapistRole', role);
+            localStorage.setItem('therapistId', id);
+
+            // Redirect to the book.html page
+            window.location.href = 'book.html';
         }
     </script>
 

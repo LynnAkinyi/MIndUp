@@ -19,6 +19,7 @@ urlpatterns = [    # Existing URL patterns
     path('contact/', views.contact, name='contact'),
     path('community/book.html/<int:therapist_id>/', views.book, name='book'),path('community/book.html', views.book, name='book'),
     path('community/chat.html/', views.chat, name='chat'),
+    path('community/book.html/', views.book, name='book'),
     path('community/', views.community, name='community'),
     path('community/dir.html/', views.dir, name='dir'),
     path('community/forums.html/', views.forums, name='forums'),
@@ -53,4 +54,7 @@ urlpatterns = [    # Existing URL patterns
     path('create_chat_group/', create_chat_group, name='create_chat_group'),
     path('get_chat_groups/', get_chat_groups, name='get_chat_groups'),
     path('join_chat_group/', views.join_chat_group, name='join_chat_group'),
+    path('therapist/<int:therapist_id>/', views.therapist_detail, name='therapist_detail'),
+    path('book/<int:therapist_id>/', views.book, name='book'),
+    path('schedule_appointment/<int:therapist_id>/', views.schedule_appointment, name='schedule_appointment'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
