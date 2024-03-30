@@ -355,12 +355,20 @@ def therapist_profile(request, therapist_id):
 @csrf_exempt
 def create_chat_group(request):
     if request.method == 'POST':
-        title = request.POST.get('title')
-        chat_group = ChatGroup.objects.create(title=title, created_by=request.user)
-        return JsonResponse({'title': chat_group.title}, status=201)
+        data = json.loads(request.body)  # Parse the JSON data
+        title = data.get('title')  # Get the 'title' from the parsed data
+        if title is not None and title.strip():  # Check if 'title' is not empty
+            chat_group = ChatGroup.objects.create(title=title, created_by=request.user)
+            return JsonResponse({'title': chat_group.title}, status=201)
+        else:
+            return JsonResponse({'error': 'Title cannot be empty'}, status=400)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
 
+@csrf_exempt
 def get_chat_groups(request):
     if request.method == 'GET':
-        chat_groups = ChatGroup.objects.all()
-        chat_groups_json = serializers.serialize('json', chat_groups)
-        return JsonResponse({'groups': chat_groups_json}, safe=False)
+        groups = ChatGroup.objects.all()
+        return JsonResponse([group.title for group in groups], safe=False)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)

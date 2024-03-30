@@ -90,8 +90,8 @@ class Volunteer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     
 class ChatGroup(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, null=False)  # Ensure this is not null
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
 
     def __str__(self):
-        pass
+        return self.title  # Return the title of the ChatGroup

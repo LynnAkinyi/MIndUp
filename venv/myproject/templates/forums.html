@@ -218,16 +218,65 @@
         document.getElementById('createButton').addEventListener('click', function() {
             var groupName = prompt("Please enter group name");
             if (groupName != null) {
+                fetch('/create_chat_group/', { // Replace with your server endpoint
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            title: groupName,
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        // Create a new chat container and add it to the HTML
+                        var newChatContainer = document.createElement('div');
+                        newChatContainer.className = 'chat-container';
+                        newChatContainer.style.border = '1px solid black'; // Add some basic styles to make the chat container visible
+                        newChatContainer.style.margin = '5px';
+                        newChatContainer.style.padding = '5px';
+                        newChatContainer.innerHTML = `
+                <div class="chat-header">
+                    <h1>${groupName} <i class="fas fa-comment"></i></h1>
+                </div>
+                <!-- Rest of the chat container HTML -->
+                <div class="chat__item__container" id="id_chat_item_container">
+                    <!-- Messages will be displayed here with a scrollbar -->
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+                    <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
+                </div>
+            `;
+                        document.getElementById('groupList').appendChild(newChatContainer); // Append chat container to group list
+                    });
+            }
+        });
 
-                // Create a new chat container and add it to the HTML
-                var newChatContainer = document.createElement('div');
-                newChatContainer.className = 'chat-container';
-                newChatContainer.style.border = '1px solid black'; // Add some basic styles to make the chat container visible
-                newChatContainer.style.margin = '5px';
-                newChatContainer.style.padding = '5px';
-                newChatContainer.innerHTML = `
+        // Function to fetch and display groups
+        function fetchAndDisplayGroups() {
+            fetch('/get_chat_groups/', { // Replace with your server endpoint
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Clear the group list
+                    var groupList = document.getElementById('groupList');
+                    groupList.innerHTML = '';
+
+                    // Create a new chat container for each group and add it to the HTML
+                    data.forEach(group => {
+                        var newChatContainer = document.createElement('div');
+                        newChatContainer.className = 'chat-container';
+                        newChatContainer.style.border = '1px solid black'; // Add some basic styles to make the chat container visible
+                        newChatContainer.style.margin = '5px';
+                        newChatContainer.style.padding = '5px';
+                        newChatContainer.innerHTML = `
                     <div class="chat-header">
-                        <h1>${groupName} <i class="fas fa-comment"></i></h1>
+                        <h1>${group} <i class="fas fa-comment"></i></h1>
                     </div>
                     <!-- Rest of the chat container HTML -->
                     <div class="chat__item__container" id="id_chat_item_container">
@@ -238,9 +287,14 @@
                         <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
                     </div>
                 `;
-                document.getElementById('groupList').appendChild(newChatContainer); // Append chat container to group list
-            }
-        });
+                        groupList.appendChild(newChatContainer); // Append chat container to group list
+                    });
+                });
+        }
+        // Call the function when the page loads
+        window.onload = fetchAndDisplayGroups;
+
+        // Existing code...
     </script>
 </body>
 
