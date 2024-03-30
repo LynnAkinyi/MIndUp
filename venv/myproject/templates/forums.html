@@ -211,6 +211,13 @@
 <body>
     <button id="createButton" type="submit">Create Group</button>
     <ul id="groupList"></ul>
+    <div class="voluntee">
+        <h3>Volunteers</h3>
+
+        <button id="volunteerButton" type="submit">Volunteer as Listener</button>
+        <ul id="volunteeList"></ul>
+    </div>
+
 
     <script>
         var loggedInUser = "{{ request.user.username }}";
@@ -218,10 +225,11 @@
         document.getElementById('createButton').addEventListener('click', function() {
             var groupName = prompt("Please enter group name");
             if (groupName != null) {
-                fetch('/create_chat_group/', { // Replace with your server endpoint
+                fetch('/create_chat_group/', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken') // Include the CSRF token in the request header
                         },
                         body: JSON.stringify({
                             title: groupName,
@@ -236,18 +244,18 @@
                         newChatContainer.style.margin = '5px';
                         newChatContainer.style.padding = '5px';
                         newChatContainer.innerHTML = `
-                <div class="chat-header">
-                    <h1>${groupName} <i class="fas fa-comment"></i></h1>
-                </div>
-                <!-- Rest of the chat container HTML -->
-                <div class="chat__item__container" id="id_chat_item_container">
-                    <!-- Messages will be displayed here with a scrollbar -->
-                </div>
-                <div class="chat-input-container">
-                    <input type="text" id="id_message_send_input" placeholder="Type your message..." />
-                    <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
-                </div>
-            `;
+            <div class="chat-header">
+                <h1>${groupName} <i class="fas fa-comment"></i></h1>
+            </div>
+            <!-- Rest of the chat container HTML -->
+            <div class="chat__item__container" id="id_chat_item_container">
+                <!-- Messages will be displayed here with a scrollbar -->
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+                <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
+            </div>
+        `;
                         document.getElementById('groupList').appendChild(newChatContainer); // Append chat container to group list
                     });
             }
@@ -255,7 +263,7 @@
 
         // Function to fetch and display groups
         function fetchAndDisplayGroups() {
-            fetch('/get_chat_groups/', { // Replace with your server endpoint
+            fetch('/get_chat_groups/', {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -275,26 +283,97 @@
                         newChatContainer.style.margin = '5px';
                         newChatContainer.style.padding = '5px';
                         newChatContainer.innerHTML = `
-                    <div class="chat-header">
-                        <h1>${group} <i class="fas fa-comment"></i></h1>
-                    </div>
-                    <!-- Rest of the chat container HTML -->
-                    <div class="chat__item__container" id="id_chat_item_container">
-                        <!-- Messages will be displayed here with a scrollbar -->
-                    </div>
-                    <div class="chat-input-container">
-                        <input type="text" id="id_message_send_input" placeholder="Type your message..." />
-                        <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
-                    </div>
-                `;
+            <div class="chat-header">
+                <h1>${group.title} <i class="fas fa-comment"></i></h1>
+                <p>Members: ${group.members.join(', ')}</p> 
+            </div>
+            <button class="join-group" data-group-id="${group.id}">Join Group</button>
+            <!-- Rest of the chat container HTML -->
+            <div class="chat__item__container" id="id_chat_item_container">
+                <!-- Messages will be displayed here with a scrollbar -->
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+                <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
+            </div>
+        `;
                         groupList.appendChild(newChatContainer); // Append chat container to group list
+
+                        // Add an event listener to the "Join Group" button
+                        newChatContainer.querySelector('.join-group').addEventListener('click', function() {
+                            fetch('/join_chat_group/', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRFToken': getCookie('csrftoken') // Include the CSRF token in the request header
+                                    },
+                                    body: JSON.stringify({
+                                        group_id: this.dataset.groupId, // Send the group ID in the POST data
+                                    }),
+                                })
+                                .then(response => response.json())
+                                .then(data => {
+                                    // Update the list of members
+                                    this.previousElementSibling.querySelector('p').textContent = `Members: ${data.members.join(', ')}`;
+                                });
+                        });
                     });
                 });
+
         }
         // Call the function when the page loads
         window.onload = fetchAndDisplayGroups;
 
-        // Existing code...
+        // Function to get a cookie by name
+        function getCookie(name) {
+            var cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                var cookies = document.cookie.split(';');
+                for (var i = 0; i < cookies.length; i++) {
+                    var cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.getElementById('volunteerButton').addEventListener('click', function() {
+            var volunteerName = loggedInUser;
+
+            // Send a POST request to the server to create a new volunteer
+            fetch('/volunteers/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    user: volunteerName
+                })
+            }).then(function(response) {
+                if (response.ok) {
+                    alert("Volunteered successfully");
+                } else {
+                    alert("Failed to volunteer");
+                }
+            });
+        });
+
+        // Fetch volunteers
+        fetch('/volunteers/')
+            .then(response => response.json())
+            .then(volunteers => {
+                const volunteerList = document.getElementById('volunteeList');
+                volunteers.forEach(volunteer => {
+                    const li = document.createElement('li');
+                    li.textContent = volunteer.user__username; // Change this line
+                    volunteerList.appendChild(li);
+                });
+            });
     </script>
 </body>
 

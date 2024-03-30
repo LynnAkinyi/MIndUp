@@ -92,6 +92,7 @@ class Volunteer(models.Model):
 class ChatGroup(models.Model):
     title = models.CharField(max_length=200, null=False)  # Ensure this is not null
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    members = models.ManyToManyField(User, related_name='chat_groups')
 
     def __str__(self):
         return self.title  # Return the title of the ChatGroup

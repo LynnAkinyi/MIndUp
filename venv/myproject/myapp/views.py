@@ -137,17 +137,16 @@ def create_volunteer(request):
         return JsonResponse(volunteers_data, safe=False)
     
 @csrf_exempt
-@require_http_methods(["POST"])
-def join_group(request):
-    data = json.loads(request.body)
-    user = User.objects.get(username=data['user'])
-    groups = Group.objects.filter(name=data['group_name'])
-    if not groups.exists():
-        return JsonResponse({'status': 'failure', 'message': 'Group does not exist'})
-    for group in groups:
-        group.members.add(user)
+def join_chat_group(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        group_id = data.get('group_id')
+        group = ChatGroup.objects.get(id=group_id)
+        group.members.add(request.user) # Add the user to the group
         group.save()
-    return JsonResponse({'status': 'success'})
+        return JsonResponse({'members': list(group.members.values_list('username', flat=True))}, status=200)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 
 def get_group_members(request, group_name):
@@ -369,6 +368,10 @@ def create_chat_group(request):
 def get_chat_groups(request):
     if request.method == 'GET':
         groups = ChatGroup.objects.all()
-        return JsonResponse([group.title for group in groups], safe=False)
+        return JsonResponse([{
+            'id': group.id,
+            'title': group.title,
+            'members': list(group.members.values_list('username', flat=True)), # Include the list of members
+        } for group in groups], safe=False)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
