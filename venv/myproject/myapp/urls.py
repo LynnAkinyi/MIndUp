@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from .views import create_group, create_volunteer, create_chat_group, get_chat_groups
+from .views import create_group, create_volunteer, create_chat_group, get_chat_groups, upcoming_appointments, delete_appointment
 
 
 
@@ -19,6 +19,7 @@ urlpatterns = [    # Existing URL patterns
     path('contact/', views.contact, name='contact'),
     path('community/book.html/<int:therapist_id>/', views.book, name='book'),path('community/book.html', views.book, name='book'),
     path('community/chat.html/', views.chat, name='chat'),
+    path('community/chat.html', views.chat, name='chat'),
     path('community/book.html/', views.book, name='book'),
     path('community/', views.community, name='community'),
     path('community/dir.html/', views.dir, name='dir'),
@@ -58,4 +59,9 @@ urlpatterns = [    # Existing URL patterns
     path('therapist/<int:therapist_id>/', views.therapist_detail, name='therapist_detail'),
     path('book/<int:therapist_id>/', views.book, name='book'),
     path('schedule_appointment/<int:therapist_id>/', views.schedule_appointment, name='schedule_appointment'),
+    path('delete-appointment/<int:appointment_id>/', delete_appointment, name='delete_appointment'),
+    path('upcoming-appointments/', upcoming_appointments, name='upcoming_appointments'),
+    path('send_message/', views.send_message, name='send_message'),
+    path('get_messages/', views.get_messages, name='get_messages'),
+    
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

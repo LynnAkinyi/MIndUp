@@ -13,7 +13,7 @@ from .models import MindfulnessTask, ExerciseTask
 from .models import Profile, Group, Volunteer
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm, TestimoniesForm
-from .models import Article,  Therapist, Testimonies, Appointment, ChatGroup
+from .models import Article,  Therapist, Testimonies, Appointment, ChatGroup, Message
 import base64
 import uuid
 from django.core.files.base import ContentFile
@@ -25,7 +25,7 @@ from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-
+from datetime import datetime, timedelta
 
 
 
@@ -76,8 +76,19 @@ def dashboard(request):
     # Retrieve the appointments for the logged-in therapist
     therapist_appointments = Appointment.objects.filter(therapist=profile)
 
-    # Retrieve the appointments for the logged-in user
-    user_appointments = Appointment.objects.filter(user=request.user)
+    # Get the current date
+    current_date = datetime.now().date()
+
+    # Get the date two days from now
+    two_days_from_now = current_date + timedelta(days=2)
+
+    # Retrieve the appointments for the logged-in user that are two days or less from now
+    user_appointments = Appointment.objects.filter(user=request.user,)
+       # Get the date two days from now
+    two_days_from_now = current_date + timedelta(days=2)
+
+    # Retrieve the appointments for the logged-in user that are two days or less from now
+    upcoming_appointments = Appointment.objects.filter(user=request.user, date__range=(current_date, two_days_from_now))
 
     articles = Article.objects.all().order_by('-date')     # get all articles
 
@@ -86,7 +97,8 @@ def dashboard(request):
         'role': profile.role, 
         'articles': articles, 
         'therapist_appointments': therapist_appointments,
-        'user_appointments': user_appointments
+        'user_appointments': user_appointments,
+        'upcoming_appointments': upcoming_appointments
     }  
     
     return render(request, 'dashboard.html', context)
@@ -112,6 +124,17 @@ def schedule_appointment(request, therapist_id):  # therapist_id is expected her
 
     # Redirect the user to the dashboard
     return redirect('dashboard')
+
+def delete_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    appointment.delete()
+    return redirect('dashboard')
+
+def upcoming_appointments(request):
+    current_date = datetime.now().date()
+    two_days_from_now = current_date + timedelta(days=2)
+    upcoming_appointments = Appointment.objects.filter(user=request.user, date__range=(current_date, two_days_from_now))
+    return render(request, 'upcoming_appointments.html', {'upcoming_appointments': upcoming_appointments})
 
 def chat(request):
     users = User.objects.all()  # Fetch all users from the database
@@ -167,6 +190,26 @@ def create_group(request):
         groups = Group.objects.all()
         groups_data = list(groups.values('name', 'created_by__username'))  # Convert queryset to list of dicts
         return JsonResponse(groups_data, safe=False)
+    
+@csrf_exempt
+@login_required
+def send_message(request):
+    if request.method == 'POST':
+        user = request.user
+        group_id = request.POST.get('group_id')
+        group = Group.objects.get(id=group_id)
+        text = request.POST.get('message')
+        Message.objects.create(user=user, group=group, text=text)
+        return JsonResponse({'status': 'ok'})
+
+@csrf_exempt
+@login_required
+def get_messages(request):
+    if request.method == 'POST':
+        group_id = request.POST.get('group_id')
+        group = Group.objects.get(id=group_id)
+        messages = group.message_set.all().values('user__username', 'text', 'timestamp')
+        return JsonResponse(list(messages), safe=False)    
 
 @csrf_exempt
 @require_http_methods(["GET", "POST"])

@@ -99,3 +99,9 @@ class ChatGroup(models.Model):
 
     def __str__(self):
         return self.title  # Return the title of the ChatGroup
+
+class Message(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    text = models.TextField()
+    timestamp = models.DateTimeField(auto_now_add=True)

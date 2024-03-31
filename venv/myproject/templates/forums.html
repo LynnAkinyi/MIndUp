@@ -210,7 +210,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-            margin-top: 300px;
+            margin-top: 60%;
         }
         
         .chat-container {
@@ -390,25 +390,6 @@
                     volunteerList.appendChild(li);
                 });
             });
-
-        var socket = new WebSocket('ws://localhost:8000/ws/chat/' + this.dataset.groupId + '/');
-        document.getElementById('id_message_send_button').addEventListener('click', function() {
-            var message = document.getElementById('id_message_send_input').value;
-            socket.send(JSON.stringify({
-                'message': message
-            }));
-        });
-
-        socket.onmessage = function(e) {
-            var data = JSON.parse(e.data);
-            var message = data['message'];
-            // Add the message to the chat
-            var messageElement = document.createElement('p');
-            messageElement.textContent = message;
-            document.getElementById('id_chat_item_container').appendChild(messageElement);
-        };
-
-        socket.close();
     </script>
 </body>
 

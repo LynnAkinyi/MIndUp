@@ -1,4 +1,4 @@
-{% load static %}
+{% load static %} {% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -336,14 +336,17 @@ menu
             </div>
             <div class="column" id="upcomingEvents"><b><i>Upcoming Events</i></b>
                 <div class="selected-dates">
-                    <ul id="upcoming-events"></ul>
+                    {% for appointment in upcoming_appointments %}
+                    <li>{{ appointment.date|date:"F d, Y" }} <i>({{ appointment.therapist.name }})</i></li>
+                    {% empty %} {% endfor %}
                 </div>
+
                 {% if role == "therapist" %}
                 <section class="appointments">
                     <p><b>Scheduled Appointments</b></p>
                     <ul id="scheduledAppointmentsList">
                         {% for appointment in therapist_appointments %}
-                        <li>{{ appointment.date|date:"F d, Y" }} by {{ appointment.user.username }}</li>
+                        <li>{{ appointment.date|date:"F d, Y" }} by <i>{{ appointment.user.username }}</i></li>
                         {% empty %}
                         <li>No appointments scheduled yet.</li>
                         {% endfor %}
@@ -358,7 +361,17 @@ menu
                 <div class="selected-dates">
                     <ul id="selectedDatesList">
                         {% for appointment in user_appointments %}
-                        <li>{{ appointment.date|date:"F d, Y" }}</li>
+                        <li>
+                            {{ appointment.date|date:"F d, Y" }} with <i>{{ appointment.therapist.name }}</i>
+                            <form method="POST" action="{% url 'delete_appointment' appointment.id %}">
+                                {% csrf_token %}
+                                <button type="submit" style="border: none; background: none;">
+    <span class="material-icons">
+delete
+</span>
+</button>
+                            </form>
+                        </li>
                         {% empty %}
                         <li>No appointments scheduled.</li>
                         {% endfor %}
