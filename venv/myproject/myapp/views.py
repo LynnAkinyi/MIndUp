@@ -26,6 +26,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
+from django.core.exceptions import PermissionDenied
 
 
 
@@ -192,15 +193,28 @@ def create_group(request):
         return JsonResponse(groups_data, safe=False)
     
 @csrf_exempt
-@login_required
 def send_message(request):
     if request.method == 'POST':
-        user = request.user
-        group_id = request.POST.get('group_id')
-        group = Group.objects.get(id=group_id)
-        text = request.POST.get('message')
-        Message.objects.create(user=user, group=group, text=text)
-        return JsonResponse({'status': 'ok'})
+        data = json.loads(request.body)
+        group_id = data.get('group_id')
+        message_text = data.get('message_text')
+
+        # Fetch the group
+        group = ChatGroup.objects.get(id=group_id)
+
+        # Check if the user is a member of the group
+        if request.user in group.members.all():
+            # Create and save the message
+            message = Message(user=request.user, group=group, text=message_text)
+            message.save()
+
+            return JsonResponse({'status': 'Message sent'}, status=200)
+        else:
+            # If the user is not a member of the group, raise a permission error
+            raise PermissionDenied('You are not a member of this group')
+
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
 
 @csrf_exempt
 @login_required

@@ -234,6 +234,8 @@
 
     <script>
         var loggedInUser = "{{ request.user.username }}";
+        // WebSocket connection
+
 
         document.getElementById('createButton').addEventListener('click', function() {
             var groupName = prompt("Please enter group name");
@@ -256,6 +258,7 @@
                         newChatContainer.style.border = '1px solid black'; // Add some basic styles to make the chat container visible
                         newChatContainer.style.margin = '5px';
                         newChatContainer.style.padding = '5px';
+                        newChatContainer.dataset.groupId = group.id; // Add this line
                         newChatContainer.innerHTML = `
             
                        
@@ -272,21 +275,54 @@
             </div>
             
         `;
+                        document.getElementById('groupList').appendChild(newChatContainer); // Append chat container to group list
+                        // Create a WebSocket connection for the new group
+                        const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${groupName}/`);
 
                         // Attach event listeners to the send button and input field of the new chat group
                         newChatContainer.querySelector('.message_send_button').addEventListener('click', function() {
-                            var messageInput = this.parentElement.querySelector('.message_send_input').value;
-                            // Send the message...
+                            var messageInput = this.parentElement.querySelector(`#id_message_send_input_${groupId}`);
+                            var message = messageInput.value;
+                            messageInput.value = ''; // Clear the input field
+
+                            // Send the message over the WebSocket connection
+                            chatSocket.send(JSON.stringify({
+                                'message': message,
+                                'group_id': newChatContainer.dataset.groupId, // Use the group id from the data attribute
+                            }));
                         });
-                        newChatContainer.querySelector('.message_send_input').addEventListener('keyup', function(e) {
+
+                        newChatContainer.querySelector('#id_message_send_input').addEventListener('keyup', function(e) {
                             if (e.keyCode == 13) {
                                 this.parentElement.querySelector('.message_send_button').click();
                             }
                         });
-                        document.getElementById('groupList').appendChild(newChatContainer); // Append chat container to group list
 
-                        // Create a WebSocket connection for the new group
-                        const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${groupName}/`);
+
+
+                        // Add an event listener for incoming WebSocket messages
+                        chatSocket.onmessage = function(e) {
+                            const data = JSON.parse(e.data);
+                            const message = data['message'];
+
+                            // Create a new message element
+                            const messageElement = document.createElement('div');
+                            messageElement.className = 'chat-message';
+                            messageElement.textContent = message;
+
+                            // Append the message element to the chat container
+                            newChatContainer.querySelector('.chat__item__container').appendChild(messageElement);
+                        };
+
+                        // Add an event listener for WebSocket connection errors
+                        chatSocket.onerror = function(e) {
+                            console.error('WebSocket error:', e);
+                        };
+
+                        // Add an event listener for WebSocket connection close events
+                        chatSocket.onclose = function(e) {
+                            console.error('WebSocket closed:', e);
+                        };
                     });
             }
 
@@ -316,6 +352,7 @@
                         newChatContainer.innerHTML = `
             <div class="chat-header">
                 <h1>${group.title} <i class="fas fa-comment"></i></h1>
+                <p>ID: ${group.id}</p>
                 <p>Members: ${group.members.join(', ')}</p> 
             </div>
             <button class="join-group" data-group-id="${group.id}">Join Group</button>
@@ -405,45 +442,6 @@
                     volunteerList.appendChild(li);
                 });
             });
-
-        const chatSocket = new WebSocket("ws://" + window.location.host + "/");
-        chatSocket.onopen = function(e) {
-            console.log("The connection was set up successfully!");
-        };
-        chatSocket.onclose = function(e) {
-            console.log("Something unexpected happened!");
-        };
-        document.querySelector("#id_message_send_input").focus();
-        document.querySelector("#id_message_send_input").onkeyup = function(e) {
-            if (e.keyCode == 13) {
-                document.querySelector("#id_message_send_button").click();
-            }
-        };
-        document.querySelector("#id_message_send_button").onclick = function(e) {
-            var messageInput = document.querySelector("#id_message_send_input").value;
-            var currentTime = new Date();
-            var time = currentTime.toLocaleTimeString();
-            chatSocket.send(JSON.stringify({
-                message: messageInput,
-                username: "{{request.user.username}}",
-                time: time
-            }));
-        };
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            var messageContainer = document.querySelector("#id_chat_item_container");
-            var div = document.createElement("div");
-            div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-            div.innerHTML = `<div class="message-content">
-                <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-                <span class="message-text">${data.message}</span>
-                <span class="message-timestamp">${data.time}</span>
-            </div>`;
-            document.querySelector("#id_message_send_input").value = "";
-            messageContainer.appendChild(div);
-            // Scroll to the bottom of the chat container
-            messageContainer.scrollTop = messageContainer.scrollHeight;
-        };
     </script>
 </body>
 
