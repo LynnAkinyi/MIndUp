@@ -46,17 +46,11 @@ INSTALLED_APPS = [
     'channels',
 ]
 
-# ASGI_APPLICATION = 'myproject.routing.application'
-
-# # Channel layers definition
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
-#         'CONFIG': {
-#             "hosts": [('127.0.0.1', 6379)],
-#         },
-#     },
-# }
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -146,8 +140,3 @@ LOGIN_URL = 'login'
 ASGI_APPLICATION = 'myproject.asgi.application'
 
 
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer"
-    }
-}

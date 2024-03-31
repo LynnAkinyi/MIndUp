@@ -7,6 +7,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from . import views
 from .views import create_group, create_volunteer, create_chat_group, get_chat_groups, upcoming_appointments, delete_appointment
+from django.urls import re_path
 
 
 
@@ -66,3 +67,5 @@ urlpatterns = [    # Existing URL patterns
     path('get_messages/', views.get_messages, name='get_messages'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+
