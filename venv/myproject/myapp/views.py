@@ -84,7 +84,7 @@ def dashboard(request):
     two_days_from_now = current_date + timedelta(days=2)
 
     # Retrieve the appointments for the logged-in user that are two days or less from now
-    user_appointments = Appointment.objects.filter(user=request.user,)
+    user_appointments = Appointment.objects.filter(user=request.user).order_by('date')
        # Get the date two days from now
     two_days_from_now = current_date + timedelta(days=2)
 
