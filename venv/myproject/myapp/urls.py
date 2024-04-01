@@ -12,7 +12,7 @@ from django.urls import re_path
 
 
 urlpatterns = [    # Existing URL patterns
-    
+    path('admin', admin.site.urls),
     path('', views.index, name='home'),
     path('about/', views.about, name='about'),
     path('blog/', views.blog, name='blog'),

@@ -1,27 +1,55 @@
 from django.contrib import admin
-from .models import UserRole,  Article,  Profile,Therapist, Testimonies
-
-# Register your models here.
+from .models import (
+    UserRole, Article, MindfulnessTask, ExerciseTask, Task,
+    Profile, Therapist, Testimonies, Appointment, Group,
+    Volunteer, ChatGroup, Message
+)
 
 @admin.register(UserRole)
 class UserRoleAdmin(admin.ModelAdmin):
-    list_display = ('name', 'permissions')
-
+    pass
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('title', 'date', 'is_new')
+    pass
+
+@admin.register(MindfulnessTask)
+class MindfulnessTaskAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(ExerciseTask)
+class ExerciseTaskAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Task)
+class TaskAdmin(admin.ModelAdmin):
+    pass
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'role')
-
-
+    pass
 
 @admin.register(Therapist)
 class TherapistAdmin(admin.ModelAdmin):
-    list_display = ('name', 'role')
+    pass
 
 @admin.register(Testimonies)
 class TestimoniesAdmin(admin.ModelAdmin):
-    list_display = ('user', 'text', 'video', 'created_at')
+    pass
+
+
+@admin.register(Group)
+class GroupAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Volunteer)
+class VolunteerAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(ChatGroup)
+class ChatGroupAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Message)
+class MessageAdmin(admin.ModelAdmin):
+    pass
