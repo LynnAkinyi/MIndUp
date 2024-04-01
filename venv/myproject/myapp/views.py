@@ -270,7 +270,8 @@ def contact(request):
 
 @login_required
 def community(request):
-    return render(request, 'community.html')
+    therapists = Therapist.objects.all()[:4]
+    return render(request, 'community.html', {'therapists': therapists})
 
 @login_required
 def blog(request):
