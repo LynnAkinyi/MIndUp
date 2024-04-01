@@ -16,6 +16,7 @@ class ArticleForm(forms.ModelForm):
         model = Article
         fields = ['title', 'content', 'image']
 class SignupForm(UserCreationForm):
+    content = forms.CharField(widget=forms.Textarea, max_length=10000)
     class Meta:
         model = User
         fields = ['username',  'password1', 'password2']

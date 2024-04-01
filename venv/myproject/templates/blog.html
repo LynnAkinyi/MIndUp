@@ -215,7 +215,7 @@
                 <img src="{{ article.image.url }}" alt="{{ article.title }}" class="image" />
                 <div class="article-content">
                     <h2>{{ article.title }}</h2>
-                    <p>{{ article.content }}</p>
+                    <p>{{ article.content|truncatewords:20 }}...</p>
                     <p><i>  Published on: {{ article.date }}</i></p>
                     <a href="{% url 'read' %}">
                         <button class="read-more-button">Read More</button>

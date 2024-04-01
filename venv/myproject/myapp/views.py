@@ -163,7 +163,7 @@ def save_article(request):
 def details(request):
     return render(request, 'details.html')
 
-def read(request):
+def read(request ):
     articles = Article.objects.order_by('-date')  # Order articles by date in descending order
     return render(request, 'read.html', {'articles': articles})
 
