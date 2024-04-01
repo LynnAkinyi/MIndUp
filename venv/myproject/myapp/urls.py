@@ -38,6 +38,7 @@ urlpatterns = [    # Existing URL patterns
     path('read/', views.read, name='read'),
     path('login/', views.user_login, name='login'),
     path('profile/', views.profile, name='profile'),
+    path('profile/<int:user_id>/', views.profile, name='profile'),
     path('community/testimonies.html/', views.testimonies, name='testimonies'),
     path('community/testimonies.html', views.testimonies, name='testimonies'),
     path('signup/', views.user_signup, name='signup'),

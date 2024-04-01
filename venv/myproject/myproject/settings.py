@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'myapp',
+  
     'chartjs',
     'rest_framework',
     'django.contrib.humanize',

@@ -26,6 +26,7 @@ class Article(models.Model):
     image = models.ImageField(upload_to='articles/')
     date = models.DateField(default=timezone.now)
     is_new = models.BooleanField(default=True)
+    
 class MindfulnessTask(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     duration = models.PositiveIntegerField(default=10)  # in minutes

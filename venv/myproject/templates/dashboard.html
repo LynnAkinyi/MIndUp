@@ -337,7 +337,7 @@ menu
             <div class="column" id="upcomingEvents"><b><i>Upcoming Events</i></b>
                 <div class="selected-dates">
                     {% for appointment in upcoming_appointments %}
-                    <li>{{ appointment.date|date:"F d, Y" }} <i>({{ appointment.therapist.name }})</i></li>
+                    <li>{{ appointment.date|date:"F d, Y" }} <b><i>({{ appointment.therapist.name }})</i></b> </li>
                     {% empty %} {% endfor %}
                 </div>
 
@@ -346,7 +346,7 @@ menu
                     <p><b>Scheduled Appointments</b></p>
                     <ul id="scheduledAppointmentsList">
                         {% for appointment in therapist_appointments %}
-                        <li>{{ appointment.date|date:"F d, Y" }} by <i>{{ appointment.user.username }}</i></li>
+                        <li>{{ appointment.date|date:"F d, Y" }} <b>by</b> <i>{{ appointment.user.username }}</a></i></li>
                         {% empty %}
                         <li>No appointments scheduled yet.</li>
                         {% endfor %}
@@ -362,7 +362,7 @@ menu
                     <ul id="selectedDatesList">
                         {% for appointment in user_appointments %}
                         <li>
-                            {{ appointment.date|date:"F d, Y" }} with <i>{{ appointment.therapist.name }}</i>
+                            {{ appointment.date|date:"F d, Y" }} <b>with</b> <i>{{ appointment.therapist.name }}</i>
                             <form method="POST" action="{% url 'delete_appointment' appointment.id %}">
                                 {% csrf_token %}
                                 <button type="submit" style="border: none; background: none;">

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserRole, Writer, Article, MindfulnessTask, ExerciseTask, Task, Profile,Therapist, Testimonies
+from .models import UserRole,  Article, MindfulnessTask, ExerciseTask, Task, Profile,Therapist, Testimonies
 
 # Register your models here.
 
@@ -7,9 +7,6 @@ from .models import UserRole, Writer, Article, MindfulnessTask, ExerciseTask, Ta
 class UserRoleAdmin(admin.ModelAdmin):
     list_display = ('name', 'permissions')
 
-@admin.register(Writer)
-class WriterAdmin(admin.ModelAdmin):
-    list_display = ('name', 'createdDate')
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):

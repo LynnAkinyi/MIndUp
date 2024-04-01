@@ -371,7 +371,8 @@ def save_profile(request):
     
     
 @login_required
-def profile(request):
+def profile(request, user_id):
+    user = User.objects.get(id=user_id)
     therapists = Profile.objects.filter(role='therapist')
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
