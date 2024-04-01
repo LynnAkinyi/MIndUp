@@ -74,7 +74,7 @@ class Therapist(models.Model):
 class Testimonies(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField()
-    video = models.URLField(blank=True, null=True)
+    video = models.FileField(upload_to='videos/', null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
 class Appointment(models.Model):

@@ -171,10 +171,6 @@ def faq(request):
     return render(request, 'faq.html')
 
 
-def testimonies(request):
-    return render(request, 'testimonies.html')
-
-
 def forums(request):
     
     return render(request, 'forums.html')
@@ -421,7 +417,7 @@ def forums(request):
 
 def testimonies(request):
     if request.method == 'POST':
-        form = TestimoniesForm(request.POST)
+        form = TestimoniesForm(request.POST, request.FILES)
         if form.is_valid():
             testimonial = form.save(commit=False)
             testimonial.user = request.user
@@ -430,7 +426,7 @@ def testimonies(request):
     else:
         form = TestimoniesForm()
 
-    testimonials = Testimonies.objects.all()
+    testimonials = Testimonies.objects.order_by('-created_at')
     return render(request, 'testimonies.html', {'form': form, 'testimonials': testimonials})
 
 def delete_testimonial(request, testimonial_id):

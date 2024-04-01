@@ -7,6 +7,7 @@ from .models import Testimonies
 
 
 class TestimoniesForm(forms.ModelForm):
+    
     class Meta:
         model = Testimonies
         fields = ['text', 'video']

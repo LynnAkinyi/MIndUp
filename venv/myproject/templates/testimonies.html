@@ -133,7 +133,7 @@
         </div>
         <!-- Repeat for other articles -->
     </section>
-    <form method="POST" action="{% url 'testimonies' %}">
+    <form method="POST" action="{% url 'testimonies' %}" enctype="multipart/form-data">
         {% csrf_token %} {{ form.as_p }}
         <button type="submit" class="read-more-button">Post Testimonial</button>
     </form>
