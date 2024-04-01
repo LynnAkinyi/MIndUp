@@ -106,7 +106,7 @@
             <iframe src="{{ testimonial.video }}" frameborder="0" allowfullscreen></iframe> {% endif %}
             <i><p>Posted by {{ testimonial.user.username }} on {{ testimonial.created_at }}</p></i> {% if testimonial.user == request.user %}
             <form method="POST" action="{% url 'delete_testimonial' testimonial.id %}">
-                {% csrf_token %}
+                {% csrf_token %} {{ form.non_field_errors }}
                 <button type="submit" class="delete-btn ">Delete</button>
             </form>
             {% endif %}

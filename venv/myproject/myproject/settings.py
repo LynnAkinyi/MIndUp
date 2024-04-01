@@ -141,4 +141,3 @@ LOGIN_URL = 'login'
 
 ASGI_APPLICATION = 'myproject.asgi.application'
 
-

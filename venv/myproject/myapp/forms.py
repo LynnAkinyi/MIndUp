@@ -12,6 +12,14 @@ class TestimoniesForm(forms.ModelForm):
         model = Testimonies
         fields = ['text', 'video']
 
+    def clean(self):
+        cleaned_data = super().clean()
+        text = cleaned_data.get('text')
+        video = cleaned_data.get('video')
+
+        if text is None and video is None:
+            raise forms.ValidationError('You must provide either text or a video.')
+
 class ArticleForm(forms.ModelForm):
     class Meta:
         model = Article
