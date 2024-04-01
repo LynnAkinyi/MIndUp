@@ -75,7 +75,7 @@ def dashboard(request):
         return redirect('profile')
 
     # Retrieve the appointments for the logged-in therapist
-    therapist_appointments = Appointment.objects.filter(therapist=profile)
+    therapist_appointments = Appointment.objects.filter(therapist=profile).order_by('date')
 
     # Get the current date
     current_date = datetime.now().date()
@@ -89,7 +89,7 @@ def dashboard(request):
     two_days_from_now = current_date + timedelta(days=2)
 
     # Retrieve the appointments for the logged-in user that are two days or less from now
-    upcoming_appointments = Appointment.objects.filter(user=request.user, date__range=(current_date, two_days_from_now))
+    upcoming_appointments = Appointment.objects.filter(user=request.user, date__range=(current_date, two_days_from_now)).order_by('date')
 
     articles = Article.objects.all().order_by('-date')     # get all articles
 
