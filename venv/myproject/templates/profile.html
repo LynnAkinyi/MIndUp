@@ -1,6 +1,9 @@
+{% load static %}
 <section class="User Details">
     <h2>User Details</h2>
-    <img src="{{ request.user.profile.image.url }}" alt="Profile Image" id="profile-pic" width="200 px" ;/>
+    {% if user.profile.image %}
+    <img src="{{ request.user.profile.image.url }}" alt="Profile Image" id="profile-pic" width="200 px" ;/> {% else %}
+    <img src="{% static 'images/userr.png' %}" alt="Default image" id="profile-pic" width="200 px" ;> {% endif %}
     <p><b>Name:</b> {{ request.user.username }}</p>
     <p><b>Email:</b> {{ request.user.profile.email }}</p>
     <p><b>Role:</b> {{ request.user.profile.get_role_display }}</p>
@@ -11,7 +14,7 @@
 </section>
 
 
-<form method="POST" action="{% url 'profile' %}" enctype="multipart/form-data" style="width: 300px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 4px;">
+<form method="POST" action="{% url 'profile' request.user.id %}" enctype="multipart/form-data" style="width: 300px; margin: auto; padding: 20px; border: 1px solid #ccc; border-radius: 4px;">
     {% csrf_token %} {{ form.as_p }}
     <button style="background-color: #8a4c1d; color: white; padding: 10px 20px; margin: 10px 0; border: none; cursor: pointer; border-radius:20px;">Save details</button>
     <button type="button" style="background-color: #351a06; color: white; padding: 10px 20px; margin: 10px 0; border: none; cursor: pointer; border-radius:20px;" onclick="confirmDelete()">Edit</button>

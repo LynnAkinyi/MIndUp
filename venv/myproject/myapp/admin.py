@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import UserRole,  Article, MindfulnessTask, ExerciseTask, Task, Profile,Therapist, Testimonies
+from .models import UserRole,  Article,  Profile,Therapist, Testimonies
 
 # Register your models here.
 
@@ -11,18 +11,6 @@ class UserRoleAdmin(admin.ModelAdmin):
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
     list_display = ('title', 'date', 'is_new')
-
-@admin.register(MindfulnessTask)
-class MindfulnessTaskAdmin(admin.ModelAdmin):
-    list_display = ('duration', 'completed')
-
-@admin.register(ExerciseTask)
-class ExerciseTaskAdmin(admin.ModelAdmin):
-    list_display = ('duration', 'completed')
-
-@admin.register(Task)
-class TaskAdmin(admin.ModelAdmin):
-    list_display = ('detail', 'status', 'category', 'creation_date')
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):

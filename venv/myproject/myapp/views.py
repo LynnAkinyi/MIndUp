@@ -371,9 +371,11 @@ def save_profile(request):
     
     
 @login_required
-def profile(request, user_id):
+def profile(request, user_id=None):
+    user_id = user_id or request.user.id
     user = User.objects.get(id=user_id)
     therapists = Profile.objects.filter(role='therapist')
+
     if request.method == 'POST':
         form = ProfileForm(request.POST, request.FILES)
         if form.is_valid():
@@ -390,6 +392,7 @@ def profile(request, user_id):
             form = ProfileForm(instance=profile_instance)
         except Profile.DoesNotExist:
             form = ProfileForm()
+
     return render(request, 'profile.html', {'form': form, 'therapists': therapists})
 
 def therapist_detail(request, therapist_id):
