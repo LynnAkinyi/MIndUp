@@ -352,8 +352,10 @@ def article_list(request):
     articles = Article.objects.all()
     return render(request, 'article_list.html', {'articles': articles})
 
-def dir(request):
+def dir(request, view_all=False):
     therapists = Profile.objects.filter(role='therapist')
+    if not view_all:
+        therapists = therapists[:6]
     return render(request, 'dir.html', {'therapists': therapists})
 
 
@@ -407,10 +409,9 @@ def therapist_detail(request, therapist_id):
 
 
 
-def view_all_therapists(request, view_all=False):
+def view_all_therapists(request):
     therapists = Profile.objects.filter(role='therapist')
-    if not view_all:
-        therapists = therapists[:6]
+  
     return render(request, 'dir.html', {'therapists': therapists})
 
 from django.shortcuts import get_object_or_404

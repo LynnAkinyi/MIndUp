@@ -209,36 +209,21 @@
                 }
                 document.getElementById('bonusTask' + taskNumber).textContent = bonus;
 
-                // Store the bonus in localStorage
-                localStorage.setItem('bonusTask' + taskNumber, bonus);
+
 
                 // Update the chart
-                // Update the chart and store the data in localStorage
+
                 let tasks = Array.from(document.querySelectorAll('.task-list li')).map((li, i) => 'Task ' + (i + 1));
                 let bonuses = tasks.map(task => parseInt(document.getElementById('bonus' + task.replace(' ', '')).textContent));
                 myChart.data.labels = tasks;
                 myChart.data.datasets[0].data = bonuses;
                 myChart.update();
 
-                // Store the tasks and bonuses in localStorage
-                localStorage.setItem('tasks', JSON.stringify(tasks));
-                localStorage.setItem('bonuses', JSON.stringify(bonuses));
+
             });
         });
 
-        // Load the bonuses from localStorage when the page is refreshed
-        // Load the bonuses from localStorage when the page is refreshed
-        window.addEventListener('load', function() {
-            document.querySelectorAll('.task-list li').forEach((li, i) => {
-                let taskNumber = i + 1;
-                let bonus = localStorage.getItem('bonusTask' + taskNumber);
-                if (bonus !== null) {
-                    document.getElementById('bonusTask' + taskNumber).textContent = bonus;
-                    let value = ['quarter', 'half', 'three-quarters', 'complete'][bonus / 2 - 1];
-                    document.querySelector(`input[name=task${taskNumber}][value=${value}]`).checked = true;
-                }
-            });
-        });
+        let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     </script>
 </body>
 
