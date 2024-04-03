@@ -79,6 +79,10 @@ def dashboard(request):
 
     # Get the current date
     current_date = datetime.now().date()
+    
+    new_articles = Article.objects.filter(is_new=True)
+    new_testimonies = Testimonies.objects.filter(is_new=True)
+    new_therapists = Therapist.objects.filter(is_new=True)
 
     # Get the date two days from now
     two_days_from_now = current_date + timedelta(days=2)
@@ -99,7 +103,10 @@ def dashboard(request):
         'articles': articles, 
         'therapist_appointments': therapist_appointments,
         'user_appointments': user_appointments,
-        'upcoming_appointments': upcoming_appointments
+        'upcoming_appointments': upcoming_appointments,        
+        'new_articles': new_articles,
+        'new_testimonies': new_testimonies,
+        'new_therapists': new_therapists,
     }  
     
     return render(request, 'dashboard.html', context)
@@ -274,7 +281,7 @@ def community(request):
     return render(request, 'community.html', {'therapists': therapists})
 
 @login_required
-def blog(request):
+def blog(request, id):
     articles = Article.objects.order_by('-date')  # Order articles by date in descending order
     return render(request, 'blog.html', {'articles': articles})
 
@@ -373,22 +380,21 @@ def profile(request, user_id=None):
     user = User.objects.get(id=user_id)
     therapists = Profile.objects.filter(role='therapist')
 
+    try:
+        profile_instance = user.profile
+    except Profile.DoesNotExist:
+        profile_instance = Profile(user=user)
+
     if request.method == 'POST':
-        form = ProfileForm(request.POST, request.FILES)
+        form = ProfileForm(request.POST, request.FILES, instance=profile_instance)
         if form.is_valid():
-            profile = form.save(commit=False)
-            profile.user = request.user
-            profile.save()
-            if profile.role == 'therapist':
+            form.save()
+            if profile_instance.role == 'therapist':
                 return redirect('view_all_therapists')
             else:  # profile.role == 'member'
                 return redirect('dashboard')
     else:
-        try:
-            profile_instance = request.user.profile
-            form = ProfileForm(instance=profile_instance)
-        except Profile.DoesNotExist:
-            form = ProfileForm()
+        form = ProfileForm(instance=profile_instance)
 
     return render(request, 'profile.html', {'form': form, 'therapists': therapists})
 
@@ -401,8 +407,10 @@ def therapist_detail(request, therapist_id):
 
 
 
-def view_all_therapists(request):
+def view_all_therapists(request, view_all=False):
     therapists = Profile.objects.filter(role='therapist')
+    if not view_all:
+        therapists = therapists[:6]
     return render(request, 'dir.html', {'therapists': therapists})
 
 from django.shortcuts import get_object_or_404
@@ -429,6 +437,8 @@ def testimonies(request):
 
     testimonials = Testimonies.objects.order_by('-created_at')
     return render(request, 'testimonies.html', {'form': form, 'testimonials': testimonials})
+
+
 
 def delete_testimonial(request, testimonial_id):
     testimonial = get_object_or_404(Testimonies, id=testimonial_id)

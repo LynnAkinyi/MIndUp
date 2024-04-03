@@ -12,10 +12,10 @@ from django.urls import re_path
 
 
 urlpatterns = [    # Existing URL patterns
-    path('admin', admin.site.urls),
     path('', views.index, name='home'),
     path('about/', views.about, name='about'),
     path('blog/', views.blog, name='blog'),
+    path('blog/<int:id>/', views.blog, name='blog'),
     path('blog/blog.html', views.blog, name='blog'),
     path('contact/', views.contact, name='contact'),
     path('community/book.html/<int:therapist_id>/', views.book, name='book'),path('community/book.html', views.book, name='book'),
@@ -40,7 +40,7 @@ urlpatterns = [    # Existing URL patterns
     path('profile/', views.profile, name='profile'),
     path('profile/<int:user_id>/', views.profile, name='profile'),
     path('community/testimonies.html/', views.testimonies, name='testimonies'),
-    path('community/testimonies.html', views.testimonies, name='testimonies'),
+    path('community/testimonies.html', views.testimonies, name='testimonies'),      
     path('signup/', views.user_signup, name='signup'),
     path('logout/', views.user_logout, name='logout'),
     path('forums/', forums, name='forums'),

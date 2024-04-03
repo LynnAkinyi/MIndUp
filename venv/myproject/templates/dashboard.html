@@ -202,6 +202,15 @@
             border-radius: 50%;
         }
         
+        .dropdown {
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+            padding: 20px;
+            border-radius: 20px;
+            background-color: rgba(75, 51, 3, 0.282)
+        }
+        
         @media (max-width: 600px) {
             .sidenav {
                 position: relative;
@@ -302,15 +311,29 @@ logout
         <input type="text" id="searchInput" placeholder="Search...">
 
         <!-- Notification Icon -->
-        <a href="{% url 'read' %}"><span class="material-icons" id="notificationIcon">
-    notifications
-    {% if articles %}<span class="dot"></span>{% endif %}
+
+        <span class="material-icons" id="notificationIcon">
+        notifications
+        {% if new_articles or new_testimonies or new_therapists %}
+            <span class="dot"></span> {% endif %}
+        <!-- <div id="dropdown" style="display: none;">
+            <div class="dropdown">
+                <ul></ul>
+            </div>
+        </div> -->
         </span>
-</a> {% if request.user.is_authenticated %}
+
+
+
+
+        </a> {% if request.user.is_authenticated %}
         <a href="{% url 'profile' request.user.id %}">
-            <span class="material-icons">person</span>
-        </a>
-        {% endif %}
+            {% if request.user.profile.image %}
+    <img src="{{ request.user.profile.image.url }}" alt="Profile Image" id="profile-pic" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: center center;" />
+{% else %}
+    <span class="material-icons">person</span>
+{% endif %}
+        </a> {% endif %}
 
     </div>
 
@@ -330,7 +353,9 @@ menu
                     <p><b>Name:</b> {{ request.user.username }}</p>
                     <p><b>Email:</b> {{ request.user.profile.email }}</p>
                     <p><b>Role:</b> {{ request.user.profile.get_role_display }}</p>
+                    {% if role == "therapist" %}
                     <p><b>specialty:</b> {{ request.user.profile.specialty }}</p>
+                    {% endif %}
 
                 </div>
 
@@ -397,6 +422,15 @@ delete
         </div>
     </div>
     <script>
+        document.getElementById('notificationIcon').addEventListener('click', function() {
+            var dropdown = document.getElementById('dropdown');
+            if (dropdown.style.display === 'none') {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
+
         // Fetch user data from the server when the dashboard page loads
         window.onload = function() {
             fetch('/get_user_data/', {

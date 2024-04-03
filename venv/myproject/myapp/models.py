@@ -66,12 +66,14 @@ class Therapist(models.Model):
     email = models.EmailField(null=True, blank=True)
     role = models.CharField(max_length=200, choices=Profile.ROLE_CHOICES, default='therapist')
     specialty = models.CharField(max_length=200, null=True, blank=True)
+    is_new = models.BooleanField(default=True)
 
 class Testimonies(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     text = models.TextField(blank=True, null=True)
     video = models.FileField(upload_to='videos/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    is_new = models.BooleanField(default=True)
 
 class Appointment(models.Model):
     therapist = models.ForeignKey(Profile, on_delete=models.CASCADE)
