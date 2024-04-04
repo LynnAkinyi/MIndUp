@@ -17,7 +17,7 @@
         
         .chat-header {
             text-align: center;
-            background-color: #075e54;
+            background-color: #8A441D;
             color: #fff;
             padding: 10px;
             border-top-left-radius: 10px;
@@ -35,7 +35,7 @@
         
         .chat-logout a {
             text-decoration: none;
-            color: #075e54;
+            color: #8A441D;
             font-weight: bold;
         }
         
@@ -70,7 +70,7 @@
         
         #id_message_send_button {
             padding: 5px 10px;
-            background-color: #075e54;
+            background-color: #8A441D;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -97,7 +97,7 @@
         }
         
         .chat-message.left {
-            background-color: #075e54;
+            background-color: #8A441D;
             width: 80%;
             float: left;
             clear: both;
@@ -165,7 +165,7 @@
             // Create chat logout
             var chatLogout = document.createElement('div');
             chatLogout.className = 'chat-logout';
-            chatLogout.innerHTML = '{% if request.user.is_authenticated %}<div style="float: left;font-weight: bold; color: #036358;">{{ request.user|title }} </div><div style="clear: both;"></div>{% endif %}';
+            chatLogout.innerHTML = '{% if request.user.is_authenticated %}<div style="float: left;font-weight: bold; color: #8A441D;">{{ request.user|title }} </div><div style="clear: both;"></div>{% endif %}';
             chatContainer.appendChild(chatLogout);
 
             // Create chat item container
