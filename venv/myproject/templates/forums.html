@@ -136,6 +136,8 @@
 
 
     <script>
+        var uniqueId = Date.now() + Math.random();
+
         document.getElementById('create-group-button').addEventListener('click', function() {
 
             // Prompt the user to enter a group name
@@ -149,14 +151,19 @@
             // Generate a unique identifier
             var uniqueId = Date.now();
 
-            // Create chat container
-            var chatContainer = document.createElement('div');
-            chatContainer.className = 'chat-container';
-            chatContainer.dataset.groupId = uniqueId; // Store the groupId in a data attribute
+            // Create a new WebSocket connection for this group
+            const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${uniqueId}/`);
+            chatSocket.onopen = function(e) {
+                console.log("The connection was set up successfully!");
+            };
+            chatSocket.onclose = function(e) {
+                console.log("Something unexpected happened!");
+            };
 
             // Create chat container
             var chatContainer = document.createElement('div');
             chatContainer.className = 'chat-container';
+            chatContainer.dataset.groupId = uniqueId; // Store the groupId in a data attribute
 
             // Create chat header
             var chatHeader = document.createElement('div');
@@ -214,47 +221,24 @@
 
             // Append the new chat group to the chat groups list
             document.getElementById('chat-groups-list').appendChild(chatContainer);
-        });
 
-        const chatSocket = new WebSocket("ws://" + window.location.host + "/");
-        chatSocket.onopen = function(e) {
-            console.log("The connection was set up successfully!");
-        };
-        chatSocket.onclose = function(e) {
-            console.log("Something unexpected happened!");
-        };
-        document.querySelector("#id_message_send_input").focus();
-        document.querySelector("#id_message_send_input").onkeyup = function(e) {
-            if (e.keyCode == 13) {
-                document.querySelector("#id_message_send_button").click();
-            }
-        };
-        document.querySelector("#id_message_send_button").onclick = function(e) {
-            var messageInput = document.querySelector("#id_message_send_input").value;
-            var currentTime = new Date();
-            var time = currentTime.toLocaleTimeString();
-            chatSocket.send(JSON.stringify({
-                message: messageInput,
-                username: "{{request.user.username}}",
-                time: time,
-                groupId: "defaultGroupId" // Add this line
-            }));
-        };
-        chatSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-            // Find the chat item container of the group that the message belongs to
-            var messageContainer = document.querySelector("#id_chat_item_container_" + data.groupId);
-            var div = document.createElement("div");
-            div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-            div.innerHTML = `<div class="message-content">
-        <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-        <span class="message-text">${data.message}</span>
-        <span class="message-timestamp">${data.time}</span>
-    </div>`;
-            messageContainer.appendChild(div);
-            // Scroll to the bottom of the chat container
-            messageContainer.scrollTop = messageContainer.scrollHeight;
-        };
+
+            chatSocket.onmessage = function(e) {
+                const data = JSON.parse(e.data);
+                // Find the chat item container of the group that the message belongs to
+                var messageContainer = document.querySelector("#id_chat_item_container_" + data.groupId);
+                var div = document.createElement("div");
+                div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                div.innerHTML = `<div class="message-content">
+    <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+    <span class="message-text">${data.message}</span>
+    <span class="message-timestamp">${data.time}</span>
+</div>`;
+                messageContainer.appendChild(div);
+                // Scroll to the bottom of the chat container
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            };
+        });
     </script>
 </body>
 

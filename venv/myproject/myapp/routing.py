@@ -1,7 +1,14 @@
-from django.urls import path, include
+# your_project/routing.py
+from channels.routing import ProtocolTypeRouter, URLRouter
+from django.urls import re_path
 from myapp.consumer import ChatConsumer
+from myapp import consumer
 
-# the empty string routes to ChatConsumer, which manages the chat functionality.
 websocket_urlpatterns = [
-    path("", ChatConsumer.as_asgi()),
+    re_path(r'ws/chat/(?P<uniqueId>[0-9]+)/$', consumer.ChatConsumer.as_asgi()),
 ]
+
+
+application = ProtocolTypeRouter({
+    'websocket': URLRouter(websocket_urlpatterns),
+})
