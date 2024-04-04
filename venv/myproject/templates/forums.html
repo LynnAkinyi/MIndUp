@@ -136,10 +136,7 @@
 
 
     <script>
-        var uniqueId = Date.now() + Math.random();
-
         document.getElementById('create-group-button').addEventListener('click', function() {
-
             // Prompt the user to enter a group name
             var groupName = prompt("Please enter a group name");
 
@@ -151,15 +148,6 @@
             // Generate a unique identifier
             var uniqueId = Date.now();
 
-            // Create a new WebSocket connection for this group
-            const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${uniqueId}/`);
-            chatSocket.onopen = function(e) {
-                console.log("The connection was set up successfully!");
-            };
-            chatSocket.onclose = function(e) {
-                console.log("Something unexpected happened!");
-            };
-
             // Create chat container
             var chatContainer = document.createElement('div');
             chatContainer.className = 'chat-container';
@@ -169,7 +157,7 @@
             var chatHeader = document.createElement('div');
             chatHeader.className = 'chat-header';
             var h1 = document.createElement('h1');
-            h1.innerHTML = groupName + ' <i class="fas fa-comment"></i>'; // Embed the group name here
+            h1.innerHTML = groupName + ' (' + uniqueId + ') <i class="fas fa-comment"></i>'; // Embed the group name and groupId here
             chatHeader.appendChild(h1);
             chatContainer.appendChild(chatHeader);
 
@@ -200,6 +188,22 @@
             chatInputContainer.appendChild(button);
             chatContainer.appendChild(chatInputContainer);
 
+            // Append the new chat group to the chat groups list
+            document.getElementById('chat-groups-list').appendChild(chatContainer);
+
+            // Create a new WebSocket connection for this group
+            const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${uniqueId}/`);
+            chatSocket.onopen = function(e) {
+                console.log("The connection was set up successfully!");
+                chatSocket.send(JSON.stringify({
+                    command: 'join',
+                    groupId: chatContainer.dataset.groupId
+                }));
+            };
+            chatSocket.onclose = function(e) {
+                console.log("Something unexpected happened!");
+            };
+
             // Add event listeners to the input and button elements
             input.onkeyup = function(e) {
                 if (e.keyCode == 13) {
@@ -211,6 +215,7 @@
                 var currentTime = new Date();
                 var time = currentTime.toLocaleTimeString();
                 chatSocket.send(JSON.stringify({
+                    command: 'send',
                     message: messageInput,
                     username: "{{request.user.username}}",
                     time: time,
@@ -219,10 +224,6 @@
                 input.value = "";
             };
 
-            // Append the new chat group to the chat groups list
-            document.getElementById('chat-groups-list').appendChild(chatContainer);
-
-
             chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
                 // Find the chat item container of the group that the message belongs to
@@ -230,13 +231,16 @@
                 var div = document.createElement("div");
                 div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
                 div.innerHTML = `<div class="message-content">
-    <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-    <span class="message-text">${data.message}</span>
-    <span class="message-timestamp">${data.time}</span>
-</div>`;
+            <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+            <span class="message-text">${data.message}</span>
+            <span class="message-timestamp">${data.time}</span>
+        </div>`;
                 messageContainer.appendChild(div);
                 // Scroll to the bottom of the chat container
                 messageContainer.scrollTop = messageContainer.scrollHeight;
+
+                console.log("Received message data:", data);
+                console.log("Group IDs of all chat groups:", Array.from(document.querySelectorAll('.chat-container')).map(el => el.dataset.groupId));
             };
         });
     </script>
