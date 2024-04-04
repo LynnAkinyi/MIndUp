@@ -142,5 +142,4 @@ LOGIN_URL = 'login'
 
 ASGI_APPLICATION = 'myproject.asgi.application'
 
-MEDIA_ROOT= os.path.join(BASE_DIR, 'media/')
-MEDIA_URL= "/media/"
+

@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import (
     UserRole, Article, MindfulnessTask, ExerciseTask, Task,
-    Profile, Therapist, Testimonies, Appointment, Group,
+    Profile, Therapist, Testimonies, Appointment, 
     Volunteer, ChatGroup, Message
 )
 
@@ -37,10 +37,6 @@ class TherapistAdmin(admin.ModelAdmin):
 class TestimoniesAdmin(admin.ModelAdmin):
     pass
 
-
-@admin.register(Group)
-class GroupAdmin(admin.ModelAdmin):
-    pass
 
 @admin.register(Volunteer)
 class VolunteerAdmin(admin.ModelAdmin):

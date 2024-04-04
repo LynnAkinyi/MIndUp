@@ -10,7 +10,7 @@ from django.views.generic import TemplateView
 from django.http import JsonResponse
 from .forms import ArticleForm
 from .models import MindfulnessTask, ExerciseTask
-from .models import Profile, Group, Volunteer
+from .models import Profile, Volunteer
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm, TestimoniesForm
 from .models import Article,  Therapist, Testimonies, Appointment, ChatGroup, Message
@@ -181,52 +181,7 @@ def faq(request):
 def forums(request):
     
     return render(request, 'forums.html')
-
-@csrf_exempt
-@require_http_methods(["GET", "POST"])
-def create_group(request):
-    if request.method == "POST":
-        data = json.loads(request.body)
-        user = User.objects.get(username=data['created_by'])
-        Group.objects.create(name=data['name'], created_by=user)
-        return JsonResponse({'status': 'success'})
-    elif request.method == "GET":
-        groups = Group.objects.all()
-        groups_data = list(groups.values('name', 'created_by__username'))  # Convert queryset to list of dicts
-        return JsonResponse(groups_data, safe=False)
     
-@csrf_exempt
-def send_message(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        group_id = data.get('group_id')
-        message_text = data.get('message_text')
-
-        # Fetch the group
-        group = ChatGroup.objects.get(id=group_id)
-
-        # Check if the user is a member of the group
-        if request.user in group.members.all():
-            # Create and save the message
-            message = Message(user=request.user, group=group, text=message_text)
-            message.save()
-
-            return JsonResponse({'status': 'Message sent'}, status=200)
-        else:
-            # If the user is not a member of the group, raise a permission error
-            raise PermissionDenied('You are not a member of this group')
-
-    else:
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
-
-@csrf_exempt
-@login_required
-def get_messages(request):
-    if request.method == 'POST':
-        group_id = request.POST.get('group_id')
-        group = Group.objects.get(id=group_id)
-        messages = group.message_set.all().values('user__username', 'text', 'timestamp')
-        return JsonResponse(list(messages), safe=False)    
 
 @csrf_exempt
 @require_http_methods(["GET", "POST"])
@@ -245,31 +200,7 @@ def create_volunteer(request):
         volunteers_data = list(volunteers.values('user__username'))  # Convert queryset to list of dicts
         return JsonResponse(volunteers_data, safe=False)
     
-@csrf_exempt
-def join_chat_group(request):
-    if request.method == 'POST':
-        data = json.loads(request.body)
-        group_id = data.get('group_id')
-        group = ChatGroup.objects.get(id=group_id)
-        group.members.add(request.user) # Add the user to the group
-        group.save()
-        return JsonResponse({'members': list(group.members.values_list('username', flat=True))}, status=200)
-    else:
-        return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-
-def get_group_members(request, group_name):
-    group = Group.objects.get(name=group_name)
-    members = list(group.members.values('username'))
-    return JsonResponse(members, safe=False)
-
-def get_all_groups_and_members(request):
-    groups = Group.objects.all()
-    groups_and_members = []
-    for group in groups:
-        members = list(group.members.values('username'))
-        groups_and_members.append({'group': group.name, 'members': members})
-    return JsonResponse(groups_and_members, safe=False)
 
 def contact(request):
     return render(request, 'contact.html')
@@ -453,29 +384,6 @@ def delete_article(request, article_id):
     return redirect('blog')
 
 
-# def book_appointment(request, therapist_id):
-#     # Get the therapist
-#     therapist = get_object_or_404(Profile, id=therapist_id, role='therapist')
-
-#     # Create a new appointment
-#     appointment = Appointment(therapist=therapist, date=request.POST['date'])
-#     appointment.save()
-
-#     # Redirect to the therapist's profile page
-#     return redirect('therapist_profile', therapist_id=therapist.id)
-
-
-# def therapist_profile(request, therapist_id):
-#     # Get the therapist
-#     therapist = get_object_or_404(Profile, id=therapist_id, role='therapist')
-
-#     # Get the appointments for this therapist
-#     appointments = Appointment.objects.filter(therapist=therapist)
-
-#     # Render the profile page
-#     return render(request, 'therapist_profile.html', {'therapist': therapist, 'appointments': appointments})
-
-
 @csrf_exempt
 def create_chat_group(request):
     if request.method == 'POST':
@@ -500,3 +408,88 @@ def get_chat_groups(request):
         } for group in groups], safe=False)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def create_group(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user = User.objects.get(username=data['created_by'])
+        ChatGroup.objects.create(name=data['name'], created_by=user)
+        return JsonResponse({'status': 'success'})
+    elif request.method == "GET":
+        groups = ChatGroup.objects.all()
+        groups_data = list(groups.values('name', 'created_by__username'))  # Convert queryset to list of dicts
+        return JsonResponse(groups_data, safe=False)
+    
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def create_group(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user = User.objects.get(username=data['created_by'])
+        ChatGroup.objects.create(name=data['name'], created_by=user)
+        return JsonResponse({'status': 'success'})
+    elif request.method == "GET":
+        groups = ChatGroup.objects.all()
+        groups_data = list(groups.values('name', 'created_by__username'))  # Convert queryset to list of dicts
+        return JsonResponse(groups_data, safe=False)    
+    
+@csrf_exempt
+def send_message(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        group_id = data.get('group_id')
+        message_text = data.get('message_text')
+
+        # Fetch the group
+        group = ChatGroup.objects.get(id=group_id)
+
+        # Check if the user is a member of the group
+        if request.user in group.members.all():
+            # Create and save the message
+            message = Message(user=request.user, group=group, text=message_text)
+            message.save()
+
+            return JsonResponse({'status': 'Message sent'}, status=200)
+        else:
+            # If the user is not a member of the group, raise a permission error
+            raise PermissionDenied('You are not a member of this group')
+
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+@csrf_exempt
+@login_required
+def get_messages(request):
+    if request.method == 'POST':
+        group_id = request.POST.get('group_id')
+        group = ChatGroup.objects.get(id=group_id)
+        messages = group.message_set.all().values('user__username', 'text', 'timestamp')
+        return JsonResponse(list(messages), safe=False)
+    
+@csrf_exempt
+def join_chat_group(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        group_id = data.get('group_id')
+        group = ChatGroup.objects.get(id=group_id)
+        group.members.add(request.user) # Add the user to the group
+        group.save()
+        return JsonResponse({'members': list(group.members.values_list('username', flat=True))}, status=200)
+    else:
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+
+def get_group_members(request, group_name):
+    group = ChatGroup.objects.get(name=group_name)
+    members = list(group.members.values('username'))
+    return JsonResponse(members, safe=False)
+
+def get_all_groups_and_members(request):
+    groups = ChatGroup.objects.all()
+    groups_and_members = []
+    for group in groups:
+        members = list(group.members.values('username'))
+        groups_and_members.append({'group': group.name, 'members': members})
+    return JsonResponse(groups_and_members, safe=False)    

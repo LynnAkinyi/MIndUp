@@ -83,24 +83,20 @@ class Appointment(models.Model):
     def __str__(self):
         return f'Appointment at {self.date} with {self.therapist.name} scheduled by {self.user.username}'
 
-class Group(models.Model):
-    name = models.CharField(max_length=100)
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    members = models.ManyToManyField(User, related_name='groups_members') 
 
 class Volunteer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     
 class ChatGroup(models.Model):
-    title = models.CharField(max_length=200, null=False)  # Ensure this is not null
+    title = models.CharField(max_length=200, null=True)  # Ensure this is not null
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     members = models.ManyToManyField(User, related_name='chat_groups')
 
     def __str__(self):
-        return self.title  # Return the title of the ChatGroup
+        return self.title if self.title else 'Untitled'  # Return the title of the ChatGroup
 
 class Message(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    group = models.ForeignKey(Group, on_delete=models.CASCADE)
+    group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE)
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

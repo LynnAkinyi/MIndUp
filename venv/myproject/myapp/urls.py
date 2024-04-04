@@ -6,9 +6,9 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from .views import create_group, create_volunteer, create_chat_group, get_chat_groups, upcoming_appointments, delete_appointment
+from .views import create_volunteer, create_chat_group, get_chat_groups, upcoming_appointments, delete_appointment
 from django.urls import re_path
-
+from myapp.consumer import ChatConsumer
 
 
 urlpatterns = [    # Existing URL patterns
@@ -52,11 +52,10 @@ urlpatterns = [    # Existing URL patterns
     path('articles/', views.article_list, name='article_list'),
     path('delete_article/<int:article_id>/', views.delete_article, name='delete_article'),
     path('delete_testimonial/<int:testimonial_id>/', views.delete_testimonial, name='delete_testimonial'),
-    path('groups/', create_group, name='create-group'),
+    path('create_chat_group/', views.create_chat_group, name='create_chat_group'),
     path('volunteers/', create_volunteer, name='create-volunteer'),
     path('groups_and_members/', views.get_all_groups_and_members, name='groups_and_members'),
     path('groups/get_members/<str:group_name>/', views.get_group_members, name='get_group_members'),
-    path('create_chat_group/', create_chat_group, name='create_chat_group'),
     path('get_chat_groups/', get_chat_groups, name='get_chat_groups'),
     path('join_chat_group/', views.join_chat_group, name='join_chat_group'),
     path('therapist/<int:therapist_id>/', views.therapist_detail, name='therapist_detail'),
@@ -68,3 +67,6 @@ urlpatterns = [    # Existing URL patterns
     path('get_messages/', views.get_messages, name='get_messages'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+websocket_urlpatterns = [
+    re_path(r'ws/chat/(?P<groupId>\w+)/$', ChatConsumer.as_asgi()),
+]
