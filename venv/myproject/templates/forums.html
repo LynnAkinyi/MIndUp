@@ -187,8 +187,8 @@
                             var uniqueId = group.id;
                             var groupName = group.title;
 
-                            // Generate a unique identifier
-                            var uniqueId = Date.now();
+                            // Use the id returned by the server as the uniqueId for the chat group
+                            var uniqueId = group.id;
 
                             // Create chat container
                             var chatContainer = document.createElement('div');
