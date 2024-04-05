@@ -463,10 +463,16 @@ def send_message(request):
 @login_required
 def get_messages(request):
     if request.method == 'POST':
-        group_id = request.POST.get('group_id')
-        group = ChatGroup.objects.get(id=group_id)
+        data = json.loads(request.body)
+        group_id = data.get('group_id')
+        try:
+            group = ChatGroup.objects.get(id=group_id)
+        except ChatGroup.DoesNotExist:
+            return JsonResponse({'error': 'Group not found'}, status=404)
         messages = group.message_set.all().values('user__username', 'text', 'timestamp')
         return JsonResponse(list(messages), safe=False)
+    else:
+        return JsonResponse({'error': 'Invalid request'}, status=400)
     
 @csrf_exempt
 def join_chat_group(request):

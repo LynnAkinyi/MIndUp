@@ -65,6 +65,7 @@ urlpatterns = [    # Existing URL patterns
     path('upcoming-appointments/', upcoming_appointments, name='upcoming_appointments'),
     path('send_message/', views.send_message, name='send_message'),
     path('get_messages/', views.get_messages, name='get_messages'),
+    # path('get_messages/<int:group_id>/', views.get_messages, name='get_messages'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
