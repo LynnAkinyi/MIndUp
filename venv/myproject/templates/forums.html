@@ -154,7 +154,7 @@
         }
 
         function get_messages(groupId) {
-            // Send a GET request to the server to fetch messages for the specified chat group
+            // Fetch messages from the server
             fetch('/get_messages/', {
                     method: 'POST',
                     headers: {
@@ -170,23 +170,28 @@
                     if (data.error) {
                         alert(data.error);
                     } else {
-                        // The server returned the messages successfully
-                        var messageContainer = document.querySelector("#id_chat_item_container_" + groupId);
-                        data.forEach(message => {
-                            var div = document.createElement("div");
-                            div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-                            div.innerHTML = `<div class="message-content">
-                    <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
-                    <span class="message-text">${message.text}</span>
-                    <span class="message-timestamp">${message.time}</span>
-                </div>`;
-                            messageContainer.appendChild(div);
-                        });
-                        // Scroll to the bottom of the chat container
-                        messageContainer.scrollTop = messageContainer.scrollHeight;
-
+                        // Display messages
+                        displayMessages(data, groupId);
                     }
                 });
+        }
+
+        function displayMessages(messages, groupId) {
+            var messageContainer = document.querySelector("#id_chat_item_container_" + groupId);
+            if (messages) { // Check if messages are defined
+                messages.forEach(message => {
+                    var div = document.createElement("div");
+                    div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                    div.innerHTML = `<div class="message-content">
+                <span class="message-username">${message && message.username ? message.username.charAt(0).toUpperCase() + message.username.slice(1) : ''}</span>
+                <span class="message-text">${message.text}</span>
+                <span class="message-timestamp">${message.time}</span>
+            </div>`;
+                    messageContainer.appendChild(div);
+                });
+                // Scroll to the bottom of the chat container
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
         }
 
 
@@ -245,6 +250,8 @@
                             // Use the id returned by the server as the uniqueId for the chat group
                             var uniqueId = group.id;
 
+
+
                             // Create chat container
                             var chatContainer = document.createElement('div');
                             chatContainer.className = 'chat-container';
@@ -257,6 +264,7 @@
                             chatHeader.className = 'chat-header';
                             var h1 = document.createElement('h1');
                             h1.innerHTML = groupName + ' (' + uniqueId + ') <i class="fas fa-comment"></i>'; // Embed the group name and groupId here
+
                             chatHeader.appendChild(h1);
                             chatContainer.appendChild(chatHeader);
 
@@ -340,8 +348,10 @@
 
                                 console.log("Received message data:", data);
                                 console.log("Group IDs of all chat groups:", Array.from(document.querySelectorAll('.chat-container')).map(el => el.dataset.groupId));
-                                get_messages(uniqueId);
+
                             };
+                            // Fetch the messages for this group
+                            get_messages(uniqueId);
                         });
                     }
                 });

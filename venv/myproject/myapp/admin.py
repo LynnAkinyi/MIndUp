@@ -37,7 +37,6 @@ class TherapistAdmin(admin.ModelAdmin):
 class TestimoniesAdmin(admin.ModelAdmin):
     pass
 
-
 @admin.register(Volunteer)
 class VolunteerAdmin(admin.ModelAdmin):
     pass

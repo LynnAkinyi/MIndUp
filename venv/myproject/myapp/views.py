@@ -27,6 +27,7 @@ from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 from django.core.exceptions import PermissionDenied
+from django.core import serializers
 
 
 
@@ -442,20 +443,22 @@ def send_message(request):
         group_id = data.get('group_id')
         message_text = data.get('message_text')
 
-        # Fetch the group
-        group = ChatGroup.objects.get(id=group_id)
+        try:
+            # Fetch the group
+            group = ChatGroup.objects.get(id=group_id)
 
-        # Check if the user is a member of the group
-        if request.user in group.members.all():
-            # Create and save the message
-            message = Message(user=request.user, group=group, text=message_text)
-            message.save()
+            # Check if the user is a member of the group
+            if request.user in group.members.all():
+                # Create and save the message
+                message = Message(user=request.user, group=group, text=message_text)
+                message.save()
 
-            return JsonResponse({'status': 'Message sent'}, status=200)
-        else:
-            # If the user is not a member of the group, raise a permission error
-            raise PermissionDenied('You are not a member of this group')
-
+                return JsonResponse({'status': 'Message sent'}, status=200)
+            else:
+                # If the user is not a member of the group, raise a permission error
+                raise PermissionDenied('You are not a member of this group')
+        except ChatGroup.DoesNotExist:
+            return JsonResponse({'error': 'Group not found'}, status=404)
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
@@ -470,7 +473,11 @@ def get_messages(request):
         except ChatGroup.DoesNotExist:
             return JsonResponse({'error': 'Group not found'}, status=404)
         messages = group.message_set.all().values('user__username', 'text', 'timestamp')
-        return JsonResponse(list(messages), safe=False)
+        messages = list(messages)
+        for message in messages:
+            message['username'] = message.pop('user__username')
+            message['time'] = message.pop('timestamp')
+        return JsonResponse(messages, safe=False)
     else:
         return JsonResponse({'error': 'Invalid request'}, status=400)
     

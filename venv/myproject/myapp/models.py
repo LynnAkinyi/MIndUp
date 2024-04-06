@@ -100,3 +100,7 @@ class Message(models.Model):
     group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE)
     text = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def username(self):
+        return self.user.username
