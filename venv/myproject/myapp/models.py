@@ -104,3 +104,7 @@ class Message(models.Model):
     @property
     def username(self):
         return self.user.username
+
+    @property
+    def time(self):
+        return self.timestamp.strftime('%H:%M')  # Return the time as a string in 'HH:MM' format # or '%H:%M' for 24-hour format without seconds

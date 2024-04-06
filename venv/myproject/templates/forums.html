@@ -123,10 +123,35 @@
             bottom: 5px;
             right: 5px;
         }
+        
+        #chat-groups-list {
+            column-count: 2;
+            padding: 0;
+            list-style-type: none;
+        }
+        
+        #volunteerButton,
+        #create-group-button,
+        #joinButton {
+            display: inline-block;
+            background-color: #8A441D;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
     </style>
 </head>
 
 <body>
+    <div class="voluntee">
+        <h3>Volunteers</h3>
+
+        <button id="volunteerButton" type="submit">Volunteer as Listener</button>
+        <ul id="volunteeList"></ul>
+    </div>
     <div class="chat-groups">
         <h2>Chat Groups</h2>
         <button id="create-group-button">Create Group</button>
@@ -137,6 +162,8 @@
 
 
     <script>
+        var loggedInUser = "{{ request.user.username }}";
+
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -356,6 +383,40 @@
                     }
                 });
         };
+
+        document.getElementById('volunteerButton').addEventListener('click', function() {
+            var volunteerName = loggedInUser;
+
+            // Send a POST request to the server to create a new volunteer
+            fetch('/volunteers/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                body: JSON.stringify({
+                    user: volunteerName
+                })
+            }).then(function(response) {
+                if (response.ok) {
+                    alert("Volunteered successfully");
+                } else {
+                    alert("Failed to volunteer");
+                }
+            });
+        });
+
+        // Fetch volunteers
+        fetch('/volunteers/')
+            .then(response => response.json())
+            .then(volunteers => {
+                const volunteerList = document.getElementById('volunteeList');
+                volunteers.forEach(volunteer => {
+                    const li = document.createElement('li');
+                    li.textContent = volunteer.user__username; // Change this line
+                    volunteerList.appendChild(li);
+                });
+            });
     </script>
 </body>
 
