@@ -179,9 +179,9 @@ def faq(request):
     return render(request, 'faq.html')
 
 
-def forums(request):
+# def forums(request):
     
-    return render(request, 'forums.html')
+#     return render(request, 'forums.html')
     
 
 @csrf_exempt
