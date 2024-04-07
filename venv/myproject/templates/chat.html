@@ -16,7 +16,7 @@
         
         .chat-header {
             text-align: center;
-            background-color: #075e54;
+            background-color: #8A441D;
             color: #fff;
             padding: 10px;
             border-top-left-radius: 10px;
@@ -30,12 +30,6 @@
         .chat-logout {
             text-align: right;
             padding: 10px;
-        }
-        
-        .chat-logout a {
-            text-decoration: none;
-            color: #075e54;
-            font-weight: bold;
         }
         
         .chat-logout a:hover {
@@ -69,7 +63,7 @@
         
         #id_message_send_button {
             padding: 5px 10px;
-            background-color: #075e54;
+            background-color: #8A441D;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -88,6 +82,7 @@
         
         .chat-message.right {
             background-color: black;
+            opacity: 0.7;
             width: 80%;
             float: right;
             clear: both;
@@ -96,7 +91,8 @@
         }
         
         .chat-message.left {
-            background-color: #075e54;
+            background-color: #8A441D;
+            opacity: 0.7;
             width: 80%;
             float: left;
             clear: both;
@@ -158,21 +154,21 @@
 
             // Set the inner HTML of the chat container
             chatContainer.innerHTML = `
-                <div class="chat-header">
-                    <h1>${volunteerName} <i class="fas fa-comment"></i></h1>
-                </div>
-                <div class="chat-logout">
-                    <div style="float: left;font-weight: bold; color: #036358;">${volunteerName} </div>
-                </div>
-                <div style="clear: both;"></div>
-                <div class="chat__item__container" id="id_chat_item_container">
-                    <!-- Messages will be displayed here with a scrollbar -->
-                </div>
-                <div class="chat-input-container">
-                    <input type="text" id="id_message_send_input" placeholder="Type your message..." />
-                    <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
-                </div>
-            `;
+            <div class="chat-header">
+                <h1>${volunteerName} <i class="fas fa-comment"></i></h1>
+            </div>
+            <div class="chat-logout">
+                <div style="float: left;font-weight: bold; ">${volunteerName} </div>
+            </div>
+            <div style="clear: both;"></div>
+            <div class="chat__item__container" id="id_chat_item_container">
+                <!-- Messages will be displayed here with a scrollbar -->
+            </div>
+            <div class="chat-input-container">
+                <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+                <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
+            </div>
+        `;
 
             // Insert the chat container into the page
             document.body.appendChild(chatContainer);
@@ -187,23 +183,7 @@
                     username: "{{request.user.username}}",
                     time: time
                 }));
-            };
-            document.querySelector("#id_message_send_input").onkeyup = function(e) {
-                if (e.keyCode == 13) { // Enter key
-                    document.querySelector("#id_message_send_button").click();
-                }
-            };
-
-            // Add event listeners to the send button and the input field
-            document.querySelector("#id_message_send_button").onclick = function(e) {
-                var messageInput = document.querySelector("#id_message_send_input").value;
-                var currentTime = new Date();
-                var time = currentTime.toLocaleTimeString();
-                chatSocket.send(JSON.stringify({
-                    message: messageInput,
-                    username: "{{request.user.username}}",
-                    time: time
-                }));
+                document.querySelector("#id_message_send_input").value = "";
             };
             document.querySelector("#id_message_send_input").onkeyup = function(e) {
                 if (e.keyCode == 13) { // Enter key
@@ -218,35 +198,24 @@
                 console.log("Something unexpected happened!");
             };
             document.querySelector("#id_message_send_input").focus();
-            document.querySelector("#id_message_send_input").onkeyup = function(e) {
-                if (e.keyCode == 13) {
-                    document.querySelector("#id_message_send_button").click();
-                }
-            };
-            document.querySelector("#id_message_send_button").onclick = function(e) {
-                var messageInput = document.querySelector("#id_message_send_input").value;
-                var currentTime = new Date();
-                var time = currentTime.toLocaleTimeString();
-                chatSocket.send(JSON.stringify({
-                    message: messageInput,
-                    username: "{{request.user.username}}",
-                    time: time
-                }));
-            };
+
             chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
                 var messageContainer = document.querySelector("#id_chat_item_container");
-                var div = document.createElement("div");
-                div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-                div.innerHTML = `<div class="message-content">
-                    <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-                    <span class="message-text">${data.message}</span>
-                    <span class="message-timestamp">${data.time}</span>
-                </div>`;
-                document.querySelector("#id_message_send_input").value = "";
-                messageContainer.appendChild(div);
-                // Scroll to the bottom of the chat container
-                messageContainer.scrollTop = messageContainer.scrollHeight;
+                if (messageContainer) {
+                    var div = document.createElement("div");
+                    div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                    div.innerHTML = `<div class="message-content">
+                <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+                <span class="message-text">${data.message}</span>
+                <span class="message-timestamp">${data.time}</span>
+            </div>`;
+                    messageContainer.appendChild(div);
+                    // Scroll to the bottom of the chat container
+                    messageContainer.scrollTop = messageContainer.scrollHeight;
+                } else {
+                    console.error('Message container not found');
+                }
             };
         }
     </script>
