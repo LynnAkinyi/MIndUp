@@ -21,7 +21,6 @@ from django.views import View
 from django.http import HttpResponse
 from django.views.generic import ListView, DetailView
 from django.views.decorators.http import require_http_methods
-from django.core import serializers
 from django.core.exceptions import ObjectDoesNotExist
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
@@ -201,7 +200,10 @@ def create_volunteer(request):
         volunteers_data = list(volunteers.values('user__username'))  # Convert queryset to list of dicts
         return JsonResponse(volunteers_data, safe=False)
     
-
+def get_volunteers(request):
+    volunteers = Volunteer.objects.all()
+    volunteer_list = list(volunteers.values('user__username', 'user_id'))  # Include 'user_id' here
+    return JsonResponse(volunteer_list, safe=False)
 
 def contact(request):
     return render(request, 'contact.html')

@@ -1,25 +1,22 @@
-{% load static %}
 <!DOCTYPE html>
 <html>
 
 <head>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
         body {
             font-family: Arial, sans-serif;
         }
         
         .chat-container {
-            max-width: 80vw;
+            max-width: 400px;
             margin: 0 auto;
             padding: 10px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
         }
         
         .chat-header {
             text-align: center;
-            background-color: #8A441D;
+            background-color: #075e54;
             color: #fff;
             padding: 10px;
             border-top-left-radius: 10px;
@@ -37,7 +34,7 @@
         
         .chat-logout a {
             text-decoration: none;
-            color: #8A441D;
+            color: #075e54;
             font-weight: bold;
         }
         
@@ -72,13 +69,13 @@
         
         #id_message_send_button {
             padding: 5px 10px;
-            background-color: #8A441D;
+            background-color: #075e54;
             color: #fff;
             border: none;
-            border-radius: 20px;
+            border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
-            margin-left: 5px;
+            margin-left: 10px;
         }
         
         .chat-message {
@@ -99,7 +96,7 @@
         }
         
         .chat-message.left {
-            background-color: #8A441D;
+            background-color: #075e54;
             width: 80%;
             float: left;
             clear: both;
@@ -125,243 +122,135 @@
             bottom: 5px;
             right: 5px;
         }
-        
-        .sidenav {
-            background-color: #E7E6E6;
-            border-radius: 10px;
-            width: 230px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
-            height: 100%;
-            overflow-x: hidden;
-            transition: 0.3s;
-            display: flex;
-            justify-content: center;
-            /* Add a transition effect */
-        }
-        
-        .sidenav ul {
-            list-style-type: none;
-            margin: 30px;
-            padding: 0;
-            justify-content: center;
-        }
-        
-        .sidenav li {
-            padding: 10px 15px;
-            cursor: pointer;
-            margin: 20px;
-            transition: 0.25s;
-        }
-        
-        .sidenav li:hover {
-            background-color: #8A441D;
-            color: #fff;
-            border-radius: 40px;
-        }
-        
-        #id_recipient_input {
-            width: 98%;
-            margin-left: 1%;
-            margin-right: 1%;
-            padding: 8px;
-            margin-top: 30px;
-            margin-bottom: 30px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        
-        .hide-sidenav {
-            left: -250px;
-        }
-        
-        .active {
-            background-color: #8A441D;
-            color: #fff;
-        }
-        
-        .main {
-            flex: 1;
-            height: 100%;
-            margin-left: 200px;
-        }
-        
-        .user-wrapper {
-            display: flex;
-            align-items: center;
-        }
-        
-        .material-icons {
-            color: #8A441D;
-            font-size: 28px;
-            cursor: pointer;
-            margin-right: 15px;
-            /* Adjusted margin */
-        }
     </style>
 </head>
 
 <body>
-    <div class="sidenav" id="sidenav">
-
-        <ul>
-            <h2>Users</h2>
-            {% for user in users %}
-            <li class="user-wrapper">
-                <!-- <span class="material-icons">person</span> -->
-                <span id="{{ user.username }}">{{ user.username }}</span>
-            </li>
-            {% endfor %}
-        </ul>
-        <input type="hidden" id="id_recipient_input" />
+    <div class="voluntee">
+        <h3>Volunteers</h3>
+        <ul id="volunteeList"></ul>
     </div>
 
-    <div class="main">
-        <div class="chat-container">
-            <div class="chat-header">
-                <h1>Tranquil Mind <i class="fas fa-comment"></i></h1>
-            </div>
-            <div class="chat-logout">
-                {% if request.user.is_authenticated %}
-                <div style="float: left;font-weight: bold; color: #8A441D;">{{ request.user|title }} </div>
-
-                <div style="clear: both;"></div>
-                {% endif %}
-            </div>
-            <div class="chat__item__container" id="id_chat_item_container">
-                <!-- Messages will be displayed here with a scrollbar -->
-            </div>
-            <div class="chat-input-container">
-                <input type="text" id="id_message_send_input" placeholder="Type your message..." />
-                <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
-            </div>
-        </div>
-    </div>
     <script>
-        window.onload = function() {
-            // Retrieve the messages from localStorage
-            var messages = JSON.parse(localStorage.getItem('messages')) || [];
-            var messageContainer = document.querySelector("#id_chat_item_container");
-
-            // Display each message
-            messages.forEach(function(message) {
-                var div = document.createElement("div");
-                div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-                div.innerHTML = `<div class="message-content">
-                <span class="message-username">${message.username.charAt(0).toUpperCase() + message.username.slice(1)}</span>
-                <span class="message-text">${message.message}</span>
-                <span class="message-timestamp">${message.time}</span>
-            </div>`;
-                messageContainer.appendChild(div);
-            });
-
-            // Add event listeners to the user elements in the sidebar
-            var users = document.querySelectorAll(".user-wrapper");
-            users.forEach(function(user) {
-                user.addEventListener("click", function() {
-                    var recipient = this.querySelector("span").textContent;
-
-                    // Create a new chat container for the chosen recipient
-                    createNewChat(recipient);
+        // Fetch volunteers
+        fetch('/volunteers/')
+            .then(response => response.json())
+            .then(volunteers => {
+                const volunteerList = document.getElementById('volunteeList');
+                volunteers.forEach(volunteer => {
+                    const li = document.createElement('li');
+                    li.textContent = volunteer.user__username; // Change this line
+                    li.addEventListener('click', function() {
+                        openChatWindow(volunteer.user__username);
+                    });
+                    volunteerList.appendChild(li);
                 });
             });
-        };
 
-        // Function to create a new chat container
-        function createNewChat(recipient) {
-            // Create elements for the new chat container
-            var newDiv = document.createElement('div');
-            newDiv.className = 'chat-container';
-            newDiv.innerHTML = `
-        <div class="chat-header">
-            <h1>Chat with ${recipient}</h1>
-        </div>
-        <div class="chat__item__container" id="id_chat_item_container_${recipient}">
-            <!-- Messages will be displayed here with a scrollbar -->
-        </div>
-        <div class="chat-input-container">
-            <input type="text" id="id_message_send_input_${recipient}" placeholder="Type your message..." />
-            <button type="submit" id="id_message_send_button_${recipient}"><i class="fas fa-paper-plane"></i> Send</button>
-        </div>
-    `;
+        // Function to open chat window for a volunteer
+        function openChatWindow(volunteerName) {
+            // Set up WebSocket connection for the chat
+            const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/" + volunteerName + "/");
 
-            // Append the new chat container to the main container
-            document.querySelector(".main").appendChild(newDiv);
+            // Create a new chat container
+            var chatContainer = document.createElement('div');
+            chatContainer.className = 'chat-container';
 
-            // Create a new WebSocket connection for this chat session
-            var chatSocket = new WebSocket("ws://" + window.location.host + "/");
+            // Set the inner HTML of the chat container
+            chatContainer.innerHTML = `
+                <div class="chat-header">
+                    <h1>${volunteerName} <i class="fas fa-comment"></i></h1>
+                </div>
+                <div class="chat-logout">
+                    <div style="float: left;font-weight: bold; color: #036358;">${volunteerName} </div>
+                </div>
+                <div style="clear: both;"></div>
+                <div class="chat__item__container" id="id_chat_item_container">
+                    <!-- Messages will be displayed here with a scrollbar -->
+                </div>
+                <div class="chat-input-container">
+                    <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+                    <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
+                </div>
+            `;
 
-            var messageInput = document.querySelector(`#id_message_send_input_${recipient}`);
-            var messageSendButton = document.querySelector(`#id_message_send_button_${recipient}`);
+            // Insert the chat container into the page
+            document.body.appendChild(chatContainer);
 
-            messageInput.focus();
-            messageInput.onkeyup = function(e) {
-                if (e.keyCode == 13) {
-                    messageSendButton.click();
+            // Add event listeners to the send button and the input field
+            document.querySelector("#id_message_send_button").onclick = function(e) {
+                var messageInput = document.querySelector("#id_message_send_input").value;
+                var currentTime = new Date();
+                var time = currentTime.toLocaleTimeString();
+                chatSocket.send(JSON.stringify({
+                    message: messageInput,
+                    username: "{{request.user.username}}",
+                    time: time
+                }));
+            };
+            document.querySelector("#id_message_send_input").onkeyup = function(e) {
+                if (e.keyCode == 13) { // Enter key
+                    document.querySelector("#id_message_send_button").click();
                 }
             };
 
-            messageSendButton.onclick = function(e) {
-                var message = messageInput.value;
+            // Add event listeners to the send button and the input field
+            document.querySelector("#id_message_send_button").onclick = function(e) {
+                var messageInput = document.querySelector("#id_message_send_input").value;
                 var currentTime = new Date();
                 var time = currentTime.toLocaleTimeString();
-
                 chatSocket.send(JSON.stringify({
-                    message: message,
+                    message: messageInput,
                     username: "{{request.user.username}}",
-                    time: time,
-                    recipient: recipient,
-                    recipientId: recipientId // Assuming recipientId is available
+                    time: time
                 }));
-
-                // Store the message in localStorage
-                var messages = JSON.parse(localStorage.getItem('messages')) || [];
-                messages.push({
-                    message: message,
-                    username: "{{request.user.username}}",
-                    time: time,
-                    recipient: recipient
-                });
-                localStorage.setItem('messages', JSON.stringify(messages));
-
-                messageInput.value = "";
+            };
+            document.querySelector("#id_message_send_input").onkeyup = function(e) {
+                if (e.keyCode == 13) { // Enter key
+                    document.querySelector("#id_message_send_button").click();
+                }
             };
 
+            chatSocket.onopen = function(e) {
+                console.log("The connection was set up successfully!");
+            };
+            chatSocket.onclose = function(e) {
+                console.log("Something unexpected happened!");
+            };
+            document.querySelector("#id_message_send_input").focus();
+            document.querySelector("#id_message_send_input").onkeyup = function(e) {
+                if (e.keyCode == 13) {
+                    document.querySelector("#id_message_send_button").click();
+                }
+            };
+            document.querySelector("#id_message_send_button").onclick = function(e) {
+                var messageInput = document.querySelector("#id_message_send_input").value;
+                var currentTime = new Date();
+                var time = currentTime.toLocaleTimeString();
+                chatSocket.send(JSON.stringify({
+                    message: messageInput,
+                    username: "{{request.user.username}}",
+                    time: time
+                }));
+            };
             chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
-                var messageContainer = document.querySelector(`#id_chat_item_container_${recipient}`);
+                var messageContainer = document.querySelector("#id_chat_item_container");
                 var div = document.createElement("div");
                 div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
                 div.innerHTML = `<div class="message-content">
-            <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-            <span class="message-text">${data.message}</span>
-            <span class="message-timestamp">${data.time}</span>
-        </div>`;
+                    <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+                    <span class="message-text">${data.message}</span>
+                    <span class="message-timestamp">${data.time}</span>
+                </div>`;
+                document.querySelector("#id_message_send_input").value = "";
                 messageContainer.appendChild(div);
-
-                // Retrieve existing messages from localStorage
-                var messages = JSON.parse(localStorage.getItem('messages')) || [];
-
-                // Add the new message to the array
-                messages.push({
-                    message: data.message,
-                    username: data.username,
-                    time: data.time,
-                    recipient: data.recipient
-                });
-
-                // Store the updated array back in localStorage
-                localStorage.setItem('messages', JSON.stringify(messages));
-
                 // Scroll to the bottom of the chat container
                 messageContainer.scrollTop = messageContainer.scrollHeight;
             };
         }
     </script>
-
 </body>
+
 
 </html>
