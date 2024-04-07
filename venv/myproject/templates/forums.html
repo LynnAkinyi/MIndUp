@@ -148,12 +148,7 @@
 </head>
 
 <body>
-    <div class="voluntee">
-        <h3>Volunteers</h3>
 
-        <button id="volunteerButton" type="submit">Volunteer as Listener</button>
-        <ul id="volunteeList"></ul>
-    </div>
     <div class="chat-groups">
         <h2>Chat Groups</h2>
         <button id="create-group-button">Create Group</button>
@@ -321,6 +316,8 @@
                             var button = document.createElement('button');
                             button.type = 'submit';
                             button.id = 'id_message_send_button_' + uniqueId;
+                            button.style.backgroundColor = '#8A441D';
+                            button.style.color = 'white';
                             button.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
                             chatInputContainer.appendChild(input);
                             chatInputContainer.appendChild(button);
@@ -387,40 +384,6 @@
                     }
                 });
         };
-
-        document.getElementById('volunteerButton').addEventListener('click', function() {
-            var volunteerName = loggedInUser;
-
-            // Send a POST request to the server to create a new volunteer
-            fetch('/volunteers/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({
-                    user: volunteerName
-                })
-            }).then(function(response) {
-                if (response.ok) {
-                    alert("Volunteered successfully");
-                } else {
-                    alert("Failed to volunteer");
-                }
-            });
-        });
-
-        // Fetch volunteers
-        fetch('/volunteers/')
-            .then(response => response.json())
-            .then(volunteers => {
-                const volunteerList = document.getElementById('volunteeList');
-                volunteers.forEach(volunteer => {
-                    const li = document.createElement('li');
-                    li.textContent = volunteer.user__username; // Change this line
-                    volunteerList.appendChild(li);
-                });
-            });
     </script>
 </body>
 

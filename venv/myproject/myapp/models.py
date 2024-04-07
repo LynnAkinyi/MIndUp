@@ -6,6 +6,7 @@ from django.utils.timezone import now
 import datetime
 from django.utils import timezone
 from datetime import datetime
+from django.contrib.auth import get_user_model
 
 class UserRole(models.Model):
     name = models.CharField(max_length=50)
@@ -108,3 +109,4 @@ class Message(models.Model):
     @property
     def time(self):
         return self.timestamp.strftime('%H:%M')  # Return the time as a string in 'HH:MM' format # or '%H:%M' for 24-hour format without seconds
+
