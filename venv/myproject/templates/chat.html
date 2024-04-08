@@ -234,6 +234,8 @@
             chatSocket.onclose = function(e) {
                 console.log("Something unexpected happened!");
             };
+
+
             document.querySelector("#id_message_send_input").focus();
 
             chatSocket.onmessage = function(e) {

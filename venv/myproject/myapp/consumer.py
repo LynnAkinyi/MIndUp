@@ -16,6 +16,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             )
 
     async def receive(self, text_data):
+        print("Received data:", text_data)
         text_data_json = json.loads(text_data)
         command = text_data_json.get('command')
 
@@ -51,6 +52,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def create_message(self, username, group_id, message_text):
+        print("Creating message:", username, group_id, message_text)
         User = get_user_model()
         user = User.objects.get(username=username)
         group = ChatGroup.objects.get(id=group_id)

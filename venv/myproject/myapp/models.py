@@ -110,3 +110,5 @@ class Message(models.Model):
     def time(self):
         return self.timestamp.strftime('%H:%M')  # Return the time as a string in 'HH:MM' format # or '%H:%M' for 24-hour format without seconds
 
+class OneOnOneChat(models.Model):
+    members = models.ManyToManyField(get_user_model(), related_name='one_on_one_chats')
