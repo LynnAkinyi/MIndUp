@@ -18,7 +18,7 @@ import base64
 import uuid
 from django.core.files.base import ContentFile
 from django.views import View
-from django.http import HttpResponse
+from django.http import HttpResponseForbidden
 from django.views.generic import ListView, DetailView
 from django.views.decorators.http import require_http_methods
 from django.core.exceptions import ObjectDoesNotExist
@@ -27,6 +27,8 @@ from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 from django.core.exceptions import PermissionDenied
 from django.core import serializers
+from django.utils import timezone
+from datetime import datetime, timedelta
 
 
 
@@ -75,7 +77,7 @@ def dashboard(request):
         return redirect('profile')
 
     # Retrieve the appointments for the logged-in therapist
-    therapist_appointments = Appointment.objects.filter(therapist=profile).order_by('date')
+    therapist_appointments = Appointment.objects.filter(therapist=profile, date__gte=timezone.now()).order_by('date')
 
     # Get the current date
     current_date = datetime.now().date()
@@ -88,14 +90,21 @@ def dashboard(request):
     two_days_from_now = current_date + timedelta(days=2)
 
     # Retrieve the appointments for the logged-in user that are two days or less from now
-    user_appointments = Appointment.objects.filter(user=request.user).order_by('date')
+    user_appointments = Appointment.objects.filter(user=request.user, date__gte=timezone.now()).order_by('date')
        # Get the date two days from now
     two_days_from_now = current_date + timedelta(days=2)
 
     # Retrieve the appointments for the logged-in user that are two days or less from now
-    upcoming_appointments = Appointment.objects.filter(user=request.user, date__range=(current_date, two_days_from_now)).order_by('date')
+    upcoming_appointments = Appointment.objects.filter(user=request.user, date__range=(current_date, two_days_from_now), date__gte=timezone.now()).order_by('date')
+    
+    # Get the current date and time
+    now = timezone.now()
 
-    articles = Article.objects.all().order_by('-date')     # get all articles
+    # Get the start and end of the current day
+    start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
+    end_of_day = start_of_day + timedelta(days=1)
+
+    articles = Article.objects.filter(date__range=(start_of_day, end_of_day)).order_by('-date')     # get all articles
 
     # add articles and appointments to the context
     context = {
@@ -148,12 +157,15 @@ def chat(request):
     users = User.objects.all()  # Fetch all users from the database
     return render(request, 'chat.html', {'users': users})
 
+@login_required
 def create_article(request):
     if request.method == 'POST':
         form = ArticleForm(request.POST, request.FILES)
         if form.is_valid():
-            article = form.save()  # Save the form and get the article instance
-            return redirect('blog')  # Redirect to the blog page
+            article = form.save(commit=False)
+            article.creator = request.user
+            article.save()
+            return redirect('blog')
     else:
         form = ArticleForm()
     return render(request, 'create_article.html', {'form': form})
@@ -383,6 +395,9 @@ def delete_testimonial(request, testimonial_id):
 
 def delete_article(request, article_id):
     article = Article.objects.get(id=article_id)
+    print(f"User: {request.user}, Article Creator: {article.creator}")
+    if request.user != article.creator:
+        return HttpResponseForbidden()
     article.delete()
     return redirect('blog')
 

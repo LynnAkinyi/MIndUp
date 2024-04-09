@@ -217,13 +217,16 @@
                     <h2>{{ article.title }}</h2>
                     <p>{{ article.content|truncatewords:20 }}...</p>
                     <p><i>  Published on: {{ article.date }}</i></p>
+                    <p><i>Article Creator: {{ article.creator }}</i></p>
                     <a href="{% url 'read' %}">
                         <button class="read-more-button">Read More</button>
                     </a>
+
                     <form action="{% url 'delete_article' article.id %}" method="POST">
-                        {% csrf_token %}
-                        <button type="submit" class="delete-btn">Delete</button>
+                        {% csrf_token %} {% if user.is_authenticated and user == article.creator %}
+                        <button type="submit" class="delete-btn">Delete</button> {% endif %}
                     </form>
+
                 </div>
             </div>
             {% endfor %}

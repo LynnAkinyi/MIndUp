@@ -23,6 +23,7 @@ class Article(models.Model):
     image = models.ImageField(upload_to='articles/')
     date = models.DateTimeField(default=timezone.now)
     is_new = models.BooleanField(default=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     
 class MindfulnessTask(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
@@ -112,3 +113,4 @@ class Message(models.Model):
 
 class OneOnOneChat(models.Model):
     members = models.ManyToManyField(get_user_model(), related_name='one_on_one_chats')
+

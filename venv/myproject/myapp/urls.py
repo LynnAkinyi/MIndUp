@@ -68,4 +68,3 @@ urlpatterns = [    # Existing URL patterns
     # path('get_messages/<int:group_id>/', views.get_messages, name='get_messages'),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
