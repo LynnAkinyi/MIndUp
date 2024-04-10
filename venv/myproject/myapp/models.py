@@ -123,9 +123,9 @@ class Task(models.Model):
         ('hobby', 'Hobby'),
     ]
 
-    name = models.CharField(max_length=20, choices=TASK_CHOICES, null=True)
-    description = models.TextField(null=True, blank=True)
-    max_bonus = models.PositiveIntegerField()
+    name = models.CharField(max_length=20, choices=TASK_CHOICES, default="")
+    description = models.TextField(default="")
+    max_bonus = models.PositiveIntegerField(null=True)
 
     def __str__(self):
         return self.name
@@ -133,8 +133,8 @@ class Task(models.Model):
 class TaskProgress(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='task_progresses')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='task_progresses')
-    progress_level = models.PositiveIntegerField()
-    bonus_earned = models.PositiveIntegerField()
+    progress_level = models.PositiveIntegerField(default=0)
+    bonus_earned = models.PositiveIntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

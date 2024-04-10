@@ -157,6 +157,8 @@
         // Add an event listener to each radio button
         radios.forEach(radio => {
             radio.addEventListener('change', function() {
+
+
                 // Get the parent div element
                 const div = this.parentElement;
 
@@ -190,6 +192,8 @@
 
                 chart.data.datasets[0].data[taskIndex] = parseInt(this.value);
 
+
+
                 // Redraw the chart
                 chart.update();
 
@@ -213,6 +217,40 @@
             });
 
         });
+
+        window.onload = function() {
+            // Fetch the tasks from the server
+            fetch('/get_tasks/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // For each task returned by the server
+                    for (const task of data.tasks) {
+                        // Find the corresponding radio button and mark it as checked
+                        const radio = document.querySelector(`input[name="${task.name}"][value="${task.bonus}"]`);
+                        radio.checked = true;
+
+                        // Find the corresponding bonus paragraph and update its text
+                        const bonusParagraph = radio.parentElement.querySelector('p');
+                        bonusParagraph.textContent = 'Bonus earned: ' + task.bonus;
+
+                        // Find the corresponding data point in the chart and update its value
+                        const taskIndex = chart.data.labels.indexOf(task.name);
+                        chart.data.datasets[0].data[taskIndex] = parseInt(task.bonus);
+                    }
+
+                    // Redraw the chart with the updated data
+                    chart.update();
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
     </script>
 </body>
 

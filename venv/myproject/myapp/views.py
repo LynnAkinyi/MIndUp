@@ -100,6 +100,14 @@ def update_task(request):
         return JsonResponse({'status': 'success'})
     return JsonResponse({'status': 'failed'})
 
+def get_task(request):
+    if request.method == 'GET':
+        user = request.user  # Assuming you have an authenticated user
+        tasks = TaskProgress.objects.filter(user=user)
+        data = serializers.serialize('json', tasks)
+        return JsonResponse(data, safe=False)
+    return JsonResponse({'status': 'failed'})
+
 def home(request):
     return render(request, 'index.html')
 
@@ -461,31 +469,31 @@ def get_chat_groups(request):
     else:
         return JsonResponse({'error': 'Method not allowed'}, status=405)
 
-# @csrf_exempt
-# @require_http_methods(["GET", "POST"])
-# def create_group(request):
-#     if request.method == "POST":
-#         data = json.loads(request.body)
-#         user = User.objects.get(username=data['created_by'])
-#         ChatGroup.objects.create(name=data['name'], created_by=user)
-#         return JsonResponse({'status': 'success'})
-#     elif request.method == "GET":
-#         groups = ChatGroup.objects.all()
-#         groups_data = list(groups.values('name', 'created_by__username'))  # Convert queryset to list of dicts
-#         return JsonResponse(groups_data, safe=False)
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def create_group(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user = User.objects.get(username=data['created_by'])
+        ChatGroup.objects.create(name=data['name'], created_by=user)
+        return JsonResponse({'status': 'success'})
+    elif request.method == "GET":
+        groups = ChatGroup.objects.all()
+        groups_data = list(groups.values('name', 'created_by__username'))  # Convert queryset to list of dicts
+        return JsonResponse(groups_data, safe=False)
     
-# @csrf_exempt
-# @require_http_methods(["GET", "POST"])
-# def create_group(request):
-#     if request.method == "POST":
-#         data = json.loads(request.body)
-#         user = User.objects.get(username=data['created_by'])
-#         ChatGroup.objects.create(name=data['name'], created_by=user)
-#         return JsonResponse({'status': 'success'})
-#     elif request.method == "GET":
-#         groups = ChatGroup.objects.all()
-#         groups_data = list(groups.values('name', 'created_by__username'))  # Convert queryset to list of dicts
-#         return JsonResponse(groups_data, safe=False)    
+@csrf_exempt
+@require_http_methods(["GET", "POST"])
+def create_group(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user = User.objects.get(username=data['created_by'])
+        ChatGroup.objects.create(name=data['name'], created_by=user)
+        return JsonResponse({'status': 'success'})
+    elif request.method == "GET":
+        groups = ChatGroup.objects.all()
+        groups_data = list(groups.values('name', 'created_by__username'))  # Convert queryset to list of dicts
+        return JsonResponse(groups_data, safe=False)    
     
 @csrf_exempt
 def send_message(request):

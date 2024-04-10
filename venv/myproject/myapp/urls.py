@@ -33,6 +33,7 @@ urlpatterns = [    # Existing URL patterns
     path('dashboard/book.html', views.book, name='book_without_id'),
     path('dashboard/tasks.html', views.tasks, name='tasks'),
     path('update_task/', update_task, name='update_task'),
+    path('get_tasks/', views.get_task, name='get_task'),
     path('details/', views.details, name='details'), 
     path('faq/', views.faq, name='faq'),
     path('read/', views.read, name='read'),
@@ -65,6 +66,6 @@ urlpatterns = [    # Existing URL patterns
     path('upcoming-appointments/', upcoming_appointments, name='upcoming_appointments'),
     path('send_message/', views.send_message, name='send_message'),
     path('get_messages/', views.get_messages, name='get_messages'),
-    # path('get_messages/<int:group_id>/', views.get_messages, name='get_messages'),
+    
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
