@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    UserRole, Article, MindfulnessTask, ExerciseTask, Task,
+    UserRole, Article, 
     Profile, Therapist, Testimonies, Appointment, 
     Volunteer, ChatGroup, Message
 )
@@ -13,16 +13,16 @@ class UserRoleAdmin(admin.ModelAdmin):
 class ArticleAdmin(admin.ModelAdmin):
     pass
 
-@admin.register(MindfulnessTask)
-class MindfulnessTaskAdmin(admin.ModelAdmin):
-    pass
+# @admin.register(MindfulnessTask)
+# class MindfulnessTaskAdmin(admin.ModelAdmin):
+#     pass
 
-@admin.register(ExerciseTask)
-class ExerciseTaskAdmin(admin.ModelAdmin):
-    pass
+# @admin.register(ExerciseTask)
+# class ExerciseTaskAdmin(admin.ModelAdmin):
+#     pass
 
-@admin.register(Task)
-class TaskAdmin(admin.ModelAdmin):
+# @admin.register(Task)
+# class TaskAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(Profile)

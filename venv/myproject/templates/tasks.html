@@ -1,229 +1,218 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Progress Tracker</title>
-    <!-- Include Chart.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <title>Tasks and Bonuses</title>
     <style>
-        body {
-            background-color: #F6EFE9;
-        }
+        /* Add your CSS styles here */
     </style>
 </head>
 
 <body>
-    <div class="task-list">
-        <h2>Tasks to be completed:</h2>
-        <ul>
-            <li>
-                <h2>Movement</h2>
-                <input type="radio" name="task1" value="incomplete"> Incomplete<br>
-                <input type="radio" name="task1" value="quarter"> 1/4 Done<br>
-                <input type="radio" name="task1" value="half"> 1/2 Done<br>
-                <input type="radio" name="task1" value="three-quarters"> 3/4 Done<br>
-                <input type="radio" name="task1" value="complete"> Complete<br>
-            </li>
-            <li>
-                <h2>Anxiety Breathing Technique</h2>
+    <div class="tasks" id="tasks">
+        <h1>Tasks and Bonuses</h1>
+        <div class="mindfullness">
+            <h2>Practice mindfulness meditation for 10 minutes daily</h2>
+            <input type="radio" id="meditation0" name="meditation" value="0">
+            <label for="meditation0">Incomplete: 0 bonus</label><br>
+            <input type="radio" id="meditation1" name="meditation" value="2">
+            <label for="meditation1">1/4 done (3 days): 2 bonuses</label><br>
+            <input type="radio" id="meditation2" name="meditation" value="4">
+            <label for="meditation2">1/2 done (7 days): 4 bonuses</label><br>
+            <input type="radio" id="meditation3" name="meditation" value="6">
+            <label for="meditation3">3/4 done (10 days): 6 bonuses</label><br>
+            <input type="radio" id="meditation4" name="meditation" value="8">
+            <label for="meditation4">Complete (14 days): 8 bonuses</label><br>
+            <p>Bonus earned: </p>
+        </div>
 
-                <input type="radio" name="task2" value="incomplete"> Incomplete<br>
-                <video width="320" height="240" controls>
-    <source src="{% static 'videos/btech.mp4' %}" type="video/mp4">
-    Your browser does not support the video tag.
-</video><br>
-                <input type="radio" name="task2" value="quarter"> 1/4 Done<br>
-                <input type="radio" name="task2" value="half"> 1/2 Done<br>
-                <input type="radio" name="task2" value="three-quarters"> 3/4 Done<br>
-                <input type="radio" name="task2" value="complete"> Complete<br>
-            </li>
-            <!-- Add more tasks as needed -->
-        </ul>
-    </div>
+        <div class="journal">
+            <h2>Keep a gratitude journal</h2>
+            <input type="radio" id="journal0" name="journal" value="0">
+            <label for="journal0">Incomplete: 0 bonus</label><br>
+            <input type="radio" id="journal1" name="journal" value="2">
+            <label for="journal1">1/4 done (3 days): 2 bonuses</label><br>
+            <input type="radio" id="journal2" name="journal" value="4">
+            <label for="journal2">1/2 done (7 days): 4 bonuses</label><br>
+            <input type="radio" id="journal3" name="journal" value="6">
+            <label for="journal3">3/4 done (10 days): 6 bonuses</label><br>
+            <input type="radio" id="journal4" name="journal" value="8">
+            <label for="journal4">Complete (14 days): 8 bonuses</label><br>
+            <p>Bonus earned: </p>
+        </div>
 
-    <table id="bonusTable">
-        <tr>
-            <th>Task</th>
-            <th>Bonus Earned</th>
-        </tr>
-        <tr>
-            <td>Task 1</td>
-            <td id="bonusTask1">0</td>
-        </tr>
-        <tr>
-            <td>Task 2</td>
-            <td id="bonusTask2">0</td>
-        </tr>
-        <!-- Add more tasks as needed -->
-    </table>
+        <div class="exercise">
+            <h2>Exercise for at least 30 minutes, 3 times a week</h2>
+            <input type="radio" id="exercise0" name="exercise" value="0">
+            <label for="exercise0">Incomplete: 0 bonus</label><br>
+            <input type="radio" id="exercise1" name="exercise" value="2">
+            <label for="exercise1">1/4 done (2 weeks): 2 bonuses</label><br>
+            <input type="radio" id="exercise2" name="exercise" value="4">
+            <label for="exercise2">1/2 done (4 weeks): 4 bonuses</label><br>
+            <input type="radio" id="exercise3" name="exercise" value="6">
+            <label for="exercise3">3/4 done (6 weeks): 6 bonuses</label><br>
+            <input type="radio" id="exercise4" name="exercise" value="8">
+            <label for="exercise4">Complete (8 weeks): 8 bonuses</label><br>
+            <p>Bonus earned: </p>
+        </div>
 
-    <div class="column"><b><i>Progress</i></b>
-        <canvas id="myChart" style="width:100%;max-width:700px;"></canvas>
+        <div class="stress">
+            <h2>Learn and practice a new stress-management technique</h2>
+            <input type="radio" id="stress0" name="stress" value="0">
+            <label for="stress0">Incomplete: 0 bonus</label><br>
+            <input type="radio" id="stress1" name="stress" value="2">
+            <label for="stress1">1/4 done (3 days): 2 bonuses</label><br>
+            <input type="radio" id="stress2" name="stress" value="4">
+            <label for="stress2">1/2 done (7 days): 4 bonuses</label><br>
+            <input type="radio" id="stress3" name="stress" value="6">
+            <label for="stress3">3/4 done (10 days): 6 bonuses</label><br>
+            <input type="radio" id="stress4" name="stress" value="8">
+            <label for="stress4">Complete (14 days): 8 bonuses</label><br>
+            <p>Bonus earned: </p>
+        </div>
+
+
+        <div class="hobby">
+            <h2>Spend time in nature or engage in a hobby</h2>
+            <input type="radio" id="hobby0" name="hobby" value="0">
+            <label for="hobby0">Incomplete: 0 bonus</label><br>
+            <input type="radio" id="hobby1" name="hobby" value="2">
+            <label for="hobby1">1/4 done (4 weeks): 2 bonuses</label><br>
+            <input type="radio" id="hobby2" name="hobby" value="4">
+            <label for="hobby2">1/2 done (8 weeks): 4 bonuses</label><br>
+            <input type="radio" id="hobby3" name="hobby" value="6">
+            <label for="hobby3">3/4 done (12 weeks): 6 bonuses</label><br>
+            <input type="radio" id="hobby4" name="hobby" value="8">
+            <label for="hobby4">Complete (16 weeks): 8 bonuses</label><br>
+            <p>Bonus earned: </p>
+        </div>
+
+        <div>
+            <canvas id="tasksChart"></canvas>
+        </div>
     </div>
 
     <script>
-        document.querySelectorAll('input[type=radio]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                let taskNumber = this.name.replace('task', '');
-                let bonus = 0;
-                switch (this.value) {
-                    case 'quarter':
-                        bonus = 2;
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                         break;
-                    case 'half':
-                        bonus = 4;
-                        break;
-                    case 'three-quarters':
-                        bonus = 6;
-                        break;
-                    case 'complete':
-                        bonus = 8;
-                        break;
-                }
-                document.getElementById('bonusTask' + taskNumber).textContent = bonus;
-
-                // Get CSRF token
-                function getCookie(name) {
-                    let cookieValue = null;
-                    if (document.cookie && document.cookie !== '') {
-                        let cookies = document.cookie.split(';');
-                        for (let i = 0; i < cookies.length; i++) {
-                            let cookie = cookies[i].trim();
-                            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                                break;
-                            }
-                        }
                     }
-                    return cookieValue;
                 }
-                let csrftoken = getCookie('csrftoken');
-
-                // Send the bonus to the server
-                fetch('/saveTaskData', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken
-                    },
-                    body: JSON.stringify({
-                        taskNumber: taskNumber,
-                        bonus: bonus,
-                    }),
-                });
-            });
-        });
-
-        // Collect the data
-        let tasks = Array.from(document.querySelectorAll('.task-list li')).map((li, i) => 'Task ' + (i + 1));
-        let bonuses = tasks.map(task => parseInt(document.getElementById('bonus' + task.replace(' ', '')).textContent));
-
+            }
+            return cookieValue;
+        }
         // Create the chart
-        let myChart = new Chart("myChart", {
-            type: "bar",
+        const ctx = document.getElementById('tasksChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
             data: {
-                labels: [],
+                labels: ['Meditation', 'Journal', 'Exercise', 'Stress Management', 'Hobby'],
                 datasets: [{
-                    label: 'Bonus Earned',
-                    data: [],
+                    label: 'Bonuses',
+                    data: [0, 0, 0, 0, 0], // Initial data
                     backgroundColor: [
                         'rgba(255, 99, 132, 0.2)',
                         'rgba(54, 162, 235, 0.2)',
                         'rgba(255, 206, 86, 0.2)',
                         'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
+                        'rgba(153, 102, 255, 0.2)'
                     ],
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
                         'rgba(54, 162, 235, 1)',
                         'rgba(255, 206, 86, 1)',
                         'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
+                        'rgba(153, 102, 255, 1)'
                     ],
-                    borderWidth: 1
+                    borderWidth: 3, // Increase the line width for better visibility
+                    tension: 0.5 // Add the tension option for smooth curves
                 }]
             },
             options: {
                 scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true,
-                            max: 10
-                        }
-                    }]
+                    y: {
+                        beginAtZero: true
+                    }
                 }
             }
         });
 
-        document.querySelectorAll('input[type=radio]').forEach(radio => {
+        // Get all radio buttons
+        const radios = document.querySelectorAll('input[type="radio"]');
+
+        // Get the parent container of the task divs
+        const taskContainer = document.getElementById('tasks');
+
+        // Add an event listener to each radio button
+        radios.forEach(radio => {
             radio.addEventListener('change', function() {
-                let taskNumber = this.name.replace('task', '');
-                let bonus = 0;
-                switch (this.value) {
-                    case 'quarter':
-                        bonus = 2;
+                // Get the parent div element
+                const div = this.parentElement;
+
+                // Get the corresponding p element
+                const bonusParagraph = div.querySelector('p');
+
+                // Set the bonus earned text
+                bonusParagraph.textContent = 'Bonus earned: ' + this.value;
+
+                // Update the chart data
+                const taskName = this.name;
+                let taskIndex;
+
+                switch (taskName) {
+                    case 'meditation':
+                        taskIndex = 0;
                         break;
-                    case 'half':
-                        bonus = 4;
+                    case 'journal':
+                        taskIndex = 1;
                         break;
-                    case 'three-quarters':
-                        bonus = 6;
+                    case 'exercise':
+                        taskIndex = 2;
                         break;
-                    case 'complete':
-                        bonus = 8;
+                    case 'stress':
+                        taskIndex = 3;
+                        break;
+                    case 'hobby':
+                        taskIndex = 4;
                         break;
                 }
-                document.getElementById('bonusTask' + taskNumber).textContent = bonus;
 
-                // Update the chart
-                let tasks = Array.from(document.querySelectorAll('.task-list li')).map((li, i) => 'Task ' + (i + 1));
-                let bonuses = tasks.map(task => parseInt(document.getElementById('bonus' + task.replace(' ', '')).textContent));
-                myChart.data.labels = tasks;
-                myChart.data.datasets[0].data = bonuses;
-                myChart.update();
+                chart.data.datasets[0].data[taskIndex] = parseInt(this.value);
+
+                // Redraw the chart
+                chart.update();
+
+                // Send an AJAX request to the server
+                fetch('/update_task/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken') // You need to implement getCookie function
+                        },
+                        body: JSON.stringify({
+                            'task': this.name,
+                            'bonus': this.value
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log(data))
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
             });
+
         });
-
-        document.querySelectorAll('input[type=radio]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                let taskNumber = this.name.replace('task', '');
-                let bonus = 0;
-                switch (this.value) {
-                    case 'quarter':
-                        bonus = 2;
-                        break;
-                    case 'half':
-                        bonus = 4;
-                        break;
-                    case 'three-quarters':
-                        bonus = 6;
-                        break;
-                    case 'complete':
-                        bonus = 8;
-                        break;
-                }
-                document.getElementById('bonusTask' + taskNumber).textContent = bonus;
-
-
-
-                // Update the chart
-
-                let tasks = Array.from(document.querySelectorAll('.task-list li')).map((li, i) => 'Task ' + (i + 1));
-                let bonuses = tasks.map(task => parseInt(document.getElementById('bonus' + task.replace(' ', '')).textContent));
-                myChart.data.labels = tasks;
-                myChart.data.datasets[0].data = bonuses;
-                myChart.update();
-
-
-            });
-        });
-
-        let csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     </script>
 </body>
 

@@ -25,28 +25,28 @@ class Article(models.Model):
     is_new = models.BooleanField(default=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     
-class MindfulnessTask(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    duration = models.PositiveIntegerField(default=10)  # in minutes
-    completed = models.BooleanField(default=False)
+# class MindfulnessTask(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+#     duration = models.PositiveIntegerField(default=10)  # in minutes
+#     completed = models.BooleanField(default=False)
 
-class ExerciseTask(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-    duration = models.PositiveIntegerField(default=30)  # in minutes
-    completed = models.BooleanField(default=False)
+# class ExerciseTask(models.Model):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+#     duration = models.PositiveIntegerField(default=30)  # in minutes
+#     completed = models.BooleanField(default=False)
 
-class Task(models.Model):
-    COMPLETE = "Complete"
-    INCOMPLETE = "Incomplete"
-    STATUS = [
-        (COMPLETE, "Complete"),
-        (INCOMPLETE, "Incomplete")
-    ]
+# class Task(models.Model):
+#     COMPLETE = "Complete"
+#     INCOMPLETE = "Incomplete"
+#     STATUS = [
+#         (COMPLETE, "Complete"),
+#         (INCOMPLETE, "Incomplete")
+#     ]
 
-    detail = models.CharField(max_length=200, default='Default detail')
-    status = models.CharField(max_length=200, choices=STATUS, default=INCOMPLETE)
-    category = models.CharField(max_length=200, default=None)
-    creation_date = models.DateTimeField('Creation Date', default=now)
+#     detail = models.CharField(max_length=200, default='Default detail')
+#     status = models.CharField(max_length=200, choices=STATUS, default=INCOMPLETE)
+#     category = models.CharField(max_length=200, default=None)
+#     creation_date = models.DateTimeField('Creation Date', default=now)
     
 class Profile(models.Model):
     ROLE_CHOICES = [
@@ -114,3 +114,29 @@ class Message(models.Model):
 class OneOnOneChat(models.Model):
     members = models.ManyToManyField(get_user_model(), related_name='one_on_one_chats')
 
+class Task(models.Model):
+    TASK_CHOICES = [
+        ('meditation', 'Meditation'),
+        ('journal', 'Journal'),
+        ('exercise', 'Exercise'),
+        ('stress', 'Stress Management'),
+        ('hobby', 'Hobby'),
+    ]
+
+    name = models.CharField(max_length=20, choices=TASK_CHOICES, null=True)
+    description = models.TextField(null=True, blank=True)
+    max_bonus = models.PositiveIntegerField()
+
+    def __str__(self):
+        return self.name
+
+class TaskProgress(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='task_progresses')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='task_progresses')
+    progress_level = models.PositiveIntegerField()
+    bonus_earned = models.PositiveIntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.user.username} - {self.task.name} - {self.progress_level}"

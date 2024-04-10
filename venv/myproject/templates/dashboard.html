@@ -415,7 +415,9 @@ delete
                 <b><i>What's new</i></b>{% for article in articles %}
                 <div class="article">
                     <h2>{{ article.title }}</h2>
-                    <p><i>Published on: {{ article.date }}</i></p>
+                    <p><i>Published on: {{ article.date }}</i> by
+                        <i>{{ article.creator }}</i>
+                    </p>
                 </div>
                 {% endfor %}
             </div>

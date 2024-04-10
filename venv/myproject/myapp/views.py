@@ -9,11 +9,11 @@ import json
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from .forms import ArticleForm
-from .models import MindfulnessTask, ExerciseTask
+# from .models import MindfulnessTask, ExerciseTask
 from .models import Profile, Volunteer
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm, TestimoniesForm
-from .models import Article,  Therapist, Testimonies, Appointment, ChatGroup, Message
+from .models import Article,  Therapist, Testimonies, Appointment, ChatGroup, Message, Task, TaskProgress
 import base64
 import uuid
 from django.core.files.base import ContentFile
@@ -32,39 +32,73 @@ from datetime import datetime, timedelta
 
 
 
-@login_required
-def tasks(request):
-    mindfulness_task = MindfulnessTask.objects.get_or_create(user=request.user)[0]
-    exercise_task = ExerciseTask.objects.get_or_create(user=request.user)[0]
-
-    context = {
-        'mindfulness_task': mindfulness_task,
-        'exercise_task': exercise_task,
-    }
-    return render(request, 'tasks.html', context)
 
 
-@csrf_exempt
-def save_task_data(request):
-    if request.method == 'POST':
-        # Parse the JSON data from the request body
-        data = json.loads(request.body)
+# @login_required
+# def tasks(request):
+#     mindfulness_task = MindfulnessTask.objects.get_or_create(user=request.user)[0]
+#     exercise_task = ExerciseTask.objects.get_or_create(user=request.user)[0]
 
-        # Get the task number and bonus from the data
-        task_number = data.get('taskNumber')
-        bonus = data.get('bonus')
+#     context = {
+#         'mindfulness_task': mindfulness_task,
+#         'exercise_task': exercise_task,
+#     }
+#     return render(request, 'tasks.html', context)
 
-        # TODO: Save the task number and bonus to the database
 
-        # Return a JSON response
-        return JsonResponse({'status': 'success'})
+# @csrf_exempt
+# def save_task_data(request):
+#     if request.method == 'POST':
+#         # Parse the JSON data from the request body
+#         data = json.loads(request.body)
 
-    else:
-        # Return a 405 Method Not Allowed response if the request method is not POST
-        return JsonResponse({'error': 'Invalid request method'}, status=405)
+#         # Get the task number and bonus from the data
+#         task_number = data.get('taskNumber')
+#         bonus = data.get('bonus')
+
+#         # TODO: Save the task number and bonus to the database
+
+#         # Return a JSON response
+#         return JsonResponse({'status': 'success'})
+
+#     else:
+#         # Return a 405 Method Not Allowed response if the request method is not POST
+#         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 def index(request):
     return render(request, 'index.html')
+
+def tasks(request):
+    return render(request, 'tasks.html')
+
+@csrf_exempt
+def update_task(request):
+    if request.method == 'POST':
+        task_name = request.POST.get('task')
+        bonus = request.POST.get('bonus')
+        user = request.user  # Assuming you have an authenticated user
+
+        task, created = Task.objects.get_or_create(
+            name=task_name,
+            defaults={'max_bonus': 8}  # Set the maximum bonus value here
+        )
+
+        if not created:
+            task.max_bonus = 8  # Update the max_bonus value if the Task already exists
+
+        task_progress, created = TaskProgress.objects.get_or_create(
+            task=task,
+            user=user,
+            defaults={'progress_level': bonus, 'bonus_earned': bonus}
+        )
+
+        if not created:
+            task_progress.progress_level = bonus
+            task_progress.bonus_earned = bonus
+            task_progress.save()
+
+        return JsonResponse({'status': 'success'})
+    return JsonResponse({'status': 'failed'})
 
 def home(request):
     return render(request, 'index.html')

@@ -131,6 +131,12 @@
             <h2>Charges</h2>
             <p>Initial consultation: $150</p>
             <p>Follow-up sessions: $100</p>
+            {% if messages %} {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %} {% endif %}
+
             <form action="{% url 'schedule_appointment' therapist.id %}" method="post">
                 {% csrf_token %}
                 <input type="date" name="date" class="styled-input">
