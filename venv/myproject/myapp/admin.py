@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     UserRole, Article, 
     Profile, Therapist, Testimonies, Appointment, 
-    Volunteer, ChatGroup, Message
+    Volunteer, ChatGroup, Message, TaskProgress
 )
 
 @admin.register(UserRole)
@@ -11,18 +11,6 @@ class UserRoleAdmin(admin.ModelAdmin):
 
 @admin.register(Article)
 class ArticleAdmin(admin.ModelAdmin):
-    pass
-
-# @admin.register(MindfulnessTask)
-# class MindfulnessTaskAdmin(admin.ModelAdmin):
-#     pass
-
-# @admin.register(ExerciseTask)
-# class ExerciseTaskAdmin(admin.ModelAdmin):
-#     pass
-
-# @admin.register(Task)
-# class TaskAdmin(admin.ModelAdmin):
     pass
 
 @admin.register(Profile)
@@ -47,4 +35,12 @@ class ChatGroupAdmin(admin.ModelAdmin):
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(Appointment)
+class AppointmentAdmin(admin.ModelAdmin):
+    pass
+
+@admin.register(TaskProgress)
+class TaskProgressAdmin(admin.ModelAdmin):
     pass

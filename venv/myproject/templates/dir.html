@@ -129,14 +129,35 @@
         </div>
 
         <div class="view-all-button-container">
-            <a href="{% url 'view_all_therapists' %}">
-                <button class="view-all-button">View All Therapists</button>
+            <a id="view-link" href="{% url 'view_all_therapists' %}">
+                <button id="view-button" class="view-all-button">View All Therapists</button>
             </a>
         </div>
         <!-- dir.html -->
     </section>
 
     <script>
+        var viewAllTherapistsUrl = "{% url 'view_all_therapists' %}";
+        var communityUrl = "{% url 'community' %}";
+        var button = document.getElementById('view-button');
+        var link = document.getElementById('view-link');
+
+        window.onload = function() {
+            var url = window.location.href;
+            if (url.endsWith(viewAllTherapistsUrl)) {
+                button.textContent = 'Hide';
+                link.href = communityUrl;
+            }
+        }
+
+        button.onclick = function() {
+            if (button.textContent === 'Hide') {
+                button.textContent = 'View All Therapists';
+                link.href = viewAllTherapistsUrl;
+                link.click(); // Programmatically click the anchor tag
+            }
+        }
+
         function searchFunction() {
             var input, filter, therapists, txtValue;
             input = document.getElementById('search');
@@ -168,5 +189,9 @@
     </script>
 
 </body>
+
+</html>
+
+</html>
 
 </html>

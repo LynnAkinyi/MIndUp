@@ -25,28 +25,6 @@ class Article(models.Model):
     is_new = models.BooleanField(default=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     
-# class MindfulnessTask(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-#     duration = models.PositiveIntegerField(default=10)  # in minutes
-#     completed = models.BooleanField(default=False)
-
-# class ExerciseTask(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
-#     duration = models.PositiveIntegerField(default=30)  # in minutes
-#     completed = models.BooleanField(default=False)
-
-# class Task(models.Model):
-#     COMPLETE = "Complete"
-#     INCOMPLETE = "Incomplete"
-#     STATUS = [
-#         (COMPLETE, "Complete"),
-#         (INCOMPLETE, "Incomplete")
-#     ]
-
-#     detail = models.CharField(max_length=200, default='Default detail')
-#     status = models.CharField(max_length=200, choices=STATUS, default=INCOMPLETE)
-#     category = models.CharField(max_length=200, default=None)
-#     creation_date = models.DateTimeField('Creation Date', default=now)
     
 class Profile(models.Model):
     ROLE_CHOICES = [
@@ -83,7 +61,8 @@ class Appointment(models.Model):
     date = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-        return f'Appointment at {self.date} with {self.therapist.name} scheduled by {self.user.username}'
+        username = 'Unknown user' if self.user is None else self.user.username
+        return f'Appointment at {self.date} with {self.therapist.name} scheduled by {username}'
 
 
 class Volunteer(models.Model):

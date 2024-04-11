@@ -4,14 +4,22 @@
 <head>
     <title>Task Progress</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+    </style>
 </head>
 
 <body>
     <h1>Task Progress</h1>
-    <canvas id="progressChart"></canvas>
 
     <form id="taskForm">
-        <h2>Task 1</h2>
+        <h2>Movement Task</h2>
         <label>
       <input type="radio" name="task1" value="0" checked> Incomplete
     </label>
@@ -31,7 +39,7 @@
       <input type="checkbox" name="bonus1"> Bonus
     </label>
 
-        <h2>Task 2</h2>
+        <h2>Mindfullness Task</h2>
         <label>
       <input type="radio" name="task2" value="0" checked> Incomplete
     </label>
@@ -52,6 +60,8 @@
     </label>
 
         <button type="submit">Update Progress</button>
+
+        <canvas class="container" id="progressChart" style="width:70%;max-width:700px; height:200px;"></canvas>
     </form>
 
     <script>
