@@ -31,13 +31,14 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from .models import TaskProgress
 
-
 def get_progress(request):
     try:
-        progress = TaskProgress.objects.latest('id')
+        progress = TaskProgress.objects.filter(user=request.user).latest('id')
         data = {
             'task1': progress.task1,
             'task2': progress.task2,
+            'bonus1': progress.bonus1,
+            'bonus2': progress.bonus2,
         }
         return JsonResponse(data)
     except TaskProgress.DoesNotExist:
@@ -48,8 +49,10 @@ def update_progress(request):
     if request.method == 'POST':
         task1 = request.POST.get('task1')
         task2 = request.POST.get('task2')
+        bonus1 = True if request.POST.get('bonus1') == 'on' else False
+        bonus2 = True if request.POST.get('bonus2') == 'on' else False
 
-        progress = TaskProgress(task1=task1, task2=task2)
+        progress = TaskProgress(user=request.user, task1=task1, task2=task2, bonus1=bonus1, bonus2=bonus2)
         progress.save()
 
         return JsonResponse({"status": "success"})
