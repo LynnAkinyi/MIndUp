@@ -144,23 +144,42 @@
         document.getElementById('volunteerButton').addEventListener('click', function() {
             var volunteerName = loggedInUser;
 
-            // Send a POST request to the server to create a new volunteer
-            fetch('/volunteers/', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token }}'
-                },
-                body: JSON.stringify({
-                    user: volunteerName
-                })
-            }).then(function(response) {
-                if (response.ok) {
-                    alert("Volunteered successfully");
-                } else {
-                    alert("Failed to volunteer");
+            // Check if the user is already on the volunteer list
+            var volunteerList = document.getElementById('volunteeList');
+            var volunteers = volunteerList.getElementsByTagName('li');
+            var alreadyVolunteered = false;
+            for (var i = 0; i < volunteers.length; i++) {
+                if (volunteers[i].textContent.trim() === volunteerName) {
+                    alreadyVolunteered = true;
+                    break;
                 }
-            });
+            }
+
+            if (alreadyVolunteered) {
+                alert("You have already volunteered.");
+            } else {
+                // Send a POST request to the server to create a new volunteer
+                fetch('/volunteers/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({
+                        user: volunteerName
+                    })
+                }).then(function(response) {
+                    if (response.ok) {
+                        alert("Volunteered successfully");
+                        // Add the user to the volunteer list on success
+                        var listItem = document.createElement('li');
+                        listItem.textContent = volunteerName;
+                        volunteerList.appendChild(listItem);
+                    } else {
+                        alert("Failed to volunteer");
+                    }
+                });
+            }
         });
 
 

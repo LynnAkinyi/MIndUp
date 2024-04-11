@@ -114,29 +114,9 @@ class Message(models.Model):
 class OneOnOneChat(models.Model):
     members = models.ManyToManyField(get_user_model(), related_name='one_on_one_chats')
 
-class Task(models.Model):
-    TASK_CHOICES = [
-        ('meditation', 'Meditation'),
-        ('journal', 'Journal'),
-        ('exercise', 'Exercise'),
-        ('stress', 'Stress Management'),
-        ('hobby', 'Hobby'),
-    ]
-
-    name = models.CharField(max_length=20, choices=TASK_CHOICES, default="")
-    description = models.TextField(default="")
-    max_bonus = models.PositiveIntegerField(null=True)
-
-    def __str__(self):
-        return self.name
-
 class TaskProgress(models.Model):
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='task_progresses')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='task_progresses')
-    progress_level = models.PositiveIntegerField(default=0)
-    bonus_earned = models.PositiveIntegerField(default=0)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return f"{self.user.username} - {self.task.name} - {self.progress_level}"
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    task1 = models.IntegerField(default=0)
+    task2 = models.IntegerField(default=0)
+    bonus1 = models.BooleanField(default=False)
+    bonus2 = models.BooleanField(default=False)

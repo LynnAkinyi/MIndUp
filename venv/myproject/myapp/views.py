@@ -13,7 +13,7 @@ from .forms import ArticleForm
 from .models import Profile, Volunteer
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm, TestimoniesForm
-from .models import Article,  Therapist, Testimonies, Appointment, ChatGroup, Message, Task, TaskProgress
+from .models import Article,  Therapist, Testimonies, Appointment, ChatGroup, Message
 import base64
 import uuid
 from django.core.files.base import ContentFile
@@ -29,41 +29,64 @@ from django.core.exceptions import PermissionDenied
 from django.core import serializers
 from django.utils import timezone
 from datetime import datetime, timedelta
+from .models import TaskProgress
 
 
+def get_progress(request):
+    try:
+        progress = TaskProgress.objects.latest('id')
+        data = {
+            'task1': progress.task1,
+            'task2': progress.task2,
+        }
+        return JsonResponse(data)
+    except TaskProgress.DoesNotExist:
+        return JsonResponse({})
 
+@csrf_exempt
+def update_progress(request):
+    if request.method == 'POST':
+        task1 = request.POST.get('task1')
+        task2 = request.POST.get('task2')
+
+        progress = TaskProgress(task1=task1, task2=task2)
+        progress.save()
+
+        return JsonResponse({"status": "success"})
+    else:
+        return JsonResponse({"status": "invalid request"})
+
+# @login_required
+# def save_tasks(request):
+#     if request.method == 'POST':
+#         user = request.user
+#         tasks = [
+#             {'name': 'meditation', 'value': request.POST.get('meditation')},
+#             {'name': 'journal', 'value': request.POST.get('journal')},
+#             {'name': 'exercise', 'value': request.POST.get('exercise')},
+#             {'name': 'stress', 'value': request.POST.get('stress')},
+#             {'name': 'hobby', 'value': request.POST.get('hobby')}
+#         ]
+#         for task_data in tasks:
+#             task_name = task_data['name']
+#             bonus_value = task_data['value']
+#             task, _ = Task.objects.get_or_create(user=user, name=task_name)
+#             task.bonus = bonus_value
+#             task.save()
+#     return redirect('tasks')  # Redirect back to the tasks page after saving
+
+# @login_required
+# def display_tasks(request):
+#     user = request.user
+#     tasks = Task.objects.filter(user=user)
+#     return render(request, 'tasks.html', {'tasks': tasks})
 
 
 # @login_required
-# def tasks(request):
-#     mindfulness_task = MindfulnessTask.objects.get_or_create(user=request.user)[0]
-#     exercise_task = ExerciseTask.objects.get_or_create(user=request.user)[0]
-
-#     context = {
-#         'mindfulness_task': mindfulness_task,
-#         'exercise_task': exercise_task,
-#     }
-#     return render(request, 'tasks.html', context)
-
-
-# @csrf_exempt
-# def save_task_data(request):
-#     if request.method == 'POST':
-#         # Parse the JSON data from the request body
-#         data = json.loads(request.body)
-
-#         # Get the task number and bonus from the data
-#         task_number = data.get('taskNumber')
-#         bonus = data.get('bonus')
-
-#         # TODO: Save the task number and bonus to the database
-
-#         # Return a JSON response
-#         return JsonResponse({'status': 'success'})
-
-#     else:
-#         # Return a 405 Method Not Allowed response if the request method is not POST
-#         return JsonResponse({'error': 'Invalid request method'}, status=405)
+# def get_tasks(request):
+#     user = request.user
+#     tasks = Task.objects.filter(user=user).values('name', 'bonus')
+#     return JsonResponse({'tasks': list(tasks)})
 
 def index(request):
     return render(request, 'index.html')
@@ -71,42 +94,7 @@ def index(request):
 def tasks(request):
     return render(request, 'tasks.html')
 
-@csrf_exempt
-def update_task(request):
-    if request.method == 'POST':
-        task_name = request.POST.get('task')
-        bonus = request.POST.get('bonus')
-        user = request.user  # Assuming you have an authenticated user
 
-        task, created = Task.objects.get_or_create(
-            name=task_name,
-            defaults={'max_bonus': 8}  # Set the maximum bonus value here
-        )
-
-        if not created:
-            task.max_bonus = 8  # Update the max_bonus value if the Task already exists
-
-        task_progress, created = TaskProgress.objects.get_or_create(
-            task=task,
-            user=user,
-            defaults={'progress_level': bonus, 'bonus_earned': bonus}
-        )
-
-        if not created:
-            task_progress.progress_level = bonus
-            task_progress.bonus_earned = bonus
-            task_progress.save()
-
-        return JsonResponse({'status': 'success'})
-    return JsonResponse({'status': 'failed'})
-
-def get_task(request):
-    if request.method == 'GET':
-        user = request.user  # Assuming you have an authenticated user
-        tasks = TaskProgress.objects.filter(user=user)
-        data = serializers.serialize('json', tasks)
-        return JsonResponse(data, safe=False)
-    return JsonResponse({'status': 'failed'})
 
 def home(request):
     return render(request, 'index.html')

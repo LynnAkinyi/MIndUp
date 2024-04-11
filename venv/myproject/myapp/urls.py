@@ -6,8 +6,8 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from . import views
-from .views import create_volunteer, create_chat_group, get_chat_groups, upcoming_appointments, delete_appointment, update_task
-
+from .views import create_volunteer, create_chat_group, get_chat_groups, upcoming_appointments, delete_appointment
+from django.contrib.auth.decorators import login_required
 
 
 
@@ -32,8 +32,10 @@ urlpatterns = [    # Existing URL patterns
     path('dashboard/book.html/<int:therapist_id>/', views.book, name='book'),
     path('dashboard/book.html', views.book, name='book_without_id'),
     path('dashboard/tasks.html', views.tasks, name='tasks'),
-    path('update_task/', update_task, name='update_task'),
-    path('get_tasks/', views.get_task, name='get_task'),
+    # path('save_tasks/', save_tasks, name='save_tasks'),
+    # path('tasks/', display_tasks, name='tasks'),
+    path('get_progress/', views.get_progress, name='get_progress'),
+    path('update_progress/', views.update_progress, name='update_progress'),
     path('details/', views.details, name='details'), 
     path('faq/', views.faq, name='faq'),
     path('read/', views.read, name='read'),

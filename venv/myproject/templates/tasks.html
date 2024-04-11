@@ -1,102 +1,110 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Progress</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <title>Tasks and Bonuses</title>
-    <style>
-        /* Add your CSS styles here */
-    </style>
 </head>
 
 <body>
-    <div class="tasks" id="tasks">
-        <h1>Tasks and Bonuses</h1>
-        <div class="mindfullness">
-            <h2>Practice mindfulness meditation for 10 minutes daily</h2>
-            <input type="radio" id="meditation0" name="meditation" value="0">
-            <label for="meditation0">Incomplete: 0 bonus</label><br>
-            <input type="radio" id="meditation1" name="meditation" value="2">
-            <label for="meditation1">1/4 done (3 days): 2 bonuses</label><br>
-            <input type="radio" id="meditation2" name="meditation" value="4">
-            <label for="meditation2">1/2 done (7 days): 4 bonuses</label><br>
-            <input type="radio" id="meditation3" name="meditation" value="6">
-            <label for="meditation3">3/4 done (10 days): 6 bonuses</label><br>
-            <input type="radio" id="meditation4" name="meditation" value="8">
-            <label for="meditation4">Complete (14 days): 8 bonuses</label><br>
-            <p>Bonus earned: </p>
-        </div>
+    <h1>Task Progress</h1>
+    <canvas id="progressChart"></canvas>
 
-        <div class="journal">
-            <h2>Keep a gratitude journal</h2>
-            <input type="radio" id="journal0" name="journal" value="0">
-            <label for="journal0">Incomplete: 0 bonus</label><br>
-            <input type="radio" id="journal1" name="journal" value="2">
-            <label for="journal1">1/4 done (3 days): 2 bonuses</label><br>
-            <input type="radio" id="journal2" name="journal" value="4">
-            <label for="journal2">1/2 done (7 days): 4 bonuses</label><br>
-            <input type="radio" id="journal3" name="journal" value="6">
-            <label for="journal3">3/4 done (10 days): 6 bonuses</label><br>
-            <input type="radio" id="journal4" name="journal" value="8">
-            <label for="journal4">Complete (14 days): 8 bonuses</label><br>
-            <p>Bonus earned: </p>
-        </div>
+    <form id="taskForm">
+        <h2>Task 1</h2>
+        <label>
+      <input type="radio" name="task1" value="0" checked> Incomplete
+    </label>
+        <label>
+      <input type="radio" name="task1" value="2"> 1/4 Done
+    </label>
+        <label>
+      <input type="radio" name="task1" value="5"> 1/2 Done
+    </label>
+        <label>
+      <input type="radio" name="task1" value="7"> 3/4 Done
+    </label>
+        <label>
+      <input type="radio" name="task1" value="10"> Complete
+    </label>
+        <label>
+      <input type="checkbox" name="bonus1"> Bonus
+    </label>
 
-        <div class="exercise">
-            <h2>Exercise for at least 30 minutes, 3 times a week</h2>
-            <input type="radio" id="exercise0" name="exercise" value="0">
-            <label for="exercise0">Incomplete: 0 bonus</label><br>
-            <input type="radio" id="exercise1" name="exercise" value="2">
-            <label for="exercise1">1/4 done (2 weeks): 2 bonuses</label><br>
-            <input type="radio" id="exercise2" name="exercise" value="4">
-            <label for="exercise2">1/2 done (4 weeks): 4 bonuses</label><br>
-            <input type="radio" id="exercise3" name="exercise" value="6">
-            <label for="exercise3">3/4 done (6 weeks): 6 bonuses</label><br>
-            <input type="radio" id="exercise4" name="exercise" value="8">
-            <label for="exercise4">Complete (8 weeks): 8 bonuses</label><br>
-            <p>Bonus earned: </p>
-        </div>
+        <h2>Task 2</h2>
+        <label>
+      <input type="radio" name="task2" value="0" checked> Incomplete
+    </label>
+        <label>
+      <input type="radio" name="task2" value="2"> 1/4 Done
+    </label>
+        <label>
+      <input type="radio" name="task2" value="5"> 1/2 Done
+    </label>
+        <label>
+      <input type="radio" name="task2" value="7"> 3/4 Done
+    </label>
+        <label>
+      <input type="radio" name="task2" value="10"> Complete
+    </label>
+        <label>
+      <input type="checkbox" name="bonus2"> Bonus
+    </label>
 
-        <div class="stress">
-            <h2>Learn and practice a new stress-management technique</h2>
-            <input type="radio" id="stress0" name="stress" value="0">
-            <label for="stress0">Incomplete: 0 bonus</label><br>
-            <input type="radio" id="stress1" name="stress" value="2">
-            <label for="stress1">1/4 done (3 days): 2 bonuses</label><br>
-            <input type="radio" id="stress2" name="stress" value="4">
-            <label for="stress2">1/2 done (7 days): 4 bonuses</label><br>
-            <input type="radio" id="stress3" name="stress" value="6">
-            <label for="stress3">3/4 done (10 days): 6 bonuses</label><br>
-            <input type="radio" id="stress4" name="stress" value="8">
-            <label for="stress4">Complete (14 days): 8 bonuses</label><br>
-            <p>Bonus earned: </p>
-        </div>
-
-
-        <div class="hobby">
-            <h2>Spend time in nature or engage in a hobby</h2>
-            <input type="radio" id="hobby0" name="hobby" value="0">
-            <label for="hobby0">Incomplete: 0 bonus</label><br>
-            <input type="radio" id="hobby1" name="hobby" value="2">
-            <label for="hobby1">1/4 done (4 weeks): 2 bonuses</label><br>
-            <input type="radio" id="hobby2" name="hobby" value="4">
-            <label for="hobby2">1/2 done (8 weeks): 4 bonuses</label><br>
-            <input type="radio" id="hobby3" name="hobby" value="6">
-            <label for="hobby3">3/4 done (12 weeks): 6 bonuses</label><br>
-            <input type="radio" id="hobby4" name="hobby" value="8">
-            <label for="hobby4">Complete (16 weeks): 8 bonuses</label><br>
-            <p>Bonus earned: </p>
-        </div>
-
-        <div>
-            <canvas id="tasksChart"></canvas>
-        </div>
-    </div>
+        <button type="submit">Update Progress</button>
+    </form>
 
     <script>
+        var ctx = document.getElementById('progressChart').getContext('2d');
+        var taskLevels = {
+            task1: 0,
+            task2: 0
+        };
+        var bonusValues = {
+            bonus1: 0,
+            bonus2: 0
+        };
+
+        var progressChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Task 1', 'Task 2'],
+                datasets: [{
+                    label: 'Progress',
+                    data: [taskLevels.task1, taskLevels.task2],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Bonus',
+                    data: [bonusValues.bonus1, bonusValues.bonus2],
+                    backgroundColor: [
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 15
+                    }
+                }
+            }
+        });
+
         function getCookie(name) {
             let cookieValue = null;
             if (document.cookie && document.cookie !== '') {
@@ -112,145 +120,68 @@
             }
             return cookieValue;
         }
-        // Create the chart
-        const ctx = document.getElementById('tasksChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Meditation', 'Journal', 'Exercise', 'Stress Management', 'Hobby'],
-                datasets: [{
-                    label: 'Bonuses',
-                    data: [0, 0, 0, 0, 0], // Initial data
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)'
-                    ],
-                    borderWidth: 3, // Increase the line width for better visibility
-                    tension: 0.5 // Add the tension option for smooth curves
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
-            }
-        });
 
-        // Get all radio buttons
-        const radios = document.querySelectorAll('input[type="radio"]');
+        document.getElementById('taskForm').addEventListener('submit', function(event) {
+            event.preventDefault();
 
-        // Get the parent container of the task divs
-        const taskContainer = document.getElementById('tasks');
+            var task1Level = document.querySelector('input[name="task1"]:checked').value;
+            var task2Level = document.querySelector('input[name="task2"]:checked').value;
+            var bonus1Checked = document.querySelector('input[name="bonus1"]').checked;
+            var bonus2Checked = document.querySelector('input[name="bonus2"]').checked;
 
-        // Add an event listener to each radio button
-        radios.forEach(radio => {
-            radio.addEventListener('change', function() {
+            taskLevels.task1 = task1Level;
+            taskLevels.task2 = task2Level;
+            bonusValues.bonus1 = bonus1Checked ? 5 : 0;
+            bonusValues.bonus2 = bonus2Checked ? 5 : 0;
 
+            progressChart.data.datasets[0].data = [taskLevels.task1, taskLevels.task2];
+            progressChart.data.datasets[1].data = [bonusValues.bonus1, bonusValues.bonus2];
+            progressChart.update();
 
-                // Get the parent div element
-                const div = this.parentElement;
-
-                // Get the corresponding p element
-                const bonusParagraph = div.querySelector('p');
-
-                // Set the bonus earned text
-                bonusParagraph.textContent = 'Bonus earned: ' + this.value;
-
-                // Update the chart data
-                const taskName = this.name;
-                let taskIndex;
-
-                switch (taskName) {
-                    case 'meditation':
-                        taskIndex = 0;
-                        break;
-                    case 'journal':
-                        taskIndex = 1;
-                        break;
-                    case 'exercise':
-                        taskIndex = 2;
-                        break;
-                    case 'stress':
-                        taskIndex = 3;
-                        break;
-                    case 'hobby':
-                        taskIndex = 4;
-                        break;
-                }
-
-                chart.data.datasets[0].data[taskIndex] = parseInt(this.value);
-
-
-
-                // Redraw the chart
-                chart.update();
-
-                // Send an AJAX request to the server
-                fetch('/update_task/', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': getCookie('csrftoken') // You need to implement getCookie function
-                        },
-                        body: JSON.stringify({
-                            'task': this.name,
-                            'bonus': this.value
-                        })
+            // Send a POST request to the Django view
+            fetch('/update_progress/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: new URLSearchParams({
+                        'task1': task1Level,
+                        'task2': task2Level,
+                        'bonus1': bonus1Checked,
+                        'bonus2': bonus2Checked
                     })
-                    .then(response => response.json())
-                    .then(data => console.log(data))
-                    .catch((error) => {
-                        console.error('Error:', error);
-                    });
-            });
-
+                }).then(response => response.json())
+                .then(data => console.log(data));
         });
 
         window.onload = function() {
-            // Fetch the tasks from the server
-            fetch('/get_tasks/', {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                })
+            fetch('/get_progress/')
                 .then(response => response.json())
                 .then(data => {
-                    // For each task returned by the server
-                    for (const task of data.tasks) {
-                        // Find the corresponding radio button and mark it as checked
-                        const radio = document.querySelector(`input[name="${task.name}"][value="${task.bonus}"]`);
-                        radio.checked = true;
-
-                        // Find the corresponding bonus paragraph and update its text
-                        const bonusParagraph = radio.parentElement.querySelector('p');
-                        bonusParagraph.textContent = 'Bonus earned: ' + task.bonus;
-
-                        // Find the corresponding data point in the chart and update its value
-                        const taskIndex = chart.data.labels.indexOf(task.name);
-                        chart.data.datasets[0].data[taskIndex] = parseInt(task.bonus);
+                    if (data.task1) {
+                        document.querySelector(`input[name="task1"][value="${data.task1}"]`).checked = true;
+                        taskLevels.task1 = data.task1;
+                    }
+                    if (data.task2) {
+                        document.querySelector(`input[name="task2"][value="${data.task2}"]`).checked = true;
+                        taskLevels.task2 = data.task2;
+                    }
+                    if (data.bonus1) {
+                        document.querySelector('input[name="bonus1"]').checked = data.bonus1;
+                        bonusValues.bonus1 = data.bonus1 ? 5 : 0;
+                    }
+                    if (data.bonus2) {
+                        document.querySelector('input[name="bonus2"]').checked = data.bonus2;
+                        bonusValues.bonus2 = data.bonus2 ? 5 : 0;
                     }
 
-                    // Redraw the chart with the updated data
-                    chart.update();
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
+                    // Update chart data
+                    progressChart.data.datasets[0].data = [taskLevels.task1, taskLevels.task2];
+                    progressChart.data.datasets[1].data = [bonusValues.bonus1, bonusValues.bonus2];
+                    progressChart.update();
                 });
-        }
+        };
     </script>
 </body>
 
