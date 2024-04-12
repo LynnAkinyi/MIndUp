@@ -271,7 +271,7 @@
 
                 chatSocket.onmessage = function(e) {
                     const data = JSON.parse(e.data);
-                    console.log("Received message: ", data);
+                    console.log("Received message: ", data.message);
                     if (messageContainer) {
                         var div = document.createElement("div");
                         div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
@@ -295,12 +295,15 @@
                 chatSocket.onopen = function(e) {
                     console.log("The connection was set up successfully!");
 
+                    // Get the message from the input field
+                    var messageInput = document.querySelector("#id_message_send_input").value;
+
                     // Send the payload when the connection is open
                     const payload = {
                         command: 'send_dm',
                         sender_username: loggedInUser,
                         receiver_username: volunteerName,
-                        message_text: 'Hello, this is a direct message.'
+                        message_text: messageInput // Use the message from the input field
                     };
                     chatSocket.send(JSON.stringify(payload));
                 };
@@ -343,10 +346,10 @@
                         const time = new Date(message.time);
                         const formattedTime = time.toLocaleTimeString();
                         div.innerHTML = `<div class="message-content">
-            <span class="message-username">${message && message.username ? message.username.charAt(0).toUpperCase() + message.username.slice(1) : ''}</span>
-            <span class="message-text">${message.text}</span>
-            <span class="message-timestamp">${formattedTime}</span>
-        </div>`;
+    <span class="message-username">${message && message.username ? message.username.charAt(0).toUpperCase() + message.username.slice(1) : ''}</span>
+    <span class="message-text">${message.message}</span>
+    <span class="message-timestamp">${formattedTime}</span>
+</div>`;
                         messageContainer.appendChild(div);
                     });
                     // Scroll to the bottom of the chat container
