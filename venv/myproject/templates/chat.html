@@ -220,7 +220,7 @@
                 // Create a new chat container
                 var chatContainer = document.createElement('div');
                 chatContainer.className = 'chat-container';
-                chatContainer.id = 'id_chat_item_container_' + volunteerName; // Set a unique id for each chat container
+                chatContainer.id = 'id_chat_container_' + volunteerName; // Set a unique id for each chat container
 
                 // Set the inner HTML of the chat container
                 chatContainer.innerHTML = `
@@ -231,7 +231,7 @@
     <div style="float: left;font-weight: bold; ">${volunteerName} </div>
 </div>
 <div style="clear: both;"></div>
-<div class="chat__item__container" id="id_chat_item_container">
+<div class="chat__item__container" id="id_chat_item_container_${volunteerName}">
     <!-- Messages will be displayed here with a scrollbar -->
 </div>
 <div class="chat-input-container">
@@ -240,12 +240,14 @@
 </div>
 `;
 
+                // Insert the chat container into the page
+                document.body.appendChild(chatContainer);
+
+                var messageContainer = document.querySelector(`#id_chat_item_container_${volunteerName}`);
+
                 chatSocket.onclose = function(e) {
                     console.log("The connection was closed. Reason: ", e.reason);
                 };
-
-                // Insert the chat container into the page
-                document.body.appendChild(chatContainer);
 
                 // Add event listeners to the send button and the input field
                 document.querySelector("#id_message_send_button").onclick = function(e) {
@@ -270,16 +272,15 @@
                 chatSocket.onmessage = function(e) {
                     const data = JSON.parse(e.data);
                     console.log("Received message: ", data);
-                    var messageContainer = document.querySelector("#id_chat_item_container_" + volunteerName); // Select the correct chat container
                     if (messageContainer) {
                         var div = document.createElement("div");
                         div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
                         div.innerHTML = `<div class="message-content">
-            <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-            <span class="message-text">${data.message}</span>
-            <span class="message-timestamp">${data.time}</span>
-        </div>`;
-                        messageContainer.appendChild(div);
+<span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+<span class="message-text">${data.message}</span>
+<span class="message-timestamp">${data.time}</span>
+</div>`;
+                        messageContainer.appendChild(div);;
                         // Scroll to the bottom of the chat container
                         messageContainer.scrollTop = messageContainer.scrollHeight;
                     } else {
