@@ -304,14 +304,16 @@
                     // Get the message from the input field
                     var messageInput = document.querySelector("#id_message_send_input").value;
 
-                    // Send the payload when the connection is open
-                    const payload = {
-                        command: 'send_dm',
-                        sender_username: loggedInUser,
-                        receiver_username: volunteerName,
-                        message_text: messageInput // Use the message from the input field
-                    };
-                    chatSocket.send(JSON.stringify(payload));
+                    // Only send the payload if the input field is not empty
+                    if (messageInput.trim() !== "") {
+                        const payload = {
+                            command: 'send_dm',
+                            sender_username: loggedInUser,
+                            receiver_username: volunteerName,
+                            message_text: messageInput // Use the message from the input field
+                        };
+                        chatSocket.send(JSON.stringify(payload));
+                    }
                 };
             };
 
