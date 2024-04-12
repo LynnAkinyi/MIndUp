@@ -250,15 +250,21 @@
                 };
 
                 // Add event listeners to the send button and the input field
+                // Add event listeners to the send button and the input field
                 document.querySelector("#id_message_send_button").onclick = function(e) {
                     var messageInput = document.querySelector("#id_message_send_input").value;
                     var currentTime = new Date();
                     var time = currentTime.toLocaleTimeString();
-                    chatSocket.send(JSON.stringify({
-                        message: messageInput,
-                        username: "{{request.user.username}}",
-                        time: time
-                    }));
+
+                    // Send the payload when the send button is clicked
+                    const payload = {
+                        command: 'send_dm',
+                        sender_username: loggedInUser,
+                        receiver_username: volunteerName,
+                        message_text: messageInput // Use the message from the input field
+                    };
+                    chatSocket.send(JSON.stringify(payload));
+
                     document.querySelector("#id_message_send_input").value = "";
                 };
                 document.querySelector("#id_message_send_input").onkeyup = function(e) {
