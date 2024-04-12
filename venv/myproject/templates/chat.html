@@ -140,198 +140,219 @@
     </div>
 
     <script>
-        var loggedInUser = "{{ request.user.username }}";
-        document.getElementById('volunteerButton').addEventListener('click', function() {
-            var volunteerName = loggedInUser;
+        window.onload = function() {
 
-            // Check if the user is already on the volunteer list
-            var volunteerList = document.getElementById('volunteeList');
-            var volunteers = volunteerList.getElementsByTagName('li');
-            var alreadyVolunteered = false;
-            for (var i = 0; i < volunteers.length; i++) {
-                if (volunteers[i].textContent.trim() === volunteerName) {
-                    alreadyVolunteered = true;
-                    break;
-                }
-            }
-
-            if (alreadyVolunteered) {
-                alert("You have already volunteered.");
-            } else {
-                // Send a POST request to the server to create a new volunteer
-                fetch('/volunteers/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify({
-                        user: volunteerName
-                    })
-                }).then(function(response) {
-                    if (response.ok) {
-                        alert("Volunteered successfully");
-                        // Add the user to the volunteer list on success
-                        var listItem = document.createElement('li');
-                        listItem.textContent = volunteerName;
-                        volunteerList.appendChild(listItem);
-                    } else {
-                        alert("Failed to volunteer");
+            function getCookie(name) {
+                var cookieArr = document.cookie.split(";");
+                for (var i = 0; i < cookieArr.length; i++) {
+                    var cookiePair = cookieArr[i].split("=");
+                    if (name == cookiePair[0].trim()) {
+                        return decodeURIComponent(cookiePair[1]);
                     }
-                });
+                }
+                return null;
             }
-        });
 
+            var loggedInUser = "{{ request.user.username }}";
+            var chatSocket;
 
+            document.getElementById('volunteerButton').addEventListener('click', function() {
+                var volunteerName = loggedInUser;
 
-        // Fetch volunteers
-        fetch('/volunteers/')
-            .then(response => response.json())
-            .then(volunteers => {
-                const volunteerList = document.getElementById('volunteeList');
-                volunteers.forEach(volunteer => {
-                    const li = document.createElement('li');
-                    li.textContent = volunteer.user__username; // Change this line
-                    li.addEventListener('click', function() {
-                        openChatWindow(volunteer.user__username);
+                // Check if the user is already on the volunteer list
+                var volunteerList = document.getElementById('volunteeList');
+                var volunteers = volunteerList.getElementsByTagName('li');
+                var alreadyVolunteered = false;
+                for (var i = 0; i < volunteers.length; i++) {
+                    if (volunteers[i].textContent.trim() === volunteerName) {
+                        alreadyVolunteered = true;
+                        break;
+                    }
+                }
+
+                if (alreadyVolunteered) {
+                    alert("You have already volunteered.");
+                } else {
+                    // Send a POST request to the server to create a new volunteer
+                    fetch('/volunteers/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            user: volunteerName
+                        })
+                    }).then(function(response) {
+                        if (response.ok) {
+                            alert("Volunteered successfully");
+                            // Add the user to the volunteer list on success
+                            var listItem = document.createElement('li');
+                            listItem.textContent = volunteerName;
+                            volunteerList.appendChild(listItem);
+                        } else {
+                            alert("Failed to volunteer");
+                        }
                     });
-                    volunteerList.appendChild(li);
-                });
+                }
             });
 
-        // Function to open chat window for a volunteer
-        function openChatWindow(volunteerName) {
-            // Set up WebSocket connection for the chat
-            const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/dm/" + loggedInUser + "/" + volunteerName + "/");
+            // Fetch volunteers
+            fetch('/volunteers/')
+                .then(response => response.json())
+                .then(volunteers => {
+                    const volunteerList = document.getElementById('volunteeList');
+                    volunteers.forEach(volunteer => {
+                        const li = document.createElement('li');
+                        li.textContent = volunteer.user__username; // Change this line
+                        li.addEventListener('click', function() {
+                            openChatWindow(volunteer.user__username);
+                        });
+                        volunteerList.appendChild(li);
+                    });
+                });
 
-            // Create a new chat container
-            var chatContainer = document.createElement('div');
-            chatContainer.className = 'chat-container';
-            chatContainer.id = 'id_chat_item_container_' + volunteerName; // Set a unique id for each chat container
+            // Function to open chat window for a volunteer
+            function openChatWindow(volunteerName) {
+                // Set up WebSocket connection for the chat
+                chatSocket = new WebSocket("ws://" + window.location.host + "/ws/dm/" + loggedInUser + "/" + volunteerName + "/");
 
-            // Set the inner HTML of the chat container
-            chatContainer.innerHTML = `
-    <div class="chat-header">
-        <h1>${volunteerName} <i class="fas fa-comment"></i></h1>
-    </div>
-    <div class="chat-logout">
-        <div style="float: left;font-weight: bold; ">${volunteerName} </div>
-    </div>
-    <div style="clear: both;"></div>
-    <div class="chat__item__container" id="id_chat_item_container">
-        <!-- Messages will be displayed here with a scrollbar -->
-    </div>
-    <div class="chat-input-container">
-        <input type="text" id="id_message_send_input" placeholder="Type your message..." />
-        <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
-    </div>
-    `;
+                // Create a new chat container
+                var chatContainer = document.createElement('div');
+                chatContainer.className = 'chat-container';
+                chatContainer.id = 'id_chat_item_container_' + volunteerName; // Set a unique id for each chat container
 
-            // Insert the chat container into the page
-            document.body.appendChild(chatContainer);
+                // Set the inner HTML of the chat container
+                chatContainer.innerHTML = `
+<div class="chat-header">
+    <h1>${volunteerName} <i class="fas fa-comment"></i></h1>
+</div>
+<div class="chat-logout">
+    <div style="float: left;font-weight: bold; ">${volunteerName} </div>
+</div>
+<div style="clear: both;"></div>
+<div class="chat__item__container" id="id_chat_item_container">
+    <!-- Messages will be displayed here with a scrollbar -->
+</div>
+<div class="chat-input-container">
+    <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+    <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
+</div>
+`;
 
-            // Add event listeners to the send button and the input field
-            document.querySelector("#id_message_send_button").onclick = function(e) {
-                var messageInput = document.querySelector("#id_message_send_input").value;
-                var currentTime = new Date();
-                var time = currentTime.toLocaleTimeString();
-                chatSocket.send(JSON.stringify({
-                    message: messageInput,
-                    username: "{{request.user.username}}",
-                    time: time
-                }));
-                document.querySelector("#id_message_send_input").value = "";
+                chatSocket.onclose = function(e) {
+                    console.log("The connection was closed. Reason: ", e.reason);
+                };
+
+                // Insert the chat container into the page
+                document.body.appendChild(chatContainer);
+
+                // Add event listeners to the send button and the input field
+                document.querySelector("#id_message_send_button").onclick = function(e) {
+                    var messageInput = document.querySelector("#id_message_send_input").value;
+                    var currentTime = new Date();
+                    var time = currentTime.toLocaleTimeString();
+                    chatSocket.send(JSON.stringify({
+                        message: messageInput,
+                        username: "{{request.user.username}}",
+                        time: time
+                    }));
+                    document.querySelector("#id_message_send_input").value = "";
+                };
+                document.querySelector("#id_message_send_input").onkeyup = function(e) {
+                    if (e.keyCode == 13) { // Enter key
+                        document.querySelector("#id_message_send_button").click();
+                    }
+                };
+
+                document.querySelector("#id_message_send_input").focus();
+
+                chatSocket.onmessage = function(e) {
+                    const data = JSON.parse(e.data);
+                    console.log("Received message: ", data);
+                    var messageContainer = document.querySelector("#id_chat_item_container_" + volunteerName); // Select the correct chat container
+                    if (messageContainer) {
+                        var div = document.createElement("div");
+                        div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                        div.innerHTML = `<div class="message-content">
+            <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+            <span class="message-text">${data.message}</span>
+            <span class="message-timestamp">${data.time}</span>
+        </div>`;
+                        messageContainer.appendChild(div);
+                        // Scroll to the bottom of the chat container
+                        messageContainer.scrollTop = messageContainer.scrollHeight;
+                    } else {
+                        console.error('Message container not found');
+                    }
+                };
+
+                // Fetch and display messages when the chat window is opened
+                get_messages(volunteerName);
+
+
+                chatSocket.onopen = function(e) {
+                    console.log("The connection was set up successfully!");
+
+                    // Send the payload when the connection is open
+                    const payload = {
+                        command: 'send_dm',
+                        sender_username: loggedInUser,
+                        receiver_username: volunteerName,
+                        message_text: 'Hello, this is a direct message.'
+                    };
+                    chatSocket.send(JSON.stringify(payload));
+                };
             };
-            document.querySelector("#id_message_send_input").onkeyup = function(e) {
-                if (e.keyCode == 13) { // Enter key
-                    document.querySelector("#id_message_send_button").click();
-                }
-            };
 
-            chatSocket.onopen = function(e) {
-                console.log("The connection was set up successfully!");
-            };
-            chatSocket.onclose = function(e) {
-                console.log("Something unexpected happened!");
-            };
 
-            document.querySelector("#id_message_send_input").focus();
 
-            chatSocket.onmessage = function(e) {
-                const data = JSON.parse(e.data);
-                var messageContainer = document.querySelector("#id_chat_item_container_" + volunteerName); // Select the correct chat container
-                if (messageContainer) {
-                    var div = document.createElement("div");
-                    div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-                    div.innerHTML = `<div class="message-content">
-                <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-                <span class="message-text">${data.message}</span>
-                <span class="message-timestamp">${data.time}</span>
-            </div>`;
-                    messageContainer.appendChild(div);
+
+
+
+            function get_messages(volunteerName) {
+                // Fetch messages from the server
+                fetch('/get_messages/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({
+                            group_id: volunteerName
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            // Display messages
+                            displayMessages(data, volunteerName);
+                        }
+                    });
+            }
+
+            function displayMessages(messages, groupId) {
+                var messageContainer = document.querySelector("#id_chat_item_container_" + groupId);
+                if (messages) { // Check if messages are defined
+                    messages.forEach(message => {
+                        var div = document.createElement("div");
+                        div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                        const time = new Date(message.time);
+                        const formattedTime = time.toLocaleTimeString();
+                        div.innerHTML = `<div class="message-content">
+            <span class="message-username">${message && message.username ? message.username.charAt(0).toUpperCase() + message.username.slice(1) : ''}</span>
+            <span class="message-text">${message.text}</span>
+            <span class="message-timestamp">${formattedTime}</span>
+        </div>`;
+                        messageContainer.appendChild(div);
+                    });
                     // Scroll to the bottom of the chat container
                     messageContainer.scrollTop = messageContainer.scrollHeight;
-                } else {
-                    console.error('Message container not found');
-                }
-            };
-            // Fetch and display messages when the chat window is opened
-            get_messages(volunteerName);
-        }
-
-        function getCookie(name) {
-            var cookieArr = document.cookie.split(";");
-            for (var i = 0; i < cookieArr.length; i++) {
-                var cookiePair = cookieArr[i].split("=");
-                if (name == cookiePair[0].trim()) {
-                    return decodeURIComponent(cookiePair[1]);
                 }
             }
-            return null;
-        }
-
-        function get_messages(volunteerName) {
-            // Fetch messages from the server
-            fetch('/get_messages/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify({
-                        group_id: volunteerName
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        alert(data.error);
-                    } else {
-                        // Display messages
-                        displayMessages(data, volunteerName);
-                    }
-                });
-        }
-
-        function displayMessages(messages, groupId) {
-            var messageContainer = document.querySelector("#id_chat_item_container_" + groupId);
-            if (messages) { // Check if messages are defined
-                messages.forEach(message => {
-                    var div = document.createElement("div");
-                    div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
-                    const time = new Date(message.time);
-                    const formattedTime = time.toLocaleTimeString();
-                    div.innerHTML = `<div class="message-content">
-                <span class="message-username">${message && message.username ? message.username.charAt(0).toUpperCase() + message.username.slice(1) : ''}</span>
-                <span class="message-text">${message.text}</span>
-                <span class="message-timestamp">${formattedTime}</span>
-            </div>`;
-                    messageContainer.appendChild(div);
-                });
-                // Scroll to the bottom of the chat container
-                messageContainer.scrollTop = messageContainer.scrollHeight;
-            }
-        }
+        };
     </script>
 </body>
 

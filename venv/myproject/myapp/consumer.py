@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
-from .models import ChatGroup, Message
+from .models import ChatGroup, Message, DirectMessage
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -42,6 +42,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                         "time": time,
                         "groupId": groupId
                     })
+                
+            else:
+                # Handle DM commands
+                await self.handle_dm_commands(command, text_data_json)
 
     async def sendMessage(self, event):
         message = event["message"]
@@ -58,3 +62,23 @@ class ChatConsumer(AsyncWebsocketConsumer):
         group = ChatGroup.objects.get(id=group_id)
         message = Message(user=user, group=group, text=message_text)
         message.save()
+
+    async def handle_dm_commands(self, command, data):
+        if command == 'send_dm':
+            sender_username = data['sender_username']
+            receiver_username = data['receiver_username']
+            message_text = data['message_text']
+            await self.create_direct_message(sender_username, receiver_username, message_text)
+            # You can also send the DM to the receiver's channel here if needed
+        elif command == 'receive_dm':
+            # Handle receiving a DM
+            pass
+    # Add more commands for DMs as needed
+
+    @database_sync_to_async
+    def create_direct_message(self, sender_username, receiver_username, message_text):
+        User = get_user_model()
+        sender = User.objects.get(username=sender_username)
+        receiver = User.objects.get(username=receiver_username)
+        direct_message = DirectMessage(sender=sender, receiver=receiver, message=message_text)
+        direct_message.save()
