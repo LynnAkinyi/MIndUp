@@ -29,7 +29,26 @@ from django.core.exceptions import PermissionDenied
 from django.core import serializers
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import TaskProgress
+from .models import TaskProgress, DirectMessage
+
+
+
+
+
+@csrf_exempt
+def get_direct_messages(request):
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        sender = data.get('sender')
+        receiver = data.get('receiver')
+
+        messages = DirectMessage.objects.filter(
+            sender__username=sender, receiver__username=receiver
+        ).order_by('timestamp')
+
+        messages_list = list(messages.values('sender__username', 'receiver__username', 'message', 'timestamp'))
+
+        return JsonResponse(messages_list, safe=False)
 
 def get_progress(request):
     try:

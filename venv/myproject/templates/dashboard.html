@@ -96,7 +96,7 @@
             box-sizing: border-box;
             border-radius: 10px;
             overflow-y: auto;
-            background-color: #fff6f2;
+            background-color: #efe6e2;
         }
         
         .highlight {
@@ -105,7 +105,7 @@
         
         a {
             text-decoration: none;
-            color: black;
+            color: #8A441D;
         }
         /* Add this to your style tag */
         
@@ -415,7 +415,7 @@ delete
             <div class="column" id="whatsNew">
                 <b><i>What's new</i></b>{% for article in articles %}
                 <div class="article">
-                    <h2>{{ article.title }}</h2>
+                    <h3>{{ article.title }}</h3>
                     <p><i>Published on: {{ article.date }}</i> by
                         <i>{{ article.creator }}</i>
                     </p>
