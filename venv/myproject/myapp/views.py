@@ -538,13 +538,23 @@ def get_messages(request):
         data = json.loads(request.body)
         group_id = data.get('group_id')
         try:
+            group_id = int(group_id)  # Try to convert group_id to an integer
             group = ChatGroup.objects.get(id=group_id)
+            messages = group.message_set.all().values('user__username', 'text', 'timestamp')
+        except ValueError:
+            # If group_id is not a number, treat it as a username
+            receiver_username = group_id
+            sender = request.user
+            try:
+                receiver = User.objects.get(username=receiver_username)
+            except User.DoesNotExist:
+                return JsonResponse({'error': 'User not found'}, status=404)
+            messages = DirectMessage.objects.filter(sender=sender, receiver=receiver).values('sender__username', 'message', 'timestamp')
         except ChatGroup.DoesNotExist:
             return JsonResponse({'error': 'Group not found'}, status=404)
-        messages = group.message_set.all().values('user__username', 'text', 'timestamp')
         messages = list(messages)
         for message in messages:
-            message['username'] = message.pop('user__username')
+            message['username'] = message.pop('user__username' if 'user__username' in message else 'sender__username')
             message['time'] = message.pop('timestamp')
         return JsonResponse(messages, safe=False)
     else:

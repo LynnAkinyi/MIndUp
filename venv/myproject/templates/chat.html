@@ -202,11 +202,12 @@
         // Function to open chat window for a volunteer
         function openChatWindow(volunteerName) {
             // Set up WebSocket connection for the chat
-            const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/" + volunteerName + "/");
+            const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/dm/" + loggedInUser + "/" + volunteerName + "/");
 
             // Create a new chat container
             var chatContainer = document.createElement('div');
             chatContainer.className = 'chat-container';
+            chatContainer.id = 'id_chat_item_container_' + volunteerName; // Set a unique id for each chat container
 
             // Set the inner HTML of the chat container
             chatContainer.innerHTML = `
@@ -258,15 +259,15 @@
 
             chatSocket.onmessage = function(e) {
                 const data = JSON.parse(e.data);
-                var messageContainer = document.querySelector("#id_chat_item_container");
+                var messageContainer = document.querySelector("#id_chat_item_container_" + volunteerName); // Select the correct chat container
                 if (messageContainer) {
                     var div = document.createElement("div");
                     div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
                     div.innerHTML = `<div class="message-content">
-        <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-        <span class="message-text">${data.message}</span>
-        <span class="message-timestamp">${data.time}</span>
-    </div>`;
+                <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+                <span class="message-text">${data.message}</span>
+                <span class="message-timestamp">${data.time}</span>
+            </div>`;
                     messageContainer.appendChild(div);
                     // Scroll to the bottom of the chat container
                     messageContainer.scrollTop = messageContainer.scrollHeight;
@@ -274,9 +275,22 @@
                     console.error('Message container not found');
                 }
             };
+            // Fetch and display messages when the chat window is opened
+            get_messages(volunteerName);
         }
 
-        function get_messages(groupId) {
+        function getCookie(name) {
+            var cookieArr = document.cookie.split(";");
+            for (var i = 0; i < cookieArr.length; i++) {
+                var cookiePair = cookieArr[i].split("=");
+                if (name == cookiePair[0].trim()) {
+                    return decodeURIComponent(cookiePair[1]);
+                }
+            }
+            return null;
+        }
+
+        function get_messages(volunteerName) {
             // Fetch messages from the server
             fetch('/get_messages/', {
                     method: 'POST',
@@ -285,7 +299,7 @@
                         'X-CSRFToken': getCookie('csrftoken')
                     },
                     body: JSON.stringify({
-                        group_id: groupId
+                        group_id: volunteerName
                     })
                 })
                 .then(response => response.json())
@@ -294,7 +308,7 @@
                         alert(data.error);
                     } else {
                         // Display messages
-                        displayMessages(data, groupId);
+                        displayMessages(data, volunteerName);
                     }
                 });
         }
