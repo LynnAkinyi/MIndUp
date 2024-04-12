@@ -278,15 +278,17 @@
                 chatSocket.onmessage = function(e) {
                     const data = JSON.parse(e.data);
                     console.log("Received message: ", data.message);
+
+                    var messageContainer = document.querySelector(`#id_chat_item_container_${data.receiver_username}`);
                     if (messageContainer) {
                         var div = document.createElement("div");
-                        div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                        div.className = (data.username === loggedInUser) ? "chat-message right" : "chat-message left";
                         div.innerHTML = `<div class="message-content">
 <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
 <span class="message-text">${data.message}</span>
-<span class="message-timestamp">${data.time}</span>
+<span class="message-timestamp">${new Date().toLocaleTimeString()}</span>
 </div>`;
-                        messageContainer.appendChild(div);;
+                        messageContainer.appendChild(div);
                         // Scroll to the bottom of the chat container
                         messageContainer.scrollTop = messageContainer.scrollHeight;
                     } else {
@@ -294,6 +296,41 @@
                     }
                 };
 
+
+                // Function to append a message to the chat window
+                function appendMessage(message, username, messageContainer) {
+                    var div = document.createElement("div");
+                    div.className = (username === loggedInUser) ? "chat-message right" : "chat-message left";
+                    div.innerHTML = `<div class="message-content">
+<span class="message-username">${username.charAt(0).toUpperCase() + username.slice(1)}</span>
+<span class="message-text">${message}</span>
+<span class="message-timestamp">${new Date().toLocaleTimeString()}</span>
+</div>`;
+                    messageContainer.appendChild(div);
+                    // Scroll to the bottom of the chat container
+                    messageContainer.scrollTop = messageContainer.scrollHeight;
+                }
+
+                // Add event listeners to the send button and the input field
+                document.querySelector("#id_message_send_button").onclick = function(e) {
+                    var messageInput = document.querySelector("#id_message_send_input").value;
+                    var currentTime = new Date();
+                    var time = currentTime.toLocaleTimeString();
+
+                    // Send the payload when the send button is clicked
+                    const payload = {
+                        command: 'send_dm',
+                        sender_username: loggedInUser,
+                        receiver_username: volunteerName,
+                        message_text: messageInput // Use the message from the input field
+                    };
+                    chatSocket.send(JSON.stringify(payload));
+
+                    // Append the message to the chat window immediately after it's sent
+                    appendMessage(messageInput, loggedInUser, messageContainer);
+
+                    document.querySelector("#id_message_send_input").value = "";
+                };
                 // Fetch and display messages when the chat window is opened
                 get_messages(volunteerName);
 
