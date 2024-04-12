@@ -201,6 +201,7 @@
             width: 10px;
             background-color: #F6EFE9;
             border-radius: 50%;
+            display: none;
         }
         
         .dropdown {
@@ -210,6 +211,12 @@
             padding: 20px;
             border-radius: 20px;
             background-color: rgba(75, 51, 3, 0.282)
+        }
+        
+        .blur-effect {
+            filter: blur(2px);
+            pointer-events: none;
+            user-select: none;
         }
         
         @media (max-width: 600px) {
@@ -313,10 +320,12 @@ logout
 
         <!-- Notification Icon -->
 
-        <a href="{% url 'blog' %}"><span class="material-icons" id="notificationIcon">
+        <a href="#whatsNew">
+            <span class="material-icons" id="notificationIcon">
         notifications
-        {% if new_articles or new_testimonies or new_therapists %}
-            <span class="dot"></span> {% endif %}</a>
+            <span class="dot"></span>
+            </span>
+        </a>
         <!-- <div id="dropdown" style="display: none;">
             <div class="dropdown">
                 <ul></ul>
@@ -413,19 +422,67 @@ delete
 
             </div>
             <div class="column" id="whatsNew">
-                <b><i>What's new</i></b>{% for article in articles %}
-                <div class="article">
-                    <h3>{{ article.title }}</h3>
-                    <p><i>Published on: {{ article.date }}</i> by
-                        <i>{{ article.creator }}</i>
-                    </p>
-                </div>
+                <b><i>What's new</i></b>
+                <h2>Articles</h2>
+                {% for article in articles %}
+                <a href="{% url 'blog' %}">
+                    <div class="article">
+                        <h3>{{ article.title }}</h3>
+                        <p><i>Published on: {{ article.date }}</i> by
+                            <i>{{ article.creator }}</i>
+                        </p>
+                    </div>
+                </a>
+                {% endfor %}
+
+                <h2>Testimonials</h2>
+                {% for testimonial in testimonials %}
+                <a href="{% url 'testimonies' %}">
+                    <div class="testimonial">
+                        <h3>By {{ testimonial.user.username }}</h3>
+                        <p><i>Posted on: {{ testimonial.created_at }}</i></p>
+                        <p>{{ testimonial.text }}</p>
+                        {% if testimonial.video %}
+                        <video src="{{ testimonial.video.url }}" controls style="width:30%;"></video> {% endif %}
+                    </div>
+                </a>
                 {% endfor %}
             </div>
             <div id="articleCount" style="display: none;">{{ articles|length }}</div>
         </div>
     </div>
     <script>
+        document.getElementById('notificationIcon').addEventListener('click', function() {
+            // Get all divs with the class "column"
+            var sections = document.querySelectorAll('.column');
+
+            // Loop through each section
+            sections.forEach(function(section) {
+                // If the section is not the "What's new" section, add the blur effect
+                if (section.id !== 'whatsNew') {
+                    section.classList.add('blur-effect');
+                }
+            });
+        });
+
+        // Select the dot and the "What's New" section
+        var dot = document.querySelector('.dot');
+        var whatsNew = document.querySelector('#whatsNew');
+
+        // Check if there's something new
+        if (whatsNew.innerHTML.trim() !== '') {
+            // If there's something new, show the dot
+            dot.style.display = 'inline';
+        } else {
+            // If there's nothing new, hide the dot
+            dot.style.display = 'none';
+        }
+
+        // Add an event listener to the notification icon
+        document.querySelector('#notificationIcon').addEventListener('click', function() {
+            // When the icon is clicked, hide the dot
+            dot.style.display = 'none';
+        });
         var ctx = document.getElementById('progressChart').getContext('2d');
         var progressChart = new Chart(ctx, {
             type: 'bar',

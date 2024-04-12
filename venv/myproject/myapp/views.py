@@ -133,9 +133,9 @@ def dashboard(request):
 
     # Get the current date
     current_date = datetime.now().date()
+   
     
     new_articles = Article.objects.filter(is_new=True)
-    new_testimonies = Testimonies.objects.filter(is_new=True)
     new_therapists = Therapist.objects.filter(is_new=True)
 
     # Get the date two days from now
@@ -151,12 +151,14 @@ def dashboard(request):
     
     # Get the current date and time
     now = timezone.now()
+    start_of_day = now - timedelta(days=1)
 
     # Get the start and end of the current day
     start_of_day = now.replace(hour=0, minute=0, second=0, microsecond=0)
     end_of_day = start_of_day + timedelta(days=1)
 
     articles = Article.objects.filter(date__range=(start_of_day, end_of_day)).order_by('-date')     # get all articles
+    new_testimonies = Testimonies.objects.filter(created_at__gte=start_of_day, is_new=True)
 
     # add articles and appointments to the context
     context = {
@@ -166,7 +168,7 @@ def dashboard(request):
         'user_appointments': user_appointments,
         'upcoming_appointments': upcoming_appointments,        
         'new_articles': new_articles,
-        'new_testimonies': new_testimonies,
+        'testimonials': new_testimonies,
         'new_therapists': new_therapists,
     }  
     
