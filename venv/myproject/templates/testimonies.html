@@ -82,6 +82,31 @@
         }
         /* Responsive design */
         
+        .video-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 70vh;
+            /* Adjust this value as needed */
+        }
+        
+        .video-container {
+            width: 50%;
+            /* or any other width you want */
+            height: 0;
+            padding-bottom: 20.25%;
+            /* for 16:9 aspect ratio */
+            position: relative;
+        }
+        
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
         @media (max-width: 768px) {
             .video-card iframe,
             .article-card img {
@@ -103,7 +128,12 @@
         <div class="testimonial-card">
             <p>{{ testimonial.text }}</p>
             {% if testimonial.video %}
-            <iframe src="{{ testimonial.video }}" frameborder="0" allowfullscreen></iframe> {% endif %}
+            <div class="video-wrapper">
+                <div class="video-container">
+                    <video src="{{ testimonial.video.url }}" controls></video>
+                </div>
+            </div>
+            {% endif %}
             <i><p>Posted by {{ testimonial.user.username }} on {{ testimonial.created_at }}</p></i> {% if testimonial.user == request.user %}
             <form method="POST" action="{% url 'delete_testimonial' testimonial.id %}">
                 {% csrf_token %} {{ form.non_field_errors }}
@@ -113,15 +143,7 @@
         </div>
         {% endfor %}
     </section>
-    <section class="videos">
-        <!-- Video testimonials go here -->
-        <!-- Example: -->
-        <div class="video-card">
-            <iframe src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen></iframe>
-            <p>John's Journey to Recovery</p>
-        </div>
-        <!-- Repeat for other videos -->
-    </section>
+
 
     <section class="articles">
         <!-- Article testimonials go here -->
