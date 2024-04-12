@@ -81,6 +81,22 @@
                 document.getElementById('therapist-directory').innerHTML = html;
             })
             .catch(error => console.error('Error fetching therapist directory content:', error));
+
+        function searchFunction() {
+            var input, filter, therapists, txtValue;
+            input = document.getElementById('search');
+            filter = input.value.toUpperCase();
+            therapists = document.getElementById("therapists").getElementsByTagName('div');
+
+            for (var i = 0; i < therapists.length; i++) {
+                txtValue = therapists[i].textContent || therapists[i].innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    therapists[i].style.display = "";
+                } else {
+                    therapists[i].style.display = "none";
+                }
+            }
+        }
     </script>
 </body>
 
