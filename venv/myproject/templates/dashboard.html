@@ -431,6 +431,7 @@ delete
                         <p><i>Published on: {{ article.date }}</i> by
                             <i>{{ article.creator }}</i>
                         </p>
+                        <hr>
                     </div>
                 </a>
                 {% empty %}
@@ -441,11 +442,11 @@ delete
                 {% for testimonial in testimonials %}
                 <a href="{% url 'testimonies' %}">
                     <div class="testimonial">
-                        <h3>By {{ testimonial.user.username }}</h3>
-                        <p><i>Posted on: {{ testimonial.created_at }}</i></p>
                         <p>{{ testimonial.text }}</p>
                         {% if testimonial.video %}
                         <video src="{{ testimonial.video.url }}" controls style="width:30%;"></video> {% endif %}
+                        <p><i>Posted on: {{ testimonial.created_at }} By {{ testimonial.user.username }}</i></p>
+                        <hr>
                     </div>
                 </a>
                 {% empty %}
