@@ -170,7 +170,8 @@ def schedule_appointment(request, therapist_id):  # therapist_id is expected her
     existing_appointment = Appointment.objects.filter(user=request.user, date__date=date).exists()
     if existing_appointment:
         messages.error(request, 'You have already scheduled an appointment on this date.')
-        return redirect('dashboard')
+        # Render the current page with the error message
+        return render(request, 'book.html', {'therapist': therapist})
 
     # Create a new Appointment object and save it to the database
     appointment = Appointment(therapist=therapist, user=request.user, date=date)
