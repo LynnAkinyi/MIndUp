@@ -28,13 +28,14 @@ def format_dates(date):
     Format the date for a Google Calendar event link.
 
     Args:
-        date (str): The date of the event as a string.
+        date (str or datetime.datetime): The date of the event as a string or a datetime object.
 
     Returns:
         str: The formatted date.
     """
-    # Convert the date string to a datetime object
-    date = datetime.datetime.strptime(date, "%Y-%m-%d")
+    # Convert the date string to a datetime object if it's not already
+    if isinstance(date, str):
+        date = datetime.datetime.strptime(date, "%Y-%m-%d")
 
     # Set a default time for the appointment
     date = date.replace(hour=9)

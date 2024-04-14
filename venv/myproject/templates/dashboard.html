@@ -366,7 +366,7 @@ logout
             <div class="column" id="upcomingEvents"><b><i>Upcoming Events</i></b>
                 <div class="selected-dates">
                     {% for appointment in upcoming_appointments %}
-                    <li>{{ appointment.date|date:"F d, Y" }} <b><i>({{ appointment.therapist.name }})</i></b> {% if appointment.google_meet_link %}
+                    <li>{{ appointment.date|date:"F d, Y, H:i" }} <b><i>({{ appointment.therapist.name }})</i></b> {% if appointment.google_meet_link %}
                         <a href="{{ appointment.google_meet_link }}">Join Google Meet</a> {% else %}
                         <p>Google Meet link not available</p>
                         {% endif %} {% empty %} {% endfor %}
@@ -378,7 +378,7 @@ logout
                     <ul id="scheduledAppointmentsList">
                         {% for appointment in therapist_appointments %}
                         <li>
-                            {{ appointment.date|date:"F d, Y" }} <b>by</b> <i>{{ appointment.user.username }}</i> {% if appointment.google_meet_link %}
+                            {{ appointment.date|date:"F d, Y, H:i" }} <b>by</b> <i>{{ appointment.user.username }}</i> {% if appointment.google_meet_link %}
                             <a href="{{ appointment.google_meet_link }}">Join Google Meet</a> {% else %}
                             <p>Google Meet link not available</p>
                             {% endif %}
@@ -398,7 +398,7 @@ logout
                     <ul id="selectedDatesList">
                         {% for appointment in user_appointments %}
                         <li>
-                            {{ appointment.date|date:"F d, Y" }} <b>with</b> <i>{{ appointment.therapist.name }}</i>
+                            {{ appointment.date|date:"F d, Y, H:i" }} <b>with </b> <i>{{ appointment.therapist.name }}</i>
                             <form method="POST" action="{% url 'delete_appointment' appointment.id %}">
                                 {% csrf_token %}
                                 <button class="deleteButton" style="border: none; background: none;">
@@ -430,7 +430,11 @@ logout
 
             </div>
             <div class="column" id="whatsNew">
-                <b><i>What's new</i></b> {% if role == "therapist" %}
+                <b><i>What's new</i></b>
+                <div class="confirmed">
+                    <h3>Confirmed Appointments</h3>
+                    <hr>
+                </div>{% if role == "therapist" %}
                 <h3>Appointment Deletions</h3>
                 {% for deletion in deletion_reasons %} {% if user.username == deletion.user.username or user.username == deletion.therapist.username %}
                 <p>

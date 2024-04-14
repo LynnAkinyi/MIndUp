@@ -143,6 +143,7 @@
             <form action="{% url 'schedule_appointment' therapist.id %}" method="post">
                 {% csrf_token %}
                 <input type="date" name="date" class="styled-input">
+                <input type="time" name="time" class="styled-input">
                 <button type="submit" class="styled-button">Schedule</button>
             </form>
         </section>

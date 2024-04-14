@@ -32,6 +32,7 @@ from .models import TaskProgress, DirectMessage, DeletionReason
 from django.db.models import Q
 from .utils import create_google_meeting_link
 from django.contrib import messages
+from datetime import datetime
 
 
 
@@ -163,18 +164,23 @@ def schedule_appointment(request, therapist_id):  # therapist_id is expected her
     # Retrieve the therapist from the database
     therapist = get_object_or_404(Profile, id=therapist_id)
 
-    # Get the selected date
-    date = request.POST.get('date')
+    # Get the selected date and time
+    date_str = str(request.POST.get('date'))
+    time_str = str(request.POST.get('time'))
+
+    # Combine the date and time into a single datetime object
+    date_time_str = f"{date_str} {time_str}"
+    date_time_obj = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M")
 
     # Check if an appointment already exists for the user on the selected date
-    existing_appointment = Appointment.objects.filter(user=request.user, date__date=date).exists()
+    existing_appointment = Appointment.objects.filter(user=request.user, date=date_time_obj).exists()
     if existing_appointment:
         messages.error(request, 'You have already scheduled an appointment on this date.')
         # Render the current page with the error message
         return render(request, 'book.html', {'therapist': therapist})
 
     # Create a new Appointment object and save it to the database
-    appointment = Appointment(therapist=therapist, user=request.user, date=date)
+    appointment = Appointment(therapist=therapist, user=request.user, date=date_time_obj)
     
     # Generate the Google Meet link for the appointment
     create_google_meeting_link(appointment)
@@ -321,14 +327,7 @@ def user_logout(request):
     logout(request)
     return redirect('home')
 
-# def schedule_appointment(request):
-#     if request.method == 'POST':
-#         selected_date = request.POST.get('appointment_date')
-#         if selected_date:
-#             # Perform any necessary operations, such as saving to the database
-#             # Here, we'll just redirect to the dashboard with the selected date
-#             return redirect('dashboard', appointment_date=selected_date)
-#     return redirect('book')
+
 
 def forums(request):
     users = User.objects.all()  # Fetch all users from the database
