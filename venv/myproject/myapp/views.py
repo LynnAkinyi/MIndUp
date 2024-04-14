@@ -9,7 +9,6 @@ import json
 from django.views.generic import TemplateView
 from django.http import JsonResponse
 from .forms import ArticleForm
-# from .models import MindfulnessTask, ExerciseTask
 from .models import Profile, Volunteer
 from django.views.decorators.http import require_POST
 from .forms import ProfileForm, TestimoniesForm
@@ -78,37 +77,7 @@ def update_progress(request):
     else:
         return JsonResponse({"status": "invalid request"})
 
-# @login_required
-# def save_tasks(request):
-#     if request.method == 'POST':
-#         user = request.user
-#         tasks = [
-#             {'name': 'meditation', 'value': request.POST.get('meditation')},
-#             {'name': 'journal', 'value': request.POST.get('journal')},
-#             {'name': 'exercise', 'value': request.POST.get('exercise')},
-#             {'name': 'stress', 'value': request.POST.get('stress')},
-#             {'name': 'hobby', 'value': request.POST.get('hobby')}
-#         ]
-#         for task_data in tasks:
-#             task_name = task_data['name']
-#             bonus_value = task_data['value']
-#             task, _ = Task.objects.get_or_create(user=user, name=task_name)
-#             task.bonus = bonus_value
-#             task.save()
-#     return redirect('tasks')  # Redirect back to the tasks page after saving
 
-# @login_required
-# def display_tasks(request):
-#     user = request.user
-#     tasks = Task.objects.filter(user=user)
-#     return render(request, 'tasks.html', {'tasks': tasks})
-
-
-# @login_required
-# def get_tasks(request):
-#     user = request.user
-#     tasks = Task.objects.filter(user=user).values('name', 'bonus')
-#     return JsonResponse({'tasks': list(tasks)})
 
 def index(request):
     return render(request, 'index.html')

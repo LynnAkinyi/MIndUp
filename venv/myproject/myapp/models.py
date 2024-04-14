@@ -112,3 +112,4 @@ class DeletionReason(models.Model):
     therapist = models.ForeignKey(User, on_delete=models.CASCADE, related_name='therapist_deletionreasons')
     reason = models.CharField(max_length=200)
     created_at = models.DateTimeField(auto_now_add=True)
+
