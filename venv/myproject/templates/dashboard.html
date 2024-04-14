@@ -366,8 +366,10 @@ logout
             <div class="column" id="upcomingEvents"><b><i>Upcoming Events</i></b>
                 <div class="selected-dates">
                     {% for appointment in upcoming_appointments %}
-                    <li>{{ appointment.date|date:"F d, Y" }} <b><i>({{ appointment.therapist.name }})</i></b> </li>
-                    {% empty %} {% endfor %}
+                    <li>{{ appointment.date|date:"F d, Y" }} <b><i>({{ appointment.therapist.name }})</i></b> {% if appointment.google_meet_link %}
+                        <a href="{{ appointment.google_meet_link }}">Join Google Meet</a> {% else %}
+                        <p>Google Meet link not available</p>
+                        {% endif %} {% empty %} {% endfor %}
                 </div>
 
                 {% if role == "therapist" %}
@@ -375,7 +377,12 @@ logout
                     <p><b>Scheduled Appointments</b></p>
                     <ul id="scheduledAppointmentsList">
                         {% for appointment in therapist_appointments %}
-                        <li>{{ appointment.date|date:"F d, Y" }} <b>by</b> <i>{{ appointment.user.username }}</a></i></li>
+                        <li>
+                            {{ appointment.date|date:"F d, Y" }} <b>by</b> <i>{{ appointment.user.username }}</i> {% if appointment.google_meet_link %}
+                            <a href="{{ appointment.google_meet_link }}">Join Google Meet</a> {% else %}
+                            <p>Google Meet link not available</p>
+                            {% endif %}
+                        </li>
                         {% empty %}
                         <li>No appointments scheduled yet.</li>
                         {% endfor %}

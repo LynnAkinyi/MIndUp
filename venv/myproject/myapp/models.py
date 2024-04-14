@@ -59,6 +59,7 @@ class Appointment(models.Model):
     therapist = models.ForeignKey(Profile, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)  # New field
     date = models.DateTimeField(default=timezone.now)
+    google_meet_link = models.URLField(blank=True, null=True)
 
     def __str__(self):
         username = 'Unknown user' if self.user is None else self.user.username

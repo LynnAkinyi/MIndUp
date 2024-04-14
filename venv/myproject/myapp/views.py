@@ -30,6 +30,7 @@ from django.utils import timezone
 from datetime import datetime, timedelta
 from .models import TaskProgress, DirectMessage, DeletionReason
 from django.db.models import Q
+from .utils import create_google_meeting_link
 
 
 
@@ -164,6 +165,9 @@ def schedule_appointment(request, therapist_id):  # therapist_id is expected her
     # Create a new Appointment object with the selected date and save it to the database
     date = request.POST.get('date')
     appointment = Appointment(therapist=therapist, user=request.user, date=date)
+    
+    # Generate the Google Meet link for the appointment
+    create_google_meeting_link(appointment)
     
     appointment.save()
 
