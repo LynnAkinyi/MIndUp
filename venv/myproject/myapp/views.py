@@ -31,6 +31,7 @@ from datetime import datetime, timedelta
 from .models import TaskProgress, DirectMessage, DeletionReason
 from django.db.models import Q
 from .utils import create_google_meeting_link
+from django.contrib import messages
 
 
 
@@ -162,8 +163,16 @@ def schedule_appointment(request, therapist_id):  # therapist_id is expected her
     # Retrieve the therapist from the database
     therapist = get_object_or_404(Profile, id=therapist_id)
 
-    # Create a new Appointment object with the selected date and save it to the database
+    # Get the selected date
     date = request.POST.get('date')
+
+    # Check if an appointment already exists for the user on the selected date
+    existing_appointment = Appointment.objects.filter(user=request.user, date__date=date).exists()
+    if existing_appointment:
+        messages.error(request, 'You have already scheduled an appointment on this date.')
+        return redirect('dashboard')
+
+    # Create a new Appointment object and save it to the database
     appointment = Appointment(therapist=therapist, user=request.user, date=date)
     
     # Generate the Google Meet link for the appointment

@@ -136,7 +136,6 @@
                 {{ message }}
             </div>
             {% endfor %} {% endif %}
-
             <form action="{% url 'schedule_appointment' therapist.id %}" method="post">
                 {% csrf_token %}
                 <input type="date" name="date" class="styled-input">
