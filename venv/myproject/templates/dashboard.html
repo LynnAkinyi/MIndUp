@@ -136,6 +136,10 @@
             margin-bottom: 20px;
         }
         
+        .row h2 {
+            margin-left: 0px;
+        }
+        
         .topnav input[type="text"] {
             width: 300px;
             padding: 10px;
@@ -318,19 +322,12 @@ logout
     <div class="topnav">
         <input type="text" id="searchInput" placeholder="Search...">
 
-        <!-- Notification Icon -->
-
         <a href="#whatsNew">
             <span class="material-icons" id="notificationIcon">
         notifications
             <span class="dot"></span>
             </span>
         </a>
-        <!-- <div id="dropdown" style="display: none;">
-            <div class="dropdown">
-                <ul></ul>
-            </div>
-        </div> -->
         </span>
 
 
@@ -348,12 +345,8 @@ logout
     </div>
 
 
-    <!-- <span class="material-icons">
-menu
-</span> -->
     </div>
 
-    <!-- add main content -->
     <div class="main">
         <h2>Hello, {{ request.user.username }}, Welcome Back!</h2>
         <!-- Add this inside your .main div -->
@@ -401,16 +394,15 @@ menu
                             {{ appointment.date|date:"F d, Y" }} <b>with</b> <i>{{ appointment.therapist.name }}</i>
                             <form method="POST" action="{% url 'delete_appointment' appointment.id %}">
                                 {% csrf_token %}
-                                <button id="deleteButton" style="border: none; background: none;">
+                                <button class="deleteButton" style="border: none; background: none;">
   <span class="material-icons">delete</span>
 </button>
 
-                                <select id="deleteReason" name="delete_reason" style="display: none;">
+                                <select class="deleteReason" name="delete_reason" style="display: none;">
   <option value="">Select a reason for deletion</option>
   <option value="Accidental">Accidental</option>
   <option value="Wrong Time">Wrong Time</option>
   <option value="Change of Heart">Change of Heart</option>
-  <!-- Add more options as needed -->
 </select>
                             </form>
                         </li>
@@ -432,16 +424,17 @@ menu
             </div>
             <div class="column" id="whatsNew">
                 <b><i>What's new</i></b> {% if role == "therapist" %}
-                <h2>Appointment Deletions</h2>
+                <h3>Appointment Deletions</h3>
                 {% for deletion in deletion_reasons %} {% if user.username == deletion.user.username or user.username == deletion.therapist.username %}
                 <p>
-                    User {{ deletion.user.username }} has deleted an appointment with {{ deletion.therapist.username }} at {{ deletion.created_at }}. Reason: {{ deletion.reason }}.
+                    <i>{{ deletion.user.username }}</i> has deleted an appointment with <i>{{ deletion.therapist.username }}</i> at {{ deletion.created_at }}.
                 </p>
+                <p> <i>Reason:</i> {{ deletion.reason }}.</p>
                 {% endif %} {% empty %}
                 <p>No deleted appointments.</p>
                 {% endfor %} {% endif %}
 
-                <h2>Articles</h2>
+                <h3>Articles</h3>
                 {% for article in articles %}
                 <a href="{% url 'blog' %}">
                     <div class="article">
@@ -456,7 +449,7 @@ menu
                 <p>Nothing new in articles.</p>
                 {% endfor %}
 
-                <h2>Testimonials</h2>
+                <h3>Testimonials</h3>
                 {% for testimonial in testimonials %}
                 <a href="{% url 'testimonies' %}">
                     <div class="testimonial">
@@ -569,18 +562,24 @@ menu
             }
         });
 
-        document.getElementById('deleteButton').addEventListener('click', function(event) {
-            var deleteReason = document.getElementById('deleteReason');
-            deleteReason.style.display = 'block';
+
+        document.querySelectorAll('.deleteButton').forEach(function(deleteButton, index) {
+            deleteButton.addEventListener('click', function(event) {
+                var deleteReason = document.querySelectorAll('.deleteReason')[index];
+                deleteReason.style.display = 'block';
+            });
         });
 
-        document.querySelector('form').addEventListener('submit', function(event) {
-            var deleteReason = document.getElementById('deleteReason');
-            if (deleteReason.value === "") {
-                event.preventDefault();
-                alert("Please select a reason for deletion.");
-            }
+        document.querySelectorAll('form').forEach(function(form, index) {
+            form.addEventListener('submit', function(event) {
+                var deleteReason = document.querySelectorAll('.deleteReason')[index];
+                if (deleteReason.value === "") {
+                    event.preventDefault();
+                    alert("Please select a reason for deletion.");
+                }
+            });
         });
+
 
         // Fetch user data from the server when the dashboard page loads
         window.onload = function() {
