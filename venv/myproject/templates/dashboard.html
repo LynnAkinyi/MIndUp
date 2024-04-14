@@ -391,7 +391,7 @@ menu
                 {% endif %}
             </div>
 
-
+            {% if role == "member" %}
             <div class="column" id="appointment">
                 <b><i>Scheduled Appointments</i></b>
                 <div class="selected-dates">
@@ -420,6 +420,8 @@ menu
                     </ul>
                 </div>
             </div>
+            {% endif %}
+
 
         </div>
         <div class="row">
@@ -428,13 +430,13 @@ menu
 
             </div>
             <div class="column" id="whatsNew">
-                <b><i>What's new</i></b>
+                <b><i>What's new</i></b> {% if role == "therapist" %}
                 <h2>Appointment Deletions</h2>
                 {% for deletion in deletion_reasons %} {% if user.username == deletion.user.username or user.username == deletion.therapist.username %}
                 <p>
                     User {{ deletion.user.username }} has deleted an appointment with {{ deletion.therapist.username }} at {{ deletion.created_at }}. Reason: {{ deletion.reason }}.
                 </p>
-                {% endif %} {% endfor %}
+                {% endif %} {% endfor %}{% endif %}
 
                 <h2>Articles</h2>
                 {% for article in articles %}
