@@ -433,6 +433,8 @@ delete
                         </p>
                     </div>
                 </a>
+                {% empty %}
+                <p>There is nothing new in articles.</p>
                 {% endfor %}
 
                 <h2>Testimonials</h2>
@@ -446,8 +448,11 @@ delete
                         <video src="{{ testimonial.video.url }}" controls style="width:30%;"></video> {% endif %}
                     </div>
                 </a>
+                {% empty %}
+                <p>There is nothing new in testimonials.</p>
                 {% endfor %}
             </div>
+
             <div id="articleCount" style="display: none;">{{ articles|length }}</div>
         </div>
     </div>
@@ -455,34 +460,48 @@ delete
         document.getElementById('notificationIcon').addEventListener('click', function() {
             // Get all divs with the class "column"
             var sections = document.querySelectorAll('.column');
+            var dot = document.querySelector('.dot');
 
-            // Loop through each section
-            sections.forEach(function(section) {
-                // If the section is not the "What's new" section, add the blur effect
-                if (section.id !== 'whatsNew') {
-                    section.classList.add('blur-effect');
-                }
+            // Check if the sections are already blurred
+            if (sections[0].classList.contains('blur-effect')) {
+                // If they are, remove the blur effect and hide the dot
+                sections.forEach(function(section) {
+                    section.classList.remove('blur-effect');
+                });
+                dot.style.display = 'none';
+            } else {
+                // If they're not, add the blur effect
+                sections.forEach(function(section) {
+                    // If the section is not the "What's new" section, add the blur effect
+                    if (section.id !== 'whatsNew') {
+                        section.classList.add('blur-effect');
+                    }
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Select the dot and the "What's New" section
+            var dot = document.querySelector('.dot');
+            var whatsNew = document.querySelector('#whatsNew');
+
+            // Check if there's something new
+            if (whatsNew.innerHTML.includes('There is nothing new in articles') &&
+                whatsNew.innerHTML.includes('There is nothing new in testimonials')) {
+                // If there's nothing new, hide the dot
+                dot.style.display = 'none';
+            } else {
+                // If there's something new, show the dot
+                dot.style.display = 'inline';
+            }
+
+            // Add an event listener to the notification icon
+            document.querySelector('#notificationIcon').addEventListener('click', function() {
+                // When the icon is clicked, hide the dot
+                dot.style.display = 'none';
             });
         });
 
-        // Select the dot and the "What's New" section
-        var dot = document.querySelector('.dot');
-        var whatsNew = document.querySelector('#whatsNew');
-
-        // Check if there's something new
-        if (whatsNew.innerHTML.trim() !== '') {
-            // If there's something new, show the dot
-            dot.style.display = 'inline';
-        } else {
-            // If there's nothing new, hide the dot
-            dot.style.display = 'none';
-        }
-
-        // Add an event listener to the notification icon
-        document.querySelector('#notificationIcon').addEventListener('click', function() {
-            // When the icon is clicked, hide the dot
-            dot.style.display = 'none';
-        });
         var ctx = document.getElementById('progressChart').getContext('2d');
         var progressChart = new Chart(ctx, {
             type: 'bar',

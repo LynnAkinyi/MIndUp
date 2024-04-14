@@ -12,6 +12,24 @@
             height: 100vh;
             flex-direction: column;
         }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 1.2em;
+            text-decoration: none;
+            background-color: #e5cfbe;
+            color: #6a2d0a;
+            border-radius: 20px;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 40px;
+        }
+        
+        .cta-button:hover {
+            color: #fff;
+            border-radius: 30px;
+            background: #6a2d0a;
+        }
     </style>
 </head>
 
@@ -59,7 +77,7 @@
       <input type="checkbox" name="bonus2"> Bonus
     </label>
 
-        <button type="submit">Update Progress</button>
+        <button type="submit" class="cta-button">Update Progress</button>
 
         <canvas class="container" id="progressChart" style="width:70%;max-width:700px; height:200px;"></canvas>
     </form>

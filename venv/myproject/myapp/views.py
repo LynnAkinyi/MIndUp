@@ -352,6 +352,7 @@ def article_list(request):
     articles = Article.objects.all()
     return render(request, 'article_list.html', {'articles': articles})
 
+@login_required
 def dir(request, view_all=False):
     therapists = Profile.objects.filter(role='therapist')
     if not view_all:

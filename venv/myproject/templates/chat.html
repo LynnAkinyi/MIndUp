@@ -250,7 +250,6 @@
                 };
 
                 // Add event listeners to the send button and the input field
-                // Add event listeners to the send button and the input field
                 document.querySelector("#id_message_send_button").onclick = function(e) {
                     var messageInput = document.querySelector("#id_message_send_input").value;
                     var currentTime = new Date();
@@ -263,10 +262,15 @@
                         receiver_username: volunteerName,
                         message_text: messageInput // Use the message from the input field
                     };
+                    console.log("Sending message: ", payload); // Log the payload
                     chatSocket.send(JSON.stringify(payload));
+
+                    // Append the message to the chat window immediately after it's sent
+                    appendMessage(messageInput, loggedInUser, messageContainer);
 
                     document.querySelector("#id_message_send_input").value = "";
                 };
+
                 document.querySelector("#id_message_send_input").onkeyup = function(e) {
                     if (e.keyCode == 13) { // Enter key
                         document.querySelector("#id_message_send_button").click();
@@ -282,10 +286,10 @@
                     var messageContainer = document.querySelector(`#id_chat_item_container_${data.receiver_username}`);
                     if (messageContainer) {
                         var div = document.createElement("div");
-                        div.className = (data.username === loggedInUser) ? "chat-message right" : "chat-message left";
+                        div.className = (data.sender_username === loggedInUser) ? "chat-message right" : "chat-message left";
                         div.innerHTML = `<div class="message-content">
-<span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
-<span class="message-text">${data.message}</span>
+<span class="message-username">${data.sender_username.charAt(0).toUpperCase() + data.sender_username.slice(1)}</span>
+<span class="message-text">${data.message_text}</span>
 <span class="message-timestamp">${new Date().toLocaleTimeString()}</span>
 </div>`;
                         messageContainer.appendChild(div);
@@ -294,8 +298,14 @@
                     } else {
                         console.error('Message container not found');
                     }
+
+                    // Append the message to the chat window immediately after it's received
+                    appendMessage(data.message_text, data.sender_username, messageContainer);
                 };
 
+
+                // Fetch and display messages when the chat window is opened
+                get_messages(volunteerName);
 
                 // Function to append a message to the chat window
                 function appendMessage(message, username, messageContainer) {
@@ -324,6 +334,7 @@
                         receiver_username: volunteerName,
                         message_text: messageInput // Use the message from the input field
                     };
+                    console.log("Sending message: ", payload); // Log the payload
                     chatSocket.send(JSON.stringify(payload));
 
                     // Append the message to the chat window immediately after it's sent

@@ -3,6 +3,9 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from channels.db import database_sync_to_async
 from django.contrib.auth import get_user_model
 from .models import ChatGroup, Message, DirectMessage
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -69,10 +72,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             receiver_username = data['receiver_username']
             message_text = data['message_text']
             await self.create_direct_message(sender_username, receiver_username, message_text)
-            # You can also send the DM to the receiver's channel here if needed
-        elif command == 'receive_dm':
-            # Handle receiving a DM
-            pass
+
+            # Send the message to the receiver's WebSocket connection
+            channel_layer = get_channel_layer()
+            await channel_layer.group_send(
+                receiver_username,  # The group name is the receiver's username
+                {
+                    'type': 'chat_message',
+                    'message': message_text,
+                    'username': sender_username,
+                }
+            )
     # Add more commands for DMs as needed
 
     @database_sync_to_async
