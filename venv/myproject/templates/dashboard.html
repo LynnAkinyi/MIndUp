@@ -405,7 +405,7 @@ menu
   <span class="material-icons">delete</span>
 </button>
 
-                                <select id="deleteReason" name="delete_reason" required style="display: none;">
+                                <select id="deleteReason" name="delete_reason" style="display: none;">
   <option value="">Select a reason for deletion</option>
   <option value="Accidental">Accidental</option>
   <option value="Wrong Time">Wrong Time</option>
@@ -420,6 +420,7 @@ menu
                     </ul>
                 </div>
             </div>
+            </section>
             {% endif %}
 
 
@@ -436,7 +437,9 @@ menu
                 <p>
                     User {{ deletion.user.username }} has deleted an appointment with {{ deletion.therapist.username }} at {{ deletion.created_at }}. Reason: {{ deletion.reason }}.
                 </p>
-                {% endif %} {% endfor %}{% endif %}
+                {% endif %} {% empty %}
+                <p>No deleted appointments.</p>
+                {% endfor %} {% endif %}
 
                 <h2>Articles</h2>
                 {% for article in articles %}
@@ -450,7 +453,7 @@ menu
                     </div>
                 </a>
                 {% empty %}
-                <p>There is nothing new in articles.</p>
+                <p>Nothing new in articles.</p>
                 {% endfor %}
 
                 <h2>Testimonials</h2>
@@ -465,7 +468,7 @@ menu
                     </div>
                 </a>
                 {% empty %}
-                <p>There is nothing new in testimonials.</p>
+                <p>Nothing new in testimonials.</p>
                 {% endfor %}
             </div>
 
@@ -566,11 +569,17 @@ menu
             }
         });
 
-        const deleteButton = document.getElementById('deleteButton');
-        const deleteReason = document.getElementById('deleteReason');
-
-        deleteButton.addEventListener('click', () => {
+        document.getElementById('deleteButton').addEventListener('click', function(event) {
+            var deleteReason = document.getElementById('deleteReason');
             deleteReason.style.display = 'block';
+        });
+
+        document.querySelector('form').addEventListener('submit', function(event) {
+            var deleteReason = document.getElementById('deleteReason');
+            if (deleteReason.value === "") {
+                event.preventDefault();
+                alert("Please select a reason for deletion.");
+            }
         });
 
         // Fetch user data from the server when the dashboard page loads
