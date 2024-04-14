@@ -30,7 +30,7 @@ from django.core import serializers
 from django.utils import timezone
 from datetime import datetime, timedelta
 from .models import TaskProgress, DirectMessage, DeletionReason
-
+from django.db.models import Q
 
 
 
@@ -160,7 +160,9 @@ def dashboard(request):
     articles = Article.objects.filter(date__range=(start_of_day, end_of_day)).order_by('-date')     # get all articles
     new_testimonies = Testimonies.objects.filter(created_at__gte=start_of_day, is_new=True)
     
-    deletion_reasons = DeletionReason.objects.order_by('-created_at')
+    deletion_reasons = DeletionReason.objects.filter(
+    Q(user=request.user) | Q(therapist=request.user)
+).order_by('-created_at')
 
     # add articles and appointments to the context
     context = {

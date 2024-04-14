@@ -401,18 +401,17 @@ menu
                             {{ appointment.date|date:"F d, Y" }} <b>with</b> <i>{{ appointment.therapist.name }}</i>
                             <form method="POST" action="{% url 'delete_appointment' appointment.id %}">
                                 {% csrf_token %}
-                                <select name="delete_reason" required>
-                        <option value="">Select a reason for deleting</option>
-                        <option value="reason1">Reason 1</option>
-                        <option value="reason2">Reason 2</option>
-                        <option value="reason3">Reason 3</option>
-                        <!-- Add more options as needed -->
-                    </select>
-                                <button type="submit" style="border: none; background: none;">
-                        <span class="material-icons">
-                            delete
-                        </span>
-                    </button>
+                                <button id="deleteButton" style="border: none; background: none;">
+  <span class="material-icons">delete</span>
+</button>
+
+                                <select id="deleteReason" name="delete_reason" required style="display: none;">
+  <option value="">Select a reason for deletion</option>
+  <option value="Accidental">Accidental</option>
+  <option value="Wrong Time">Wrong Time</option>
+  <option value="Change of Heart">Change of Heart</option>
+  <!-- Add more options as needed -->
+</select>
                             </form>
                         </li>
                         {% empty %}
@@ -563,6 +562,13 @@ menu
             } else {
                 dropdown.style.display = 'none';
             }
+        });
+
+        const deleteButton = document.getElementById('deleteButton');
+        const deleteReason = document.getElementById('deleteReason');
+
+        deleteButton.addEventListener('click', () => {
+            deleteReason.style.display = 'block';
         });
 
         // Fetch user data from the server when the dashboard page loads
