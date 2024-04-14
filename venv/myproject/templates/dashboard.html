@@ -432,7 +432,8 @@ logout
                 <p> <i>Reason:</i> {{ deletion.reason }}.</p>
                 {% endif %} {% empty %}
                 <p>No deleted appointments.</p>
-                {% endfor %} {% endif %}
+                {% endfor %}
+                <hr>{% endif %}
 
                 <h3>Articles</h3>
                 {% for article in articles %}
@@ -442,12 +443,13 @@ logout
                         <p><i>Published on: {{ article.date }}</i> by
                             <i>{{ article.creator }}</i>
                         </p>
-                        <hr>
+
                     </div>
                 </a>
                 {% empty %}
                 <p>Nothing new in articles.</p>
                 {% endfor %}
+                <hr>
 
                 <h3>Testimonials</h3>
                 {% for testimonial in testimonials %}
