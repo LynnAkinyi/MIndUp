@@ -105,3 +105,10 @@ class TaskProgress(models.Model):
     task2 = models.IntegerField(default=0)
     bonus1 = models.BooleanField(default=False)
     bonus2 = models.BooleanField(default=False)
+
+class DeletionReason(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='deletionreasons', null=True)
+    appointment_id = models.IntegerField()
+    therapist = models.ForeignKey(User, on_delete=models.CASCADE, related_name='therapist_deletionreasons')
+    reason = models.CharField(max_length=200)
+    created_at = models.DateTimeField(auto_now_add=True)

@@ -401,11 +401,18 @@ menu
                             {{ appointment.date|date:"F d, Y" }} <b>with</b> <i>{{ appointment.therapist.name }}</i>
                             <form method="POST" action="{% url 'delete_appointment' appointment.id %}">
                                 {% csrf_token %}
+                                <select name="delete_reason" required>
+                        <option value="">Select a reason for deleting</option>
+                        <option value="reason1">Reason 1</option>
+                        <option value="reason2">Reason 2</option>
+                        <option value="reason3">Reason 3</option>
+                        <!-- Add more options as needed -->
+                    </select>
                                 <button type="submit" style="border: none; background: none;">
-    <span class="material-icons">
-delete
-</span>
-</button>
+                        <span class="material-icons">
+                            delete
+                        </span>
+                    </button>
                             </form>
                         </li>
                         {% empty %}
@@ -423,6 +430,13 @@ delete
             </div>
             <div class="column" id="whatsNew">
                 <b><i>What's new</i></b>
+                <h2>Appointment Deletions</h2>
+                {% for deletion in deletion_reasons %} {% if user.username == deletion.user.username or user.username == deletion.therapist.username %}
+                <p>
+                    User {{ deletion.user.username }} has deleted an appointment with {{ deletion.therapist.username }} at {{ deletion.created_at }}. Reason: {{ deletion.reason }}.
+                </p>
+                {% endif %} {% endfor %}
+
                 <h2>Articles</h2>
                 {% for article in articles %}
                 <a href="{% url 'blog' %}">

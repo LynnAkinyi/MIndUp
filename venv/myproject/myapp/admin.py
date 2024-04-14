@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (
     UserRole, Article, 
     Profile, Therapist, Testimonies, Appointment, 
-    Volunteer, ChatGroup, Message, TaskProgress, DirectMessage
+    Volunteer, ChatGroup, Message, TaskProgress, DirectMessage, DeletionReason
 )
 
 @admin.register(UserRole)
@@ -46,4 +46,7 @@ class AppointmentAdmin(admin.ModelAdmin):
 
 @admin.register(TaskProgress)
 class TaskProgressAdmin(admin.ModelAdmin):
+    pass
+@admin.register(DeletionReason)
+class DeletionReasonAdmin(admin.ModelAdmin):
     pass

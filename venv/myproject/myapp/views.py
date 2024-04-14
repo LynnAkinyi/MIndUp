@@ -29,7 +29,7 @@ from django.core.exceptions import PermissionDenied
 from django.core import serializers
 from django.utils import timezone
 from datetime import datetime, timedelta
-from .models import TaskProgress, DirectMessage
+from .models import TaskProgress, DirectMessage, DeletionReason
 
 
 
@@ -159,6 +159,8 @@ def dashboard(request):
 
     articles = Article.objects.filter(date__range=(start_of_day, end_of_day)).order_by('-date')     # get all articles
     new_testimonies = Testimonies.objects.filter(created_at__gte=start_of_day, is_new=True)
+    
+    deletion_reasons = DeletionReason.objects.order_by('-created_at')
 
     # add articles and appointments to the context
     context = {
@@ -166,7 +168,8 @@ def dashboard(request):
         'articles': articles, 
         'therapist_appointments': therapist_appointments,
         'user_appointments': user_appointments,
-        'upcoming_appointments': upcoming_appointments,        
+        'upcoming_appointments': upcoming_appointments,   
+        'deletion_reasons': deletion_reasons,     
         'new_articles': new_articles,
         'testimonials': new_testimonies,
         'new_therapists': new_therapists,
@@ -196,8 +199,19 @@ def schedule_appointment(request, therapist_id):  # therapist_id is expected her
     # Redirect the user to the dashboard
     return redirect('dashboard')
 
+@login_required
 def delete_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)
+    
+    if request.method == 'POST':
+        reason = request.POST.get('delete_reason')
+        DeletionReason.objects.create(
+            user=request.user,
+            appointment_id=appointment_id,
+            therapist=appointment.therapist.user,  # Use the User instance associated with the Profile
+            reason=reason
+        )
+    
     appointment.delete()
     return redirect('dashboard')
 
