@@ -18,6 +18,7 @@ urlpatterns = [    # Existing URL patterns
     path('blog/<int:id>/', views.blog, name='blog'),
     path('blog/blog.html', views.blog, name='blog'),
     path('contact/', views.contact, name='contact'),
+    path('community/dir.html', views.dir, name='dir'),
     path('get_direct_messages/', views.get_direct_messages, name='get_direct_messages'),
     path('community/book.html/<int:therapist_id>/', views.book, name='book'),path('community/book.html', views.book, name='book'),
     path('community/chat.html/', views.chat, name='chat'),

@@ -377,10 +377,10 @@ logout
                 <div class="selected-dates">
                     {% for appointment in upcoming_appointments %}
                     <li>
-                        {{ appointment.date|date:"F d, Y, H:i" }} <b><i>({{ appointment.therapist.name }})</i></b> {% if appointment.google_meet_link %}
+                        {{ appointment.date|date:"F d, Y, H:i" }} <b><i>({{ appointment.therapist.name }})</i></b> {% if appointment.confirmed %} {% if appointment.google_meet_link %}
                         <a href="{{ appointment.google_meet_link }}">Join Google Meet</a> {% else %}
                         <p>Google Meet link not available</p>
-                        {% endif %} {% if appointment.confirmed %}
+                        {% endif %}
                         <p><i>Status: Confirmed</i></p>
                         {% else %}
                         <p><i>Status: Pending</i></p>
