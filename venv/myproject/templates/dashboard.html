@@ -430,11 +430,7 @@ logout
 
             </div>
             <div class="column" id="whatsNew">
-                <b><i>What's new</i></b>
-                <div class="confirmed">
-                    <h3>Confirmed Appointments</h3>
-                    <hr>
-                </div>{% if role == "therapist" %}
+                <b><i>What's new</i></b> {% if role == "therapist" %}
                 <h3>Appointment Deletions</h3>
                 {% for deletion in deletion_reasons %} {% if user.username == deletion.user.username or user.username == deletion.therapist.username %}
                 <p>

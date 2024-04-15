@@ -172,10 +172,10 @@ def schedule_appointment(request, therapist_id):  # therapist_id is expected her
     date_time_str = f"{date_str} {time_str}"
     date_time_obj = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M")
 
-    # Check if an appointment already exists for the user on the selected date
-    existing_appointment = Appointment.objects.filter(user=request.user, date=date_time_obj).exists()
+    # Check if an appointment already exists for the selected date and time
+    existing_appointment = Appointment.objects.filter(date=date_time_obj).exists()
     if existing_appointment:
-        messages.error(request, 'You have already scheduled an appointment on this date.')
+        messages.error(request, 'This time slot is already booked. Please select a different time.')
         # Render the current page with the error message
         return render(request, 'book.html', {'therapist': therapist})
 

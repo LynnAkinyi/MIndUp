@@ -38,7 +38,7 @@ def format_dates(date):
         date = datetime.datetime.strptime(date, "%Y-%m-%d")
 
     # Set a default time for the appointment
-    date = date.replace(hour=9)
+    # date = date.replace(hour=9)
 
     # Google Calendar uses the format: 20220101T000000Z
     # Assuming the appointment lasts for 1 hour
