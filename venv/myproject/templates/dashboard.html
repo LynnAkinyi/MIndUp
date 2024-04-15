@@ -372,7 +372,8 @@ logout
                 </div>
 
             </div>
-            <div class="column" id="upcomingEvents"><b><i>Upcoming Events</i></b>
+            <div class="column" id="upcomingEvents">
+                {% if role == "member" %}<b><i>Upcoming Events</i></b>
                 <div class="selected-dates">
                     {% for appointment in upcoming_appointments %}
                     <li>
@@ -389,8 +390,7 @@ logout
                     <li>No upcoming appointments.</li>
                     {% endfor %}
                 </div>
-
-                {% if role == "therapist" %}
+                {% endif %} {% if role == "therapist" %}
                 <section class="appointments">
                     <p><b>Scheduled Appointments</b></p>
                     <ul id="scheduledAppointmentsList">
