@@ -174,7 +174,16 @@
             cursor: pointer;
             font-size: 12px;
         }
-        /* CSS */
+        
+        .confirm {
+            background-color: #8A441D;
+            color: #fff;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
         
         .active {
             color: #8A441D;
@@ -366,10 +375,19 @@ logout
             <div class="column" id="upcomingEvents"><b><i>Upcoming Events</i></b>
                 <div class="selected-dates">
                     {% for appointment in upcoming_appointments %}
-                    <li>{{ appointment.date|date:"F d, Y, H:i" }} <b><i>({{ appointment.therapist.name }})</i></b> {% if appointment.google_meet_link %}
+                    <li>
+                        {{ appointment.date|date:"F d, Y, H:i" }} <b><i>({{ appointment.therapist.name }})</i></b> {% if appointment.google_meet_link %}
                         <a href="{{ appointment.google_meet_link }}">Join Google Meet</a> {% else %}
                         <p>Google Meet link not available</p>
-                        {% endif %} {% empty %} {% endfor %}
+                        {% endif %} {% if appointment.confirmed %}
+                        <p><i>Status: Confirmed</i></p>
+                        {% else %}
+                        <p><i>Status: Pending</i></p>
+                        {% endif %}
+                    </li>
+                    {% empty %}
+                    <li>No upcoming appointments.</li>
+                    {% endfor %}
                 </div>
 
                 {% if role == "therapist" %}
@@ -381,6 +399,11 @@ logout
                             {{ appointment.date|date:"F d, Y, H:i" }} <b>by</b> <i>{{ appointment.user.username }}</i> {% if appointment.google_meet_link %}
                             <a href="{{ appointment.google_meet_link }}">Join Google Meet</a> {% else %}
                             <p>Google Meet link not available</p>
+                            {% endif %} {% if not appointment.confirmed %}
+                            <form method="post" action="{% url 'confirm_appointment' appointment.id %}">
+                                {% csrf_token %}
+                                <input type="submit" value="Confirm" class="confirm">
+                            </form>
                             {% endif %}
                         </li>
                         {% empty %}

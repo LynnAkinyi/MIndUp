@@ -190,6 +190,15 @@ def schedule_appointment(request, therapist_id):  # therapist_id is expected her
     # Redirect the user to the dashboard
     return redirect('dashboard')
 
+@require_POST
+def confirm_appointment(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    if request.user != appointment.therapist.user:
+        return HttpResponseForbidden()
+    appointment.confirmed = True
+    appointment.save()
+    return redirect('dashboard')
+
 @login_required
 def delete_appointment(request, appointment_id):
     appointment = get_object_or_404(Appointment, id=appointment_id)

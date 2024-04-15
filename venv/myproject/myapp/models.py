@@ -60,6 +60,7 @@ class Appointment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)  # New field
     date = models.DateTimeField(default=timezone.now)
     google_meet_link = models.URLField(blank=True, null=True)
+    confirmed = models.BooleanField(default=False)
 
     def __str__(self):
         username = 'Unknown user' if self.user is None else self.user.username
