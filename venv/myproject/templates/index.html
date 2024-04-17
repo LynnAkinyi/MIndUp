@@ -12,51 +12,7 @@
     <link rel="icon" href="static/css/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="shortcut icon" href="static/images/favicon.ico" type="image/x-icon" />
-    <style>
-        .active {
-            color: #8A441D;
-            background-color: rgba(255, 246, 242, 0.4);
-            border-radius: 30px;
-            padding: 10px;
-            width: 49px;
-        }
-        
-        .content-container {
-            display: flex;
-            align-items: center;
-        }
-        
-        .welcome-image {
-            margin-right: 20px;
-            /* Adjust margin as needed */
-            width: 150px;
-            /* Adjust image width as needed */
-            height: auto;
-            /* Maintain aspect ratio */
-            border-radius: 10px;
-        }
-        
-        .text-content {
-            /* Styles for the text content */
-        }
-        
-        .cta-button {
-            display: inline-block;
-            padding: 10px 25px;
-            font-size: 1.2em;
-            text-decoration: none;
-            color: #fff;
-            border-radius: 30px;
-            background: #6a2d0a;
-            transition: background-color 0.3s, color 0.3s;
-            margin-top: 40px;
-        }
-        
-        .cta-button:hover {
-            background-color: #e5cfbe;
-            color: #6a2d0a;
-        }
-    </style>
+
 </head>
 
 <body>
@@ -145,11 +101,7 @@ menu
                 <img src="static/images/therapist.jpg" alt="Image" class="image" />
             </div>
         </section>
-        <!-- {% if request.user.is_authenticated %}
-    <p>{{ request.user.username }}</p>
-    <a href="{% url 'logout' %} ">Logout</a> {% else %}
-    <a href="{% url 'login' %} ">Login</a>
-    <a href="{% url 'signup' %} ">Signup</a> {% endif %} -->
+
         <footer>
             <div class="footer-container ">
                 <div class="footer-section ">
@@ -194,12 +146,7 @@ menu
             </div>
         </footer>
     </div>
-    <script>
-        window.onload = function() {
-            const dashboardLink = document.getElementById('dashboardLink');
-            dashboardLink.classList.add('active');
-        }
-    </script>
+
 </body>
 
 </html>

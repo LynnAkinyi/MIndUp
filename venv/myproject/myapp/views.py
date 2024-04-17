@@ -132,10 +132,14 @@ def dashboard(request):
     articles = Article.objects.filter(date__range=(start_of_day, end_of_day)).order_by('-date')     # get all articles
     new_testimonies = Testimonies.objects.filter(created_at__gte=start_of_day, is_new=True)
     
-    deletion_reasons = DeletionReason.objects.filter(
-    Q(user=request.user) | Q(therapist=request.user)
-).order_by('-created_at')
+    # Calculate the time 24 hours ago
+    twenty_four_hours_ago = now - timedelta(hours=24)
 
+    # Filter the deletion reasons to only include those created in the last 24 hours
+    deletion_reasons = DeletionReason.objects.filter(
+        Q(user=request.user) | Q(therapist=request.user),
+        created_at__gte=twenty_four_hours_ago
+    ).order_by('-created_at')
     # add articles and appointments to the context
     context = {
         'role': profile.role, 
