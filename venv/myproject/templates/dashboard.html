@@ -524,26 +524,37 @@ logout
             }
         });
 
-        document.addEventListener('DOMContentLoaded', (event) => {
-            // Select the dot and the "What's New" section
+        document.addEventListener('DOMContentLoaded', function() {
             var dot = document.querySelector('.dot');
-            var whatsNew = document.querySelector('#whatsNew');
+            var whatsNewSection = document.getElementById('whatsNew');
+            var notificationIcon = document.getElementById('notificationIcon');
 
-            // Check if there's something new
-            if (whatsNew.innerHTML.includes('There is nothing new in articles') &&
-                whatsNew.innerHTML.includes('There is nothing new in testimonials')) {
-                // If there's nothing new, hide the dot
-                dot.style.display = 'none';
-            } else {
-                // If there's something new, show the dot
-                dot.style.display = 'inline';
+            // Function to check if there's new content in the "What's New" section
+            function checkForNewContent() {
+                // Check if there are any appointment deletions, articles, or testimonials in the "What's New" section
+                var hasDeletions = !whatsNewSection.innerHTML.includes('No deleted appointments.');
+                var hasArticles = !whatsNewSection.innerHTML.includes('Nothing new in articles.');
+                var hasTestimonials = !whatsNewSection.innerHTML.includes('Nothing new in testimonials.');
+
+                // If there are deletions, articles, or testimonials, show the dot
+                if (hasDeletions || hasArticles || hasTestimonials) {
+                    dot.style.display = 'block';
+                } else {
+                    dot.style.display = 'none';
+                }
             }
 
-            // Add an event listener to the notification icon
-            document.querySelector('#notificationIcon').addEventListener('click', function() {
-                // When the icon is clicked, hide the dot
+            // Check for new content when the page is loaded
+            checkForNewContent();
+
+            // Hide the dot when the notification icon is clicked
+            notificationIcon.addEventListener('click', function() {
                 dot.style.display = 'none';
             });
+
+            // Check for new content every 5 seconds
+            // This is just an example, you might need to adjust the interval or use a different method depending on how your website works
+            setInterval(checkForNewContent, 5000);
         });
 
         var ctx = document.getElementById('progressChart').getContext('2d');

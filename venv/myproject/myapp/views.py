@@ -176,13 +176,31 @@ def schedule_appointment(request, therapist_id):  # therapist_id is expected her
     date_time_str = f"{date_str} {time_str}"
     date_time_obj = datetime.strptime(date_time_str, "%Y-%m-%d %H:%M")
 
-    # Check if an appointment already exists for the selected date and time
-    existing_appointment = Appointment.objects.filter(date=date_time_obj).exists()
+    # Calculate the start and end times for the time slot
+    start_time = date_time_obj - timedelta(hours=1)
+    end_time = date_time_obj + timedelta(hours=1)
+
+    # Check if an appointment already exists for the selected therapist and time slot
+    existing_appointment = Appointment.objects.filter(
+        therapist=therapist,
+        date__range=(start_time, end_time)
+    ).exists()
+
     if existing_appointment:
-        messages.error(request, 'This time slot is already booked. Please select a different time.')
+        messages.error(request, 'This time slot is already booked or too close to another appointment. Please select a different time.')
         # Render the current page with the error message
         return render(request, 'book.html', {'therapist': therapist})
 
+    # Check if the user has an appointment with any therapist at the selected time
+    user_appointment = Appointment.objects.filter(
+        user=request.user,
+        date__range=(start_time, end_time)
+    ).exists()
+
+    if user_appointment:
+        messages.error(request, 'You have an appointment with a different therapist at this hour.')
+        # Render the current page with the error message
+        return render(request, 'book.html', {'therapist': therapist})
     # Create a new Appointment object and save it to the database
     appointment = Appointment(therapist=therapist, user=request.user, date=date_time_obj)
     
