@@ -1,0 +1,109 @@
+<!-- create_article.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Article</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        form {
+            background-color: #fff;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        label {
+            font-weight: bold;
+        }
+        
+        input[type="text"],
+        textarea {
+            width: calc(100% - 22px);
+            /* Adjusting for padding */
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        .read-more-button {
+            margin: 20px;
+            padding: 10px 50px;
+            background-color: #8a4c1d;
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+        
+        .read-more-button:hover {
+            background-color: #a79589;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Create New Article</h1>
+    <form method="POST" enctype="multipart/form-data" onsubmit="createArticle(); return false;">
+        {% csrf_token %} {{ form.as_p }}
+
+        <button type="submit" class="read-more-button">Post</button>
+    </form>
+    <script>
+        const blogUrl = "{% url 'blog' %}";
+
+        function createArticle() {
+            const articleTitle = document.getElementById('articleTitle').value;
+            const articleContent = document.getElementById('articleContent').value;
+            const articleImage = document.getElementById('articleImage').files[0];
+
+            if (articleTitle && articleContent && articleImage) {
+                let formData = new FormData();
+                formData.append('title', articleTitle);
+                formData.append('content', articleContent);
+                formData.append('image', articleImage);
+
+                // Get the CSRF token
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                fetch('/create_article/', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrftoken
+                    },
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        window.location.href = blogUrl;
+                    } else {
+                        alert('There was an error creating the article.');
+                    }
+                });
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+    </script>
+</body>
+
+
+</html>

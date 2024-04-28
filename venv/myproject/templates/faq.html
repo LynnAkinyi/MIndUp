@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Example Page</title>
+    <style>
+        /* Navigation bar styles */
+        
+        nav {
+            background-color: #FFFFFF;
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            width: 100%;
+        }
+        /* First section styles */
+        
+        section:first-of-type {
+            width: 100%;
+            height: calc(100vh / 2);
+            background-color: #A79589;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+            color: #333;
+        }
+        /* Second section styles */
+        
+        section:nth-of-type(2) {
+            padding: 50px;
+            background-color: #FFFFFF;
+            font-size: 1.2rem;
+            color: #333;
+            height: calc(100vh - (100vh / 3));
+        }
+        
+        .container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            /* Three equal columns */
+            gap: 3rem;
+            /* Spacing between divs */
+        }
+        
+        .box {
+            background-color: #FFF4EE;
+            padding: 1rem;
+            text-align: center;
+        }
+        /* Footer styles */
+        
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            left: 0;
+            padding: 20px;
+            background-color: #f1f1f1;
+        }
+        
+        @media only screen and (max-width: 600px) {
+            /* Adjust the styles for mobile devices */
+            section:first-of-type {
+                font-size: 1.5rem;
+            }
+            section:nth-of-type(2) {
+                padding: 20px;
+                font-size: 1rem;
+                height: auto;
+            }
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <h1>TranquilMind</h1>
+    </nav>
+
+    <section>
+        <p>Have any questions? We're here to assist you.</p>
+        <!--add search -->
+    </section>
+
+    <section class="container">
+        <div class="box">
+            <!--add text to this section -->
+            <h3>What services does TranquilMind offer?</h3>
+            <p>Our platform offers a holistic approach to mental well-being. From counseling and therapy to community forums and informative resources, Tranquil Mind provides a range of services to address various aspects of mental health.</p>
+        </div>
+        <div class="box">
+            <h3>How can I connect with mental health professionals on TranquilMind?</h3>
+            <p>You can connect with them through counseling sessions, therapy programs, or participate in support groups to receive personalized support.</p>
+        </div>
+        <div class="box">
+            <h3>How can I access resources on TranquilMind?</h3>
+            <p>Navigate through our platform to discover a wealth of knowledge aimed at supporting your mental well-being.</p>
+        </div>
+        <div class="box">
+            <h3>Are there community forums on TranquilMind?</h3>
+            <p>Absolutely! Our community forums provide a space for open conversations. Connect with others who share similar experiences, offer support, and foster a sense of belonging.</p>
+        </div>
+        <div class="box">
+            <h3>How can I get involved with TranquilMind?</h3>
+            <p>If you're passionate about mental health, you can explore volunteer opportunities, participate in events, and contribute to our community. Reach out to us to discover how you can be a part of our mission.</p>
+        </div>
+        <div class="box">
+            <h3> Can I access TranquilMind in multiple languages?</h3>
+            <p> While currently available in English, we have plans to expand language options to ensure inclusivity and reach a diverse audience.</p>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2023 Example Page. All rights reserved.
+    </footer>
+</body>
+
+</html>

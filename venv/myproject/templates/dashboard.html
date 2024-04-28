@@ -1,0 +1,901 @@
+{% load static %} {% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+    </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <title>Dashboard</title>
+    <style>
+        .sidenav {
+            height: 100%;
+            width: 200px;
+            position: fixed;
+            z-index: 1;
+            top: 0px;
+            left: 0;
+            background-color: #A79589;
+            background: linear-gradient(to center, #A79589, #F6EFE9);
+            overflow-x: hidden;
+            padding-top: 10px;
+            border-radius: 0px 10px 10px 0px;
+        }
+        
+        .sidenav a {
+            padding: 10px;
+            margin: 10px 10px 10px 20px;
+            display: block;
+            text-decoration: none;
+            text-decoration: none;
+            font-size: 18px;
+            color: #8A441D;
+            display: block;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.4));
+        }
+        
+        .sidenav a:hover {
+            color: #f1f1f1;
+        }
+        
+        .dashlinks a {
+            margin-top: 50px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .logout a {
+            display: flex;
+            align-items: center;
+            margin-top: 150px;
+        }
+        
+        .material-icons {
+            color: #8A441D;
+            font-size: 28px;
+            cursor: pointer;
+            margin-right: 15px;
+            /* Adjusted margin */
+        }
+        
+        footer {
+            background-color: #A79589;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 0;
+            width: 100%;
+        }
+        
+        .main {
+            margin-left: 140px;
+            /* Same as the width of the sidenav */
+            padding: 0px 10px;
+        }
+        
+        .main h2 {
+            margin-top: 50px;
+            margin-bottom: 10px;
+        }
+        
+        .row {
+            display: flex;
+            justify-content: space-between;
+            margin-left: 50px;
+            height: 270px;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.4));
+        }
+        
+        .column {
+            flex: 1;
+            margin: 7px;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 10px;
+            overflow-y: auto;
+            background-color: #efe6e2;
+        }
+        
+        .highlight {
+            background-color: yellow;
+        }
+        
+        a {
+            text-decoration: none;
+            color: #8A441D;
+        }
+        /* Add this to your style tag */
+        
+        ul {
+            list-style-type: square;
+            /* Use 'tick' for ticks */
+        }
+        
+        .selected-dates {
+            top: 0px;
+            max-height: 100px;
+        }
+        
+        .topnav {
+            background: linear-gradient(to top, #A79589, #ab7448);
+            overflow: hidden;
+            padding: 20px;
+            margin: 10px 0 0 220px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+        }
+        
+        .main h2 {
+            margin-left: 10cqmin;
+            margin-bottom: 20px;
+        }
+        
+        .row h2 {
+            margin-left: 0px;
+        }
+        
+        .topnav input[type="text"] {
+            width: 300px;
+            padding: 10px;
+            border-radius: 30px;
+            border: none;
+            margin-left: 5%;
+            margin-right: 50%;
+            filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.2));
+            /* Adjusted margin */
+        }
+        /* Media query for mobile */
+        
+        .dropdownNav {
+            display: none;
+            position: absolute;
+            width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+        }
+        
+        .dropdownNav a {
+            display: block;
+            text-align: left;
+            padding: 12px 16px;
+        }
+        
+        .styled-button {
+            background-color: #8A441D;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .confirm {
+            background-color: #8A441D;
+            color: #fff;
+            padding: 5px 15px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        
+        .active {
+            color: #8A441D;
+            background-color: rgba(255, 246, 242, 0.4);
+            border-radius: 40px;
+        }
+        
+        .date-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .date-item .delete-btn {
+            margin-left: 10px;
+        }
+        /* Add this CSS to display the notification dot */
+        
+        #notificationIcon {
+            position: relative;
+        }
+        
+        .dot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 10px;
+            width: 10px;
+            background-color: #F6EFE9;
+            border-radius: 50%;
+            display: none;
+        }
+        
+        .dropdown {
+            display: flex;
+            flex-direction: column;
+            margin: 10px;
+            padding: 20px;
+            border-radius: 20px;
+            background-color: rgba(75, 51, 3, 0.282)
+        }
+        
+        .blur-effect {
+            filter: blur(2px);
+            pointer-events: none;
+            user-select: none;
+        }
+        
+        @media (max-width: 600px) {
+            .sidenav {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 10px;
+            }
+            .sidenav a {
+                float: left;
+                width: 100%;
+                text-align: center;
+            }
+            .topnav {
+                padding: 10px;
+                margin: 0;
+            }
+            .topnav input[type="text"] {
+                width: 100%;
+                margin: 0 0 10px 0;
+            }
+            .main {
+                margin-left: 0;
+            }
+            .main h2 {
+                text-align: center;
+            }
+            .row {
+                margin-left: 0;
+                height: auto;
+                flex-direction: column;
+            }
+            .row a {
+                text-decoration: none;
+                color: black;
+            }
+            .column {
+                margin: 10px 0;
+                width: 100%;
+            }
+            .sidenav {
+                display: none;
+            }
+            <!-- .mobile-nav {
+                display: flex;
+                flex-direction: column;
+                margin: 10px;
+                padding: 20px;
+                border-radius: 20px;
+                background-color: rgba(75, 51, 3, 0.282)
+            }
+            -->.topnav input[type="text"] {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- add side nav and style it -->
+    <div class="sidenav">
+        <div class="dashlinks">
+            <a href="{% url 'dashboard' %}" class="active" id="dashboardLink"><span class="material-icons">dashboard</span>Dashboard</a>
+
+
+            <a href="{% url 'community' %}"><span class="material-icons">
+groups
+</span>Community</a>
+            <a href="{% url 'blog' %}"><span class="material-icons">
+edit_note
+</span>Blog</a>
+            <a href="{% url 'about' %}"><span class="material-icons">
+description
+</span>About Us</a>
+            <a href="{% url 'tasks' %}"><span class="material-icons">
+task
+</span>Tasks</a>
+        </div>
+        <div class="logout"> <a href="{% url 'logout' %} "><span class="material-icons">
+logout
+</span>Logout</a></div>
+
+
+    </div>
+    <!-- <div class="mobile-nav">
+
+
+        <div id="dropdownNav" class="dropdownNav">
+            <a href="#">Dashboard</a>
+            <a href="#">Profile</a>
+            <a href="#">Community</a>
+            <a href="#">Blog</a>
+        </div>
+
+    </div> -->
+
+    <!-- add top navigation bar -->
+    <div class="topnav">
+        <input type="text" id="searchInput" placeholder="Search...">
+
+        <a href="#whatsNew">
+            <span class="material-icons" id="notificationIcon">
+        notifications
+            <span class="dot"></span>
+            </span>
+        </a>
+        </span>
+
+
+
+
+        </a> {% if request.user.is_authenticated %}
+        <a href="{% url 'profile' request.user.id %}">
+            {% if request.user.profile.image %}
+    <img src="{{ request.user.profile.image.url }}" alt="Profile Image" id="profile-pic" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: center center;" />
+{% else %}
+    <span class="material-icons">person</span>
+{% endif %}
+        </a> {% endif %}
+
+    </div>
+
+
+    </div>
+
+    <div class="main">
+        <h2>Hello, {{ request.user.username }}, Welcome Back!</h2>
+        <!-- Add this inside your .main div -->
+        <div class="row">
+            <div class="column" id="memberOverview"><b><i>Member Overview</i></b>
+                <div class="saved-info" id="saved-info">
+                    <p><b>Name:</b> {{ request.user.username }}</p>
+                    <p><b>Email:</b> {{ request.user.profile.email }}</p>
+                    <p><b>Role:</b> {{ request.user.profile.get_role_display }}</p>
+                    {% if role == "therapist" %}
+                    <p><b>specialty:</b> {{ request.user.profile.specialty }}</p>
+                    {% endif %}
+
+                </div>
+
+            </div>
+            <div class="column" id="upcomingEvents">
+                {% if role == "member" %}<b><i>Upcoming Events</i></b>
+                <div class="selected-dates">
+                    {% for appointment in upcoming_appointments %}
+                    <li>
+                        {{ appointment.date|date:"F d, Y, H:i" }} <b><i>({{ appointment.therapist.name }})</i></b> {% if appointment.confirmed %} {% if appointment.google_meet_link %}
+                        <a href="{{ appointment.google_meet_link }}">Join Google Meet</a> {% else %}
+                        <p>Google Meet link not available</p>
+                        {% endif %}
+                        <p><i>Status: Confirmed</i></p>
+                        {% else %}
+                        <p><i>Status: Pending</i></p>
+                        {% endif %}
+                    </li>
+                    {% empty %}
+                    <li>No upcoming appointments.</li>
+                    {% endfor %}
+                </div>
+                {% endif %} {% if role == "therapist" %}
+                <section class="appointments">
+                    <p><b>Scheduled Appointments</b></p>
+                    <ul id="scheduledAppointmentsList">
+                        {% for appointment in therapist_appointments %}
+                        <li>
+                            {{ appointment.date|date:"F d, Y, H:i" }} <b>by</b> <i>{{ appointment.user.username }}</i> {% if appointment.google_meet_link %}
+                            <a href="{{ appointment.google_meet_link }}">Join Google Meet</a> {% else %}
+                            <p>Google Meet link not available</p>
+                            {% endif %} {% if not appointment.confirmed %}
+                            <form method="post" action="{% url 'confirm_appointment' appointment.id %}">
+                                {% csrf_token %}
+                                <input type="submit" value="Confirm" class="confirm">
+                            </form>
+                            {% endif %}
+                        </li>
+                        {% empty %}
+                        <li>No appointments scheduled yet.</li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+            </div>
+
+            {% if role == "member" %}
+            <div class="column" id="appointment">
+                <b><i>Scheduled Appointments</i></b>
+                <div class="selected-dates">
+                    <ul id="selectedDatesList">
+                        {% for appointment in user_appointments %}
+                        <li>
+                            {{ appointment.date|date:"F d, Y, H:i" }} <b>with </b> <i>{{ appointment.therapist.name }}</i>
+                            <form method="POST" action="{% url 'delete_appointment' appointment.id %}">
+                                {% csrf_token %}
+                                <button class="deleteButton" style="border: none; background: none;">
+  <span class="material-icons">delete</span>
+</button>
+
+                                <select class="deleteReason" name="delete_reason" style="display: none;">
+  <option value="">Select a reason for deletion</option>
+  <option value="Accidental">Accidental</option>
+  <option value="Wrong Time">Wrong Time</option>
+  <option value="Change of Heart">Change of Heart</option>
+</select>
+                            </form>
+                        </li>
+                        {% empty %}
+                        <li>No appointments scheduled.</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            </section>
+            {% endif %}
+
+
+        </div>
+        <div class="row">
+            <div class="column" id="progress"><b><i>Progress</i></b>
+                <canvas id="progressChart" style="width:100%;max-width:700px;"></canvas>
+
+            </div>
+            <div class="column" id="whatsNew">
+                <b><i>What's new</i></b> {% if role == "therapist" %}
+                <h3>Appointment Deletions</h3>
+                {% for deletion in deletion_reasons %} {% if user.username == deletion.user.username or user.username == deletion.therapist.username %}
+                <p>
+                    <i>{{ deletion.user.username }}</i> has deleted an appointment with <i>{{ deletion.therapist.username }}</i> at {{ deletion.created_at }}.
+                </p>
+                <p> <i>Reason:</i> {{ deletion.reason }}.</p>
+                {% endif %} {% empty %}
+                <p>No deleted appointments.</p>
+                {% endfor %}
+                <hr>{% endif %}
+
+                <h3>Articles</h3>
+                {% for article in articles %}
+                <a href="{% url 'blog' %}">
+                    <div class="article">
+                        <h3>{{ article.title }}</h3>
+                        <p><i>Published on: {{ article.date }}</i> by
+                            <i>{{ article.creator }}</i>
+                        </p>
+
+                    </div>
+                </a>
+                {% empty %}
+                <p>Nothing new in articles.</p>
+                {% endfor %}
+                <hr>
+
+                <h3>Testimonials</h3>
+                {% for testimonial in testimonials %}
+                <a href="{% url 'testimonies' %}">
+                    <div class="testimonial">
+                        <p>{{ testimonial.text }}</p>
+                        {% if testimonial.video %}
+                        <video src="{{ testimonial.video.url }}" controls style="width:30%;"></video> {% endif %}
+                        <p><i>Posted on: {{ testimonial.created_at }} By {{ testimonial.user.username }}</i></p>
+                        <hr>
+                    </div>
+                </a>
+                {% empty %}
+                <p>Nothing new in testimonials.</p>
+                {% endfor %}
+            </div>
+
+            <div id="articleCount" style="display: none;">{{ articles|length }}</div>
+        </div>
+    </div>
+    <script>
+        document.getElementById('notificationIcon').addEventListener('click', function() {
+            // Get all divs with the class "column"
+            var sections = document.querySelectorAll('.column');
+            var dot = document.querySelector('.dot');
+
+            // Check if the sections are already blurred
+            if (sections[0].classList.contains('blur-effect')) {
+                // If they are, remove the blur effect and hide the dot
+                sections.forEach(function(section) {
+                    section.classList.remove('blur-effect');
+                });
+                dot.style.display = 'none';
+            } else {
+                // If they're not, add the blur effect
+                sections.forEach(function(section) {
+                    // If the section is not the "What's new" section, add the blur effect
+                    if (section.id !== 'whatsNew') {
+                        section.classList.add('blur-effect');
+                    }
+                });
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            var dot = document.querySelector('.dot');
+            var whatsNewSection = document.getElementById('whatsNew');
+            var notificationIcon = document.getElementById('notificationIcon');
+
+            // Function to check if there's new content in the "What's New" section
+            function checkForNewContent() {
+                // Check if there are any appointment deletions, articles, or testimonials in the "What's New" section
+                var hasDeletions = !whatsNewSection.innerHTML.includes('No deleted appointments.');
+                var hasArticles = !whatsNewSection.innerHTML.includes('Nothing new in articles.');
+                var hasTestimonials = !whatsNewSection.innerHTML.includes('Nothing new in testimonials.');
+
+                // If there are deletions, articles, or testimonials, show the dot
+                if (hasDeletions || hasArticles || hasTestimonials) {
+                    dot.style.display = 'block';
+                } else {
+                    dot.style.display = 'none';
+                }
+            }
+
+            // Check for new content when the page is loaded
+            checkForNewContent();
+
+            // Hide the dot when the notification icon is clicked
+            notificationIcon.addEventListener('click', function() {
+                dot.style.display = 'none';
+            });
+
+            // Check for new content every 5 seconds
+            // This is just an example, you might need to adjust the interval or use a different method depending on how your website works
+            setInterval(checkForNewContent, 5000);
+        });
+
+        var ctx = document.getElementById('progressChart').getContext('2d');
+        var progressChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Task 1', 'Task 2', 'Bonus 1', 'Bonus 2'],
+                datasets: [{
+                    label: 'Progress',
+                    data: [0, 0, 0, 0],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        fetch('/get_progress/')
+            .then(response => response.json())
+            .then(data => {
+                progressChart.data.datasets[0].data = [data.task1, data.task2, data.bonus1, data.bonus2];
+                progressChart.update();
+            });
+
+        document.getElementById('notificationIcon').addEventListener('click', function() {
+            var dropdown = document.getElementById('dropdown');
+            if (dropdown.style.display === 'none') {
+                dropdown.style.display = 'block';
+            } else {
+                dropdown.style.display = 'none';
+            }
+        });
+
+
+        document.querySelectorAll('.deleteButton').forEach(function(deleteButton, index) {
+            deleteButton.addEventListener('click', function(event) {
+                var deleteReason = document.querySelectorAll('.deleteReason')[index];
+                deleteReason.style.display = 'block';
+            });
+        });
+
+        document.querySelectorAll('form').forEach(function(form, index) {
+            form.addEventListener('submit', function(event) {
+                var deleteReason = document.querySelectorAll('.deleteReason')[index];
+                if (deleteReason.value === "") {
+                    event.preventDefault();
+                    alert("Please select a reason for deletion.");
+                }
+            });
+        });
+
+
+        // Fetch user data from the server when the dashboard page loads
+        window.onload = function() {
+            fetch('/get_user_data/', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': 'Bearer ' + token // Use the token received after successful login
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display user data on the dashboard
+                    document.getElementById('username').textContent = data.username;
+                    document.getElementById('email').textContent = data.email;
+                    // ... Display other user data ...
+                });
+        }
+        var role = "{{ role }}";
+        var username = "{{ user.username }}";
+
+        if (role === "therapist") {
+
+            document.getElementById('appointment').style.display = 'none';
+
+        } else if (role === "member") {
+
+        }
+
+        document.getElementById('notificationIcon').addEventListener('click', function() {
+            var dropdown = document.getElementById('notificationDropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        });
+        document.getElementById('searchInput').addEventListener('keyup', function(event) {
+            // Number 13 is the "Enter" key on the keyboard
+            if (event.keyCode === 13) {
+                // Cancel the default action, if needed
+                event.preventDefault();
+                // Trigger the search function
+                search();
+            }
+        });
+
+        function search() {
+            // Get the search query from the input field
+            var query = document.getElementById('searchInput').value.trim().toLowerCase();
+
+            // Get the content to search
+            var contentToSearch = Array.from(document.querySelectorAll('.dashlinks a, .main h2, .main b, #dashboard-info, #upcoming-events, #selectedDatesList'));
+
+            // Remove previous highlights
+            contentToSearch.forEach(function(item) {
+                item.innerHTML = item.innerHTML.replace(/<span class="highlight">([^<]*)<\/span>/g, '$1');
+            });
+
+            // Loop through each content item and check if it matches the search query
+            contentToSearch.forEach(function(item) {
+                var textContent = item.textContent.toLowerCase();
+                if (textContent.includes(query)) {
+                    // If the item matches the search query, highlight it
+                    var regex = new RegExp('(' + query + ')', 'gi');
+                    item.innerHTML = item.innerHTML.replace(regex, '<span class="highlight">$1</span>');
+                }
+            });
+        }
+        // Check if values exist in local storage and display them
+        window.addEventListener('load', function() {
+            var userProfile = localStorage.getItem('userProfile');
+            if (userProfile) {
+                var userData = JSON.parse(userProfile);
+                var name = userData.name;
+                var email = userData.email;
+                var phone = userData.phone;
+                var profilePictureUrl = userData.profilePictureUrl;
+
+                var dashboardInfoDiv = document.getElementById('dashboard-info');
+                dashboardInfoDiv.innerHTML = '<p><strong>Name:</strong> ' + name + '</p>' +
+                    '<p><strong>Email:</strong> ' + email + '</p>' +
+                    '<p><strong>Phone:</strong> ' + phone + '</p>';
+
+                // Show saved information
+                var savedInfoDiv = document.getElementById('saved-info');
+                savedInfoDiv.style.display = 'block';
+            }
+        });
+        // JavaScript
+
+
+        var ctx = document.getElementById('progressChart').getContext('2d');
+        var taskLevels = {
+            task1: 0,
+            task2: 0
+        };
+        var bonusValues = {
+            bonus1: 0,
+            bonus2: 0
+        };
+
+        var progressChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Task 1', 'Task 2'],
+                datasets: [{
+                    label: 'Progress',
+                    data: [taskLevels.task1, taskLevels.task2],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)'
+                    ],
+                    borderWidth: 1
+                }, {
+                    label: 'Bonus',
+                    data: [bonusValues.bonus1, bonusValues.bonus2],
+                    backgroundColor: [
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(255, 206, 86, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(255, 206, 86, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 15
+                    }
+                }
+            }
+        });
+
+        // user_details.js
+        document.getElementById('userDetailsForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+
+            try {
+                const response = await fetch('/api/user/details/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') // Include CSRF token
+                    },
+                    body: JSON.stringify({
+                        name,
+                        email
+                    })
+                });
+                if (response.ok) {
+                    const userDetails = await response.json();
+                    document.getElementById('userDetails').innerHTML = `
+               
+                <p>Name: ${userDetails.name}</p>
+                <p>Email: ${userDetails.email}</p>
+            `;
+                } else {
+                    console.error('Failed to save user details');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // Function to get CSRF token
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        const upcomingEventsDiv = document.getElementById('upcoming-events');
+
+        // Clear the existing content of the div
+        upcomingEventsDiv.innerHTML = '';
+
+        // Function to generate meeting links for the given date
+        function generateMeetingLink(date) {
+            // Example logic to generate meeting links based on the date
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1; // Months are zero indexed, so we add 1
+            const day = date.getDate();
+
+            // Example: Generate Google Meet link
+            const googleMeetLink = `https://meet.google.com/your-meeting-id?date=${year}-${month}-${day}`;
+
+            // Example: Generate Zoom meeting link
+            const zoomMeetingLink = `https://zoom.us/j/your-meeting-id?date=${year}-${month}-${day}`;
+
+            // You can add more logic here to generate links for other platforms
+
+            // Return an object containing both meeting links
+            return {
+                googleMeetLink,
+                zoomMeetingLink
+            };
+        }
+
+        // Display upcoming events with embedded meeting links
+        function displayUpcomingEvents(selectedDates) {
+            // Check if there are at least two selected dates
+            if (selectedDates.length >= 2) {
+                const sortedDates = selectedDates.sort(); // Sort the dates
+
+                for (let i = 0; i < sortedDates.length - 1; i++) {
+                    const currentDate = new Date(sortedDates[i]);
+                    const nextDate = new Date(sortedDates[i + 1]);
+
+                    // Calculate the difference in days between the current date and the next date
+                    const timeDifference = Math.abs(nextDate.getTime() - currentDate.getTime());
+                    const dayDifference = Math.ceil(timeDifference / (1000 * 3600 * 24));
+
+                    // Check if the day difference is exactly one day
+                    if (dayDifference === 1) {
+                        const startDate = currentDate.toLocaleDateString(); // Get the start date
+
+                        // Generate meeting links for the current date
+                        const meetingLinks = generateMeetingLink(currentDate);
+
+                        // Create a list item for the event
+                        const eventListItem = document.createElement('li');
+                        const googleMeetLinkElement = document.createElement('a');
+                        googleMeetLinkElement.textContent = "Google Meet";
+                        googleMeetLinkElement.href = meetingLinks.googleMeetLink;
+                        googleMeetLinkElement.target = "_blank"; // Open link in a new tab/window
+                        eventListItem.appendChild(googleMeetLinkElement);
+
+                        const zoomMeetingLinkElement = document.createElement('a');
+                        zoomMeetingLinkElement.textContent = "Zoom";
+                        zoomMeetingLinkElement.href = meetingLinks.zoomMeetingLink;
+                        zoomMeetingLinkElement.target = "_blank"; // Open link in a new tab/window
+                        eventListItem.appendChild(zoomMeetingLinkElement);
+
+                        upcomingEventsDiv.appendChild(eventListItem);
+                    }
+                }
+            }
+        }
+
+        function previewProfilePicture(event) {
+            const input = event.target;
+            const reader = new FileReader();
+
+            reader.onload = function() {
+                const dataURL = reader.result;
+                const profilePicturePreview = document.getElementById('profile-picture-preview');
+                profilePicturePreview.src = dataURL;
+
+                const profileLink = document.getElementById('profile-link');
+                profileLink.removeChild(profileLink.firstChild); // Remove the previous icon
+            };
+
+            reader.readAsDataURL(input.files[0]);
+        }
+
+        // check for new articles every 5 seconds
+    </script>
+</body>
+
+</html>

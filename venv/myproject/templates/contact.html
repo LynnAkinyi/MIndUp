@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <style>
+        .contact-container {
+            display: flex;
+            background-color: #f8f8f8;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .contact-info {
+            flex: 1;
+            background-color: #e8e8e8;
+            padding: 20px;
+            border-radius: 8px 0 0 8px;
+            text-align: center;
+        }
+        
+        .contact-info h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .contact-info p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        
+        .contact-details p {
+            margin-bottom: 10px;
+        }
+        
+        .contact-details i {
+            margin-right: 10px;
+            color: #6a2d0a;
+        }
+        
+        .social-icons i {
+            font-size: 20px;
+            margin: 0 10px;
+            color: #6a2d0a;
+        }
+        
+        .contact-form {
+            flex: 2;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .form-group {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        
+        .form-control {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        
+        .subject-options {
+            display: flex;
+            align-items: center;
+        }
+        
+        .subject-options input[type="radio"] {
+            margin-right: 5px;
+        }
+        
+        .subject-options label {
+            margin-right: 20px;
+            color: #F6EFE9;
+        }
+        
+        .submit-btn {
+            background-color: #6a2d0a;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .contact-container {
+                flex-direction: column;
+            }
+            .contact-info {
+                border-radius: 8px 8px 0 0;
+            }
+            .contact-form {
+                border-radius: 0 0 8px 8px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="contact-container">
+        <div class="contact-info">
+            <h2>Contact Information</h2>
+            <p>Say something to start a live chat!</p>
+            <div class="contact-details">
+                <p><i class="fas fa-phone"></i> +25476860 8120</p>
+                <p><i class="fas fa-envelope"></i> 2003749@students.kcau.ac.ke</p>
+                <p><i class="fas fa-map-marker-alt"></i> Nairobi, Kenya</p>
+            </div>
+            <div class="social-icons">
+                <i class="fab fa-twitter"></i>
+                <i class="fab fa-instagram"></i>
+            </div>
+        </div>
+        <div class="contact-form">
+            <form>
+                <div class="form-group">
+                    <input type="text" placeholder="First Name" class="form-control" />
+                    <input type="text" placeholder="Last Name" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <input type="email" placeholder="Email" class="form-control" />
+                    <input type="tel" placeholder="Phone Number" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <div class="subject-options">
+                        <input type="radio" id="general-inquiry" name="subject" value="General Inquiry" checked>
+                        <label for="general-inquiry">General Inquiry</label>
+                        <input type="radio" id="general-inquiry" name="subject" value="General Inquiry">
+                        <label for="general-inquiry">General Inquiry</label>
+                        <input type="radio" id="general-inquiry" name="subject" value="General Inquiry">
+                        <label for="general-inquiry">General Inquiry</label>
+                        <input type="radio" id="general-inquiry" name="subject" value="General Inquiry">
+                        <label for="general-inquiry">General Inquiry</label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <textarea placeholder="Write your message..." class="form-control" rows="4"></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Send Message</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

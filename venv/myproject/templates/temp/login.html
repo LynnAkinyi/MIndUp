@@ -1,0 +1,84 @@
+<div class="container">
+    <h1>{{ request.user.username }}'s Profile</h1>
+
+    <!-- Personal Information Section -->
+    <div class="section">
+        <h2 class="section-title">Personal Information</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="input-group">
+                <label for="profile-picture">Profile Picture:</label>
+                <input type="file" id="profile-picture" name="profile-picture" accept="image/*" onchange="displaySelectedImage()">
+            </div>
+            <img id="selected-image" src="#" alt="Selected image" style="display: none;" />
+            <div class="input-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name">
+            </div>
+            <div class="input-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email">
+            </div>
+            <div class="input-group">
+                <label for="phone">Phone:</label>
+                <input type="tel" id="phone" name="phone">
+            </div>
+            <div class="input-group">
+                <p>Role:</p>
+                <input type="radio" id="therapist" name="role" value="therapist">
+                <label for="therapist">Therapist</label><br>
+                <input type="radio" id="member" name="role" value="member">
+                <label for="member">Member</label><br>
+            </div>
+
+            <div class="saved-info">
+                <p><strong>Profile Picture:</strong> <img id="saved-profile-picture" src="" alt="Profile Picture"></p>
+                <p><strong>Name:</strong> <span id="saved-name"></span></p>
+                <p><strong>Email:</strong> <span id="saved-email"></span></p>
+                <p><strong>Phone:</strong> <span id="saved-phone"></span></p>
+                <p><strong>Role:</strong> <span id="saved-role"></span></p>
+
+            </div>
+        </form>
+    </div>
+
+    <!-- Save/Edit Button -->
+    <button class="btn" id="save-btn" onclick="saveProfile()">Save</button>
+
+
+</div>
+
+<script>
+    function saveProfile() {
+        // Get input values
+        const name = document.querySelector('#name').value;
+        const email = document.querySelector('#email').value;
+        const phone = document.querySelector('#phone').value;
+        const role = document.querySelector('input[name="role"]:checked').value;
+
+        // Create a FormData object to handle the file upload
+        const formData = new FormData();
+        formData.append('profile_picture', document.querySelector('#profile-picture').files[0]);
+        formData.append('name', name);
+        formData.append('email', email);
+        formData.append('phone', phone);
+        formData.append('role', role);
+
+        // Send a POST request to the server
+        fetch('/save_profile/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken') // You need to get the CSRF token
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Profile saved successfully!');
+                } else {
+                    alert('An error occurred.');
+                }
+            });
+    }
+</script>

@@ -1,0 +1,152 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tranquil Mind</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+    <script src="{% static 'js/script.js' %}"></script>
+
+    <link rel="icon" href="static/css/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="shortcut icon" href="static/images/favicon.ico" type="image/x-icon" />
+
+</head>
+
+<body>
+    <div class="splash-screen">
+        <img src="{% static 'images/logo.png' %}" alt="logo" class="logo" />
+    </div>
+
+    <div class="homepage">
+        <!-- Welcome section -->
+        <section class="welcome-section">
+            <div class="bg"></div>
+            <div class="nav-bar">
+                <div class="logow">
+                    <img src="static/images/logo.png" alt="logo" class="logow" />
+                </div>
+                <div class="nav-links">
+
+                    <a href="{% url 'home' %}" class="active" id="dashboardLink">Home</a>
+                    <a href="{% url 'dashboard' %}">Dashboard</a>
+                    <a href="{% url 'community' %}">Community</a>
+                    <a href="{% url 'blog' %}">Blog</a>
+                    <a href="{% url 'about' %}">About Us</a>
+                    <a href="{% url 'login' %}">Login</a>
+                </div>
+                <!-- <div class="dropdown-menu"> <span class="material-symbols-outlined">
+menu
+</span>
+                    <div class="dropdown-content">
+                        <a href="home.html">Home</a>
+                        <a href="community.html">Community</a>
+                        <a href="blog.html">Blog</a>
+                        <a href="about.html">About Us</a>
+                        <a href="login.html">Login</a>
+                    </div>
+                </div> -->
+
+            </div>
+
+            <div class="welcome-container">
+
+                <div class="welcome-text">
+                    <h1>Welcome to Tranquil Mind</h1>
+                    <img src="{% static 'images/logowhite.png' %}" alt="Image" class="welcome-image" />
+                    <p><i>You are not alone. This is a safe and supportive space dedicated to your mental well-being.</i>
+
+                    </p>
+                    <p> <i>Join resilience-building workshops conducted by experts on our platform.</i></p>
+                    <a href="{% url 'dashboard' %}" class="cta-button">Join Now</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Other sections -->
+        <section class="section1">
+            <div class="container">
+                <article>
+                    <h1>Building Resilience</h1>
+                    <p>
+                        Join resilience-building workshops conducted by experts on our platform. Engage with a supportive community sharing stories of triumph and participate in activities designed to enhance emotional strength and adaptability..
+                    </p>
+                </article>
+                <img src="static/images/people.jpg" alt="Image" class="image" />
+            </div>
+        </section>
+
+        <section class="section2">
+            <div class="container">
+                <img src="static/images/partner.jpg" alt="Image" class="image" />
+                <article>
+                    <h1>The Power of Connection</h1>
+                    <p>
+                        Explore how our platform emphasizes the importance of healthy relationships in mental well-being. From communication tips to relationship support groups, discover the role of connections in fostering a positive state of mind.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="section3">
+            <div class="container">
+                <article>
+                    <h1>Breaking Barriers to Mental Health Support</h1>
+                    <p>
+                        Dive into the world of virtual counseling, exploring its benefits, considerations, and how it has become a lifeline for individuals worldwide.
+                    </p>
+                </article>
+                <img src="static/images/therapist.jpg" alt="Image" class="image" />
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-container ">
+                <div class="footer-section ">
+                    <h3>Reach us</h3>
+                    <p><a href="tel:+254768608120 ">+25476860 8120</a></p>
+                    <p><a href="mailto:2003749@students.kcau.ac.ke ">2003749@students.kcau.ac.ke</a></p>
+                    <p><a href="https://www.google.com/maps/search/?api=1&query=Nairobi,Kenya " target="_blank "><i class="fas fa-map-marker-alt "></i> Nairobi, Kenya</a></p>
+                </div>
+                <div class="footer-section ">
+                    <h3>Company</h3>
+                    <a href="{% url 'about' %} ">About</a>
+                    <a href="{% url 'contact' %} ">Contact Us</a>
+                    <div class="social-links ">
+                        <p>Follow Us On:</p>
+                        <p>
+                            <a href="https://www.twitter.com ">
+                                <img src="static/images/twitter.png " alt="Facebook " />
+                            </a>
+                            <a href="https://www.linkedin.com/in/lynn-akinyi/ ">
+                                <img src="static/images/linkedin (1).png " alt="Twitter " />
+                            </a>
+                            <a href="https://www.instagram.com/_a_ly.nn/ ">
+                                <img src="static/images/instagram (1).png " alt="Instagram " />
+                            </a>
+                        </p>
+
+
+                    </div>
+                </div>
+                <div class="footer-section ">
+                    <h3>Legal</h3>
+                    <p>Privacy Policy</p>
+                    <p>Terms & Services</p>
+                    <p>Terms of Use</p>
+                </div>
+                <div class="footer-section ">
+                    <h3>Quick Links</h3>
+                    <a href="{% url 'dir' %} ">Therapist Directory</a>
+                    <a href="{% url 'faq' %} ">FAQs</a>
+                    <a href="{% url 'community' %} ">Community</a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+</body>
+
+</html>

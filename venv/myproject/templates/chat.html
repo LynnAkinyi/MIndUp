@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .chat-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        
+        .chat-header {
+            text-align: center;
+            background-color: #8A441D;
+            color: #fff;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        
+        .chat-header h1 {
+            font-size: 24px;
+        }
+        
+        .chat-logout {
+            text-align: right;
+            padding: 10px;
+        }
+        
+        .chat-logout a:hover {
+            text-decoration: underline;
+        }
+        
+        .chat__item__container {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 10px;
+            height: 300px;
+            max-height: 300px;
+            /* Set a maximum height for the chat container */
+            overflow-y: auto;
+            /* Add a vertical scrollbar when needed */
+        }
+        
+        .chat-input-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        #id_message_send_input {
+            flex: 1;
+            /* Take up available space */
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        #id_message_send_button {
+            padding: 5px 10px;
+            background-color: #8A441D;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .chat-message {
+            background-color: #e4f9f5;
+            border-radius: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            position: relative;
+        }
+        
+        .chat-message.right {
+            background-color: black;
+            opacity: 0.7;
+            width: 80%;
+            float: right;
+            clear: both;
+            margin-left: auto;
+            margin-right: 0;
+        }
+        
+        .chat-message.left {
+            background-color: #8A441D;
+            opacity: 0.7;
+            width: 80%;
+            float: left;
+            clear: both;
+            margin-left: 0;
+            margin-right: auto;
+        }
+        
+        .chat-message span {
+            font-weight: bold;
+            color: white;
+        }
+        
+        .message-timestamp {
+            font-size: 10px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        
+        .message-username {
+            font-size: 12px;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+        
+        #volunteerButton {
+            display: inline-block;
+            background-color: #8A441D;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="voluntee">
+        <h3>Volunteers</h3>
+        <ul id="volunteeList"></ul>
+        <button id="volunteerButton" type="submit">Volunteer as Listener</button>
+    </div>
+
+    <script>
+        window.onload = function() {
+
+            function getCookie(name) {
+                var cookieArr = document.cookie.split(";");
+                for (var i = 0; i < cookieArr.length; i++) {
+                    var cookiePair = cookieArr[i].split("=");
+                    if (name == cookiePair[0].trim()) {
+                        return decodeURIComponent(cookiePair[1]);
+                    }
+                }
+                return null;
+            }
+
+            var loggedInUser = "{{ request.user.username }}";
+            var chatSocket;
+
+            document.getElementById('volunteerButton').addEventListener('click', function() {
+                var volunteerName = loggedInUser;
+
+                // Check if the user is already on the volunteer list
+                var volunteerList = document.getElementById('volunteeList');
+                var volunteers = volunteerList.getElementsByTagName('li');
+                var alreadyVolunteered = false;
+                for (var i = 0; i < volunteers.length; i++) {
+                    if (volunteers[i].textContent.trim() === volunteerName) {
+                        alreadyVolunteered = true;
+                        break;
+                    }
+                }
+
+                if (alreadyVolunteered) {
+                    alert("You have already volunteered.");
+                } else {
+                    // Send a POST request to the server to create a new volunteer
+                    fetch('/volunteers/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': '{{ csrf_token }}'
+                        },
+                        body: JSON.stringify({
+                            user: volunteerName
+                        })
+                    }).then(function(response) {
+                        if (response.ok) {
+                            alert("Volunteered successfully");
+                            // Add the user to the volunteer list on success
+                            var listItem = document.createElement('li');
+                            listItem.textContent = volunteerName;
+                            volunteerList.appendChild(listItem);
+                        } else {
+                            alert("Failed to volunteer");
+                        }
+                    });
+                }
+            });
+
+            // Fetch volunteers
+            fetch('/volunteers/')
+                .then(response => response.json())
+                .then(volunteers => {
+                    const volunteerList = document.getElementById('volunteeList');
+                    volunteers.forEach(volunteer => {
+                        const li = document.createElement('li');
+                        li.textContent = volunteer.user__username; // Change this line
+                        li.addEventListener('click', function() {
+                            openChatWindow(volunteer.user__username);
+                        });
+                        volunteerList.appendChild(li);
+                    });
+                });
+
+            // Function to open chat window for a volunteer
+            function openChatWindow(volunteerName) {
+                // Set up WebSocket connection for the chat
+                chatSocket = new WebSocket("ws://" + window.location.host + "/ws/dm/" + loggedInUser + "/" + volunteerName + "/");
+
+                // Create a new chat container
+                var chatContainer = document.createElement('div');
+                chatContainer.className = 'chat-container';
+                chatContainer.id = 'id_chat_container_' + volunteerName; // Set a unique id for each chat container
+
+                // Set the inner HTML of the chat container
+                chatContainer.innerHTML = `
+<div class="chat-header">
+    <h1>${volunteerName} <i class="fas fa-comment"></i></h1>
+</div>
+<div class="chat-logout">
+    <div style="float: left;font-weight: bold; ">${volunteerName} </div>
+</div>
+<div style="clear: both;"></div>
+<div class="chat__item__container" id="id_chat_item_container_${volunteerName}">
+    <!-- Messages will be displayed here with a scrollbar -->
+</div>
+<div class="chat-input-container">
+    <input type="text" id="id_message_send_input" placeholder="Type your message..." />
+    <button type="submit" id="id_message_send_button"><i class="fas fa-paper-plane"></i> Send</button>
+</div>
+`;
+
+                // Insert the chat container into the page
+                document.body.appendChild(chatContainer);
+
+                var messageContainer = document.querySelector(`#id_chat_item_container_${volunteerName}`);
+
+                chatSocket.onclose = function(e) {
+                    console.log("The connection was closed. Reason: ", e.reason);
+                };
+
+                // Add event listeners to the send button and the input field
+                document.querySelector("#id_message_send_button").onclick = function(e) {
+                    var messageInput = document.querySelector("#id_message_send_input").value;
+                    var currentTime = new Date();
+                    var time = currentTime.toLocaleTimeString();
+
+                    // Send the payload when the send button is clicked
+                    const payload = {
+                        command: 'send_dm',
+                        sender_username: loggedInUser,
+                        receiver_username: volunteerName,
+                        message_text: messageInput // Use the message from the input field
+                    };
+                    console.log("Sending message: ", payload); // Log the payload
+                    chatSocket.send(JSON.stringify(payload));
+
+                    // Append the message to the chat window immediately after it's sent
+                    appendMessage(messageInput, loggedInUser, messageContainer);
+
+                    document.querySelector("#id_message_send_input").value = "";
+                };
+
+                document.querySelector("#id_message_send_input").onkeyup = function(e) {
+                    if (e.keyCode == 13) { // Enter key
+                        document.querySelector("#id_message_send_button").click();
+                    }
+                };
+
+                document.querySelector("#id_message_send_input").focus();
+
+                chatSocket.onmessage = function(e) {
+                    const data = JSON.parse(e.data);
+                    console.log("Received message: ", data.message);
+
+                    var messageContainer = document.querySelector(`#id_chat_item_container_${data.receiver_username}`);
+                    if (messageContainer) {
+                        var div = document.createElement("div");
+                        div.className = (data.sender_username === loggedInUser) ? "chat-message right" : "chat-message left";
+                        div.innerHTML = `<div class="message-content">
+<span class="message-username">${data.sender_username.charAt(0).toUpperCase() + data.sender_username.slice(1)}</span>
+<span class="message-text">${data.message_text}</span>
+<span class="message-timestamp">${new Date().toLocaleTimeString()}</span>
+</div>`;
+                        messageContainer.appendChild(div);
+                        // Scroll to the bottom of the chat container
+                        messageContainer.scrollTop = messageContainer.scrollHeight;
+                    } else {
+                        console.error('Message container not found');
+                    }
+
+                    // Append the message to the chat window immediately after it's received
+                    appendMessage(data.message_text, data.sender_username, messageContainer);
+                };
+
+
+                // Fetch and display messages when the chat window is opened
+                get_messages(volunteerName);
+
+                // Function to append a message to the chat window
+                function appendMessage(message, username, messageContainer) {
+                    var div = document.createElement("div");
+                    div.className = (username === loggedInUser) ? "chat-message right" : "chat-message left";
+                    div.innerHTML = `<div class="message-content">
+<span class="message-username">${username.charAt(0).toUpperCase() + username.slice(1)}</span>
+<span class="message-text">${message}</span>
+<span class="message-timestamp">${new Date().toLocaleTimeString()}</span>
+</div>`;
+                    messageContainer.appendChild(div);
+                    // Scroll to the bottom of the chat container
+                    messageContainer.scrollTop = messageContainer.scrollHeight;
+                }
+
+                // Add event listeners to the send button and the input field
+                document.querySelector("#id_message_send_button").onclick = function(e) {
+                    var messageInput = document.querySelector("#id_message_send_input").value;
+                    var currentTime = new Date();
+                    var time = currentTime.toLocaleTimeString();
+
+                    // Send the payload when the send button is clicked
+                    const payload = {
+                        command: 'send_dm',
+                        sender_username: loggedInUser,
+                        receiver_username: volunteerName,
+                        message_text: messageInput // Use the message from the input field
+                    };
+                    console.log("Sending message: ", payload); // Log the payload
+                    chatSocket.send(JSON.stringify(payload));
+
+                    // Append the message to the chat window immediately after it's sent
+                    appendMessage(messageInput, loggedInUser, messageContainer);
+
+                    document.querySelector("#id_message_send_input").value = "";
+                };
+                // Fetch and display messages when the chat window is opened
+                get_messages(volunteerName);
+
+
+                chatSocket.onopen = function(e) {
+                    console.log("The connection was set up successfully!");
+
+                    // Get the message from the input field
+                    var messageInput = document.querySelector("#id_message_send_input").value;
+
+                    // Only send the payload if the input field is not empty
+                    if (messageInput.trim() !== "") {
+                        const payload = {
+                            command: 'send_dm',
+                            sender_username: loggedInUser,
+                            receiver_username: volunteerName,
+                            message_text: messageInput // Use the message from the input field
+                        };
+                        chatSocket.send(JSON.stringify(payload));
+                    }
+                };
+            };
+
+
+
+
+
+
+            function get_messages(volunteerName) {
+                // Fetch messages from the server
+                fetch('/get_messages/', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': getCookie('csrftoken')
+                        },
+                        body: JSON.stringify({
+                            group_id: volunteerName
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            alert(data.error);
+                        } else {
+                            // Display messages
+                            displayMessages(data, volunteerName);
+                        }
+                    });
+            }
+
+            function displayMessages(messages, groupId) {
+                var messageContainer = document.querySelector("#id_chat_item_container_" + groupId);
+                if (messages) { // Check if messages are defined
+                    messages.forEach(message => {
+                        var div = document.createElement("div");
+                        div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                        const time = new Date(message.time);
+                        const formattedTime = time.toLocaleTimeString();
+                        div.innerHTML = `<div class="message-content">
+    <span class="message-username">${message && message.username ? message.username.charAt(0).toUpperCase() + message.username.slice(1) : ''}</span>
+    <span class="message-text">${message.message}</span>
+    <span class="message-timestamp">${formattedTime}</span>
+</div>`;
+                        messageContainer.appendChild(div);
+                    });
+                    // Scroll to the bottom of the chat container
+                    messageContainer.scrollTop = messageContainer.scrollHeight;
+                }
+            }
+        };
+    </script>
+</body>
+
+
+</html>

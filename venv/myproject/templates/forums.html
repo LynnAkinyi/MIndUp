@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .chat-container {
+            max-width: 400px;
+            margin: 20px auto;
+            padding: 10px;
+            max-height: 500px;
+            /* Adjust this value as needed */
+            overflow-y: auto;
+        }
+        
+        .chat-header {
+            text-align: center;
+            background-color: #8A441D;
+            color: #fff;
+            padding: 10px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+        }
+        
+        .chat-header h1 {
+            font-size: 24px;
+        }
+        
+        .chat-logout {
+            text-align: right;
+            padding: 10px;
+        }
+        
+        .chat-logout a {
+            text-decoration: none;
+            color: #8A441D;
+            font-weight: bold;
+        }
+        
+        .chat-logout a:hover {
+            text-decoration: underline;
+        }
+        
+        .chat__item__container {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 10px;
+            height: 300px;
+            max-height: 300px;
+            /* Set a maximum height for the chat container */
+            overflow-y: auto;
+            /* Add a vertical scrollbar when needed */
+        }
+        
+        .chat-input-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        #id_message_send_input {
+            flex: 1;
+            /* Take up available space */
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        #id_message_send_button {
+            padding: 5px 10px;
+            background-color: #8A441D;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        
+        .chat-message {
+            background-color: #e4f9f5;
+            border-radius: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            position: relative;
+        }
+        
+        .chat-message.right {
+            background-color: black;
+            opacity: 0.7;
+            width: 80%;
+            float: right;
+            clear: both;
+            margin-left: auto;
+            margin-right: 0;
+        }
+        
+        .chat-message.left {
+            background-color: #8A441D;
+            opacity: 0.7;
+            width: 80%;
+            float: left;
+            clear: both;
+            margin-left: 0;
+            margin-right: auto;
+        }
+        
+        .chat-message span {
+            font-weight: bold;
+            color: white;
+        }
+        
+        .message-timestamp {
+            font-size: 10px;
+            position: absolute;
+            top: 5px;
+            right: 5px;
+        }
+        
+        .message-username {
+            font-size: 12px;
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+        }
+        
+        #chat-groups-list {
+            column-count: 2;
+            padding: 0;
+            list-style-type: none;
+        }
+        
+        #volunteerButton,
+        #create-group-button,
+        #joinButton {
+            display: inline-block;
+            background-color: #8A441D;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chat-groups">
+        <h2>Chat Groups</h2>
+        <button id="create-group-button">Create Group</button>
+        <ul id="chat-groups-list">
+            <!-- Chat groups will be dynamically added here -->
+        </ul>
+    </div>
+
+
+    <script>
+        var loggedInUser = "{{ request.user.username }}";
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                let cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+                    // Does this cookie string begin with the name we want?
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        function get_messages(groupId) {
+            // Fetch messages from the server
+            fetch('/get_messages/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        group_id: groupId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        // Display messages
+                        displayMessages(data, groupId);
+                    }
+                });
+        }
+
+        function displayMessages(messages, groupId) {
+            var messageContainer = document.querySelector("#id_chat_item_container_" + groupId);
+            if (messages) { // Check if messages are defined
+                messages.forEach(message => {
+                    var div = document.createElement("div");
+                    div.className = (message.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                    const time = new Date(message.time);
+                    const formattedTime = time.toLocaleTimeString();
+                    div.innerHTML = `<div class="message-content">
+                <span class="message-username">${message && message.username ? message.username.charAt(0).toUpperCase() + message.username.slice(1) : ''}</span>
+                <span class="message-text">${message.text}</span>
+                <span class="message-timestamp">${formattedTime}</span>
+            </div>`;
+                    messageContainer.appendChild(div);
+                });
+                // Scroll to the bottom of the chat container
+                messageContainer.scrollTop = messageContainer.scrollHeight;
+            }
+        }
+
+
+        document.getElementById('create-group-button').addEventListener('click', function() {
+            // Prompt the user to enter a group name
+            var groupName = prompt("Please enter a group name");
+
+            // If the user clicked "Cancel", then groupName will be null and we should not create a group
+            if (groupName === null) {
+                return;
+            }
+
+            // Send a POST request to the server to create a new chat group
+            fetch('/create_chat_group/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken') // Assuming you have a function to get the CSRF token
+                    },
+                    body: JSON.stringify({
+                        title: groupName
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        // The server created the chat group successfully
+                        var uniqueId = data.id; // Use the ID returned by the server as the unique identifier
+
+                        // The rest of your code...
+                        get_messages(uniqueId);
+                    }
+                });
+        });
+
+
+
+        // Fetch the chat groups from the server when the page loads
+        window.onload = function() {
+            fetch('/get_chat_groups/', {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        // The server returned the chat groups successfully
+                        data.forEach(group => {
+                            // Create a chat group for each group returned by the server
+                            var uniqueId = group.id;
+                            var groupName = group.title;
+
+                            // Use the id returned by the server as the uniqueId for the chat group
+                            var uniqueId = group.id;
+
+
+
+                            // Create chat container
+                            var chatContainer = document.createElement('div');
+                            chatContainer.className = 'chat-container';
+                            chatContainer.dataset.groupId = uniqueId; // Store the groupId in a data attribute
+
+
+
+                            // Create chat header
+                            var chatHeader = document.createElement('div');
+                            chatHeader.className = 'chat-header';
+                            var h1 = document.createElement('h1');
+                            h1.innerHTML = groupName + ' (' + uniqueId + ') <i class="fas fa-comment"></i>'; // Embed the group name and groupId here
+
+                            chatHeader.appendChild(h1);
+                            chatContainer.appendChild(chatHeader);
+
+                            // Create chat logout
+                            var chatLogout = document.createElement('div');
+                            chatLogout.className = 'chat-logout';
+                            chatLogout.innerHTML = '{% if request.user.is_authenticated %}<div style="float: left;font-weight: bold; color: #8A441D;">{{ request.user|title }} </div><div style="clear: both;"></div>{% endif %}';
+                            chatContainer.appendChild(chatLogout);
+
+                            // Create chat item container
+                            var chatItemContainer = document.createElement('div');
+                            chatItemContainer.className = 'chat__item__container';
+                            chatItemContainer.id = 'id_chat_item_container_' + uniqueId;
+                            chatContainer.appendChild(chatItemContainer);
+
+                            // Create chat input container
+                            var chatInputContainer = document.createElement('div');
+                            chatInputContainer.className = 'chat-input-container';
+                            var input = document.createElement('input');
+                            input.type = 'text';
+                            input.id = 'id_message_send_input_' + uniqueId;
+                            input.placeholder = 'Type your message...';
+                            var button = document.createElement('button');
+                            button.type = 'submit';
+                            button.id = 'id_message_send_button_' + uniqueId;
+                            button.style.backgroundColor = '#8A441D';
+                            button.style.color = 'white';
+                            button.innerHTML = '<i class="fas fa-paper-plane"></i> Send';
+                            chatInputContainer.appendChild(input);
+                            chatInputContainer.appendChild(button);
+                            chatContainer.appendChild(chatInputContainer);
+
+                            // Append the new chat group to the chat groups list
+                            document.getElementById('chat-groups-list').appendChild(chatContainer);
+
+                            // Create a new WebSocket connection for this group
+                            const chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${uniqueId}/`);
+                            chatSocket.onopen = function(e) {
+                                console.log("The connection was set up successfully!");
+                                chatSocket.send(JSON.stringify({
+                                    command: 'join',
+                                    groupId: chatContainer.dataset.groupId
+                                }));
+                            };
+                            chatSocket.onclose = function(e) {
+                                console.log("Something unexpected happened!");
+                            };
+
+                            // Add event listeners to the input and button elements
+                            input.onkeyup = function(e) {
+                                if (e.keyCode == 13) {
+                                    button.click();
+                                }
+                            };
+                            button.onclick = function(e) {
+                                var messageInput = input.value;
+                                var currentTime = new Date();
+                                var time = currentTime.toLocaleTimeString();
+                                chatSocket.send(JSON.stringify({
+                                    command: 'send',
+                                    message: messageInput,
+                                    username: "{{request.user.username}}",
+                                    time: time,
+                                    groupId: chatContainer.dataset.groupId // Include the groupId in the data sent to the server
+                                }));
+                                input.value = "";
+                            };
+
+                            chatSocket.onmessage = function(e) {
+                                const data = JSON.parse(e.data);
+                                // Find the chat item container of the group that the message belongs to
+                                var messageContainer = document.querySelector("#id_chat_item_container_" + data.groupId);
+                                var div = document.createElement("div");
+                                div.className = (data.username === "{{request.user.username}}") ? "chat-message right" : "chat-message left";
+                                div.innerHTML = `<div class="message-content">
+                        <span class="message-username">${data.username.charAt(0).toUpperCase() + data.username.slice(1)}</span>
+                        <span class="message-text">${data.message}</span>
+                        <span class="message-timestamp">${data.time}</span>
+                    </div>`;
+                                messageContainer.appendChild(div);
+                                // Scroll to the bottom of the chat container
+                                messageContainer.scrollTop = messageContainer.scrollHeight;
+
+                                console.log("Received message data:", data);
+                                console.log("Group IDs of all chat groups:", Array.from(document.querySelectorAll('.chat-container')).map(el => el.dataset.groupId));
+
+                            };
+                            // Fetch the messages for this group
+                            get_messages(uniqueId);
+                        });
+                    }
+                });
+        };
+    </script>
+</body>
+
+</html>
