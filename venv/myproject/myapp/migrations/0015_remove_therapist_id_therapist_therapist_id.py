@@ -4,7 +4,7 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
+    
     dependencies = [
         ('myapp', '0014_profile_specialization_therapist_appointment'),
     ]
@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='therapist',
             name='therapist_id',
-            field=models.AutoField(default=1, primary_key=True, serialize=False),
+            field=models.AutoField(primary_key=True, serialize=False),
         ),
     ]

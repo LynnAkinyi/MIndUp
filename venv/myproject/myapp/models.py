@@ -39,8 +39,8 @@ class Profile(models.Model):
     specialty = models.CharField(max_length=200, null=True, blank=True)
 
 
-
 class Therapist(models.Model):
+    therapist_id = models.AutoField(primary_key=True)  # Auto-incrementing primary key
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to='therapists/')
     email = models.EmailField(null=True, blank=True)
