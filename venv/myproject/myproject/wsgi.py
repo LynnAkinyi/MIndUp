@@ -11,14 +11,11 @@ import os
 import sys
 from django.core.wsgi import get_wsgi_application
 
-# Add your project directory to the Python path
-project_path = 'C:\\Users\\pc\\OneDrive\\Desktop\\AUTH_SYSTEM\\venv\\myproject\\myproject'
-if os.path.exists(project_path) and os.path.isfile(os.path.join(project_path, '__init__.py')):
+# Add the project directory to the Python path
+current_path = os.path.dirname(os.path.abspath(__file__))
+project_path = os.path.join(current_path, '..')
+if project_path not in sys.path:
     sys.path.insert(0, project_path)
-else:
-    print(f"Project path: {project_path} does not exist or is not a valid Python package.")
-
-
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproject.settings')
 
