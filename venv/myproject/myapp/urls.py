@@ -4,9 +4,9 @@ from .views import forums
 from .views import user_details
 from django.contrib import admin
 from django.conf import settings
-from django.conf.urls import url
 from django.views.static import serve
 from django.conf.urls.static import static
+from django.urls import re_path
 from . import views
 from .views import create_volunteer, create_chat_group, get_chat_groups, upcoming_appointments, delete_appointment, confirm_appointment
 from django.contrib.auth.decorators import login_required
@@ -14,6 +14,7 @@ from django.contrib.auth.decorators import login_required
 
 
 urlpatterns = [    # Existing URL patterns
+    path('', views.index, name='index'),
     path('', views.index, name='home'),
     path('about/', views.about, name='about'),
     path('blog/', views.blog, name='blog'),
@@ -71,9 +72,7 @@ urlpatterns = [    # Existing URL patterns
     path('upcoming-appointments/', upcoming_appointments, name='upcoming_appointments'),
     path('send_message/', views.send_message, name='send_message'),
     path('get_messages/', views.get_messages, name='get_messages'),
-    url(r'^media/(?P<path>.*)', serve, {'document_root':
-                                        settings.MEDIA_ROOT}),
-    url(r'^static/(?P<path>.*)', serve, {'document_root':
-                                         settings.STATIC_ROOT}),
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.STATIC_ROOT}),
     
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
