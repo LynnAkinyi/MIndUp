@@ -9,7 +9,7 @@ pip install --upgrade pip
 pip install -r requirements.txt
 
 # Set Django settings module
-export DJANGO_SETTINGS_MODULE=myproject.settings
+export DJANGO_SETTINGS_MODULE=myproject.myproject.settings
 
 # Run Django commands
 python manage.py collectstatic --noinput
