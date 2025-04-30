@@ -11,6 +11,12 @@ pip install -r requirements.txt
 # Set Django settings module
 export DJANGO_SETTINGS_MODULE=myproject.settings
 
+# Reset database and migrations
+find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
+find . -path "*/migrations/*.pyc" -delete
+rm -f db.sqlite3
+
 # Run Django commands
+python manage.py makemigrations
+python manage.py migrate --run-syncdb
 python manage.py collectstatic --noinput
-python manage.py migrate

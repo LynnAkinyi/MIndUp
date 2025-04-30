@@ -56,7 +56,7 @@ class Testimonies(models.Model):
     is_new = models.BooleanField(default=True)
 
 class Appointment(models.Model):
-    therapist = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    therapist = models.ForeignKey(Therapist, on_delete=models.CASCADE, to_field='therapist_id')
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True)  # New field
     date = models.DateTimeField(default=timezone.now)
     google_meet_link = models.URLField(blank=True, null=True)
