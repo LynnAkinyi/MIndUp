@@ -2,10 +2,10 @@
 set -e
 
 # Install dependencies
+pip install --upgrade pip
 pip install -r requirements.txt
-pip install Pillow
 
-# Set correct Django settings module 
+# Set Django settings
 export DJANGO_SETTINGS_MODULE=myproject.settings
 
 # Run Django commands
