@@ -21,6 +21,8 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'myapp.apps.MyappConfig',
     'chartjs',
+    'channels',
+    'daphne',
     'rest_framework',
     'django.contrib.humanize',
     'django.contrib.admin',
@@ -28,15 +30,18 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'daphne',
     'django.contrib.staticfiles',
-    'channels',
+    
 ]
+
+ASGI_APPLICATION = 'myproject.asgi.application'
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels.layers.InMemoryChannelLayer"
     }
 }
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
@@ -109,4 +114,4 @@ X_FRAME_OPTIONS = 'SAMEORIGIN'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'login'
-ASGI_APPLICATION = 'myproject.asgi.application'
+
