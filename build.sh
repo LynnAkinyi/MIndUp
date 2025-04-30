@@ -1,11 +1,15 @@
 #!/bin/bash
 set -e
 
+# Add project root to PYTHONPATH
+export PYTHONPATH=$PYTHONPATH:/opt/render/project/src
+
 # Install dependencies
+pip install --upgrade pip
 pip install -r requirements.txt
 
-# Set correct Django settings module 
-export DJANGO_SETTINGS_MODULE=myproject.settings  # Change to your actual project name
+# Set Django settings module
+export DJANGO_SETTINGS_MODULE=myproject.settings
 
 # Run Django commands
 python manage.py collectstatic --noinput
