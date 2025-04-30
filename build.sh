@@ -1,22 +1,20 @@
 #!/bin/bash
 set -e
 
-# Add project root to PYTHONPATH
-export PYTHONPATH=$PYTHONPATH:/opt/render/project/src
+# Install build dependencies
+python -m pip install --upgrade pip
+pip install wheel setuptools
+pip install build
 
-# Install dependencies
-pip install --upgrade pip
+# Install Pillow with specific build flags
+LDFLAGS="-L/opt/homebrew/lib" CFLAGS="-I/opt/homebrew/include" pip install Pillow==9.5.0
+
+# Install remaining dependencies
 pip install -r requirements.txt
 
-# Set Django settings module
+# Set Django settings
 export DJANGO_SETTINGS_MODULE=myproject.settings
 
-# Reset database and migrations
-find . -path "*/migrations/*.py" -not -name "__init__.py" -delete
-find . -path "*/migrations/*.pyc" -delete
-rm -f db.sqlite3
-
 # Run Django commands
-python manage.py makemigrations
-python manage.py migrate --run-syncdb
 python manage.py collectstatic --noinput
+python manage.py migrate
